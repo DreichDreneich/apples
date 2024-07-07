@@ -1,0 +1,13 @@
+﻿  2dTree.cpp
+  Apple.cpp
+  Game.cpp
+  GameMain.cpp
+  MainMenu.cpp
+  Math.cpp
+  Menu.cpp
+  Player.cpp
+  Actor.cpp
+  Sound.cpp
+  UI.cpp
+  Generating Code...
+  ApplesGame.vcxproj -> F:\projects\XYZ_UECourse\xyz-cpp-course-lesson-1-1-2\apples\ApplesGame\x64\Debug\ApplesGame.exe
