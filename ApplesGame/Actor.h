@@ -6,13 +6,14 @@ namespace ApplesGame
 {
 	struct Actor
 	{
-		Position position;
+		sf::Vector2f position;
 		sf::Sprite sprite;
+
+		void Draw(sf::RenderWindow& window) {
+			sprite.setPosition(position);
+			window.draw(sprite);
+		}
+
+		void Init(const sf::Texture& texture);
 	};
-
-	void InitActor(Actor& actor, const sf::Texture& texture);
-
-	bool HasActorCollisionWithCircleShape(const Actor& actor, const Position& circlePosition, const float circleDiameter);
-
-	void DrawActor(Actor& actor, sf::RenderWindow& window);
 }

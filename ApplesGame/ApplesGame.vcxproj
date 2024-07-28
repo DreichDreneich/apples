@@ -158,9 +158,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="2dTree.cpp" />
-    <ClCompile Include="Apple.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameField.cpp" />
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Math.cpp" />
@@ -171,10 +170,10 @@
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="2dTree.h" />
-    <ClInclude Include="Apple.h" />
+    <ClInclude Include="ActorInfo.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameSettings.h" />
+    <ClInclude Include="GameField.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Menu.h" />

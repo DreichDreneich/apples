@@ -1,7 +1,7 @@
 #include <SFML/Audio.hpp>
 
 #include "Game.h"
-#include "2dTree.h"
+#include "GameField.h"
 
 #include <assert.h>
 
@@ -44,80 +44,185 @@ namespace ApplesGame
 		gameState.gameMode = 0;
 		gameState.gameState.push(GameState::MainMenu);
 
+		gameState.actorsInfo[ActorType::APPLE].num = NUM_APPLES;
+		gameState.actorsInfo[ActorType::APPLE].store.resize(NUM_APPLES);
+
+		gameState.actorsInfo[ActorType::STONE].num = NUM_STONES;
+		gameState.actorsInfo[ActorType::STONE].store.resize(NUM_STONES);
+
+		gameState.actorsInfo[ActorType::BONUS].num = NUM_BONUSES;
+		gameState.actorsInfo[ActorType::BONUS].store.resize(NUM_BONUSES);
+
 		// Init game resources (terminate if error)
-		assert(gameState.playerTexture.loadFromFile(RESOURCES_PATH + "Pacman.png"));
-		assert(gameState.appleTexture.loadFromFile(RESOURCES_PATH + "Apple.png"));
-		assert(gameState.stoneTexture.loadFromFile(RESOURCES_PATH + "Stone.png"));
-		assert(gameState.bonusTexture.loadFromFile(RESOURCES_PATH + "xyz-logo.png"));
+		assert(gameState.playerTexture.loadFromFile(RESOURCES_PATH + "Snake_Body.png"));
+		assert(gameState.playerHeadTexture.loadFromFile(RESOURCES_PATH + "Snake_head.png"));
+		assert(gameState.actorsInfo[ActorType::APPLE].texture.loadFromFile(RESOURCES_PATH + "Apple.png"));
+		assert(gameState.actorsInfo[ActorType::STONE].texture.loadFromFile(RESOURCES_PATH + "Stone.png"));
+		assert(gameState.actorsInfo[ActorType::BONUS].texture.loadFromFile(RESOURCES_PATH + "xyz-logo.png"));
 		assert(gameState.font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
 		LoadAndPrepareSound(gameState.deathSound, "Death.wav");
 		LoadAndPrepareSound(gameState.applePickSound, "AppleEat.wav");
-		// Sound from sfml examples
 		LoadAndPrepareSound(gameState.bonusPickSound, "ding.flac");
+
+		gameState.xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
+		gameState.yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
 
 		GenerateRecordsList(gameState);
 		InitUI(gameState.uiState, gameState.font);
 		RestartGame(gameState);
 	}
 
+	void GenerateNewActorPosition(State& state, GameEl& elem, int oldX, int oldY)
+	{
+		bool generated = false;
+
+		while (!generated)
+		{
+			auto x = rand() % state.xCellsNum;
+			auto y = rand() % state.yCellsNum;
+
+			if (state.gameField.grid[x][y].type == ActorType::NONE)
+			{
+				state.gameField.grid[x][y] = elem;
+				GameEl emptyGameEl{};
+				state.gameField.grid[oldX][oldY] = emptyGameEl;
+
+				generated = true;
+			}
+		}
+	}
+
+	void CreateActors(State& state, ActorType type)
+	{
+		int counter = 0;
+
+		while (counter < state.actorsInfo[type].num)
+		{
+			auto x = rand() % state.xCellsNum;
+			auto y = rand() % state.yCellsNum;
+
+			if (state.gameField.grid[x][y].type == ActorType::NONE)
+			{
+				state.actorsInfo[type].store[counter].Init(state.actorsInfo[type].texture);
+
+				GameEl el{};
+				el.idx = counter;
+				el.type = type;
+				state.gameField.grid[x][y] = el;
+				++counter;
+			}
+		}
+	}
+
 	void RestartGame(State& state)
 	{
-		// Init player
-		InitPlayer(state.player, state.playerTexture);
-		// Init apples
-		for (int i = 0; i < NUM_APPLES; i++)
+		auto middleX = state.xCellsNum / 2;
+		auto middleY = state.yCellsNum / 2;
+
+		state.gameField.grid.clear();
+		state.gameField.grid.resize(state.xCellsNum);
+
+		for (int i = 0; i < state.xCellsNum; i++)
 		{
-			InitApple(state.apples[i], state.appleTexture);
+			state.gameField.grid[i].clear();
+			state.gameField.grid[i].resize(state.yCellsNum);
 		}
 
-		state.applesTree = build2DTree(state.apples, 0, NUM_APPLES - 1, true);
+		state.player.Init({ middleX, middleY}, state.playerHeadTexture, state.playerTexture);
 
-		// Init stones
-		for (int i = 0; i < NUM_STONES; i++)
-		{
-			InitActor(state.stones[i], state.stoneTexture);
-		}
+		CreateActors(state, ActorType::APPLE);
+		CreateActors(state, ActorType::STONE);
+ 		CreateActors(state, ActorType::BONUS);
 
-		// Init bonuses
-		for (int i = 0; i < NUM_BONUSES; i++)
-		{
-			InitActor(state.bonuses[i], state.bonusTexture);
-		}
-
-		// Init game state
-		state.numEatenApples = 0;
-
-
-		//state.isGameOver = false;
-		//state.gameState = {};
-		//state.gameState.push(GameState::Game);
-
-
+ 		state.score = 0;
 		state.timeSinceGameOver = 0.f;
-		state.player.size = INITIAL_PLAYER_SIZE;
-		state.player.hasBonus = false;
-		state.player.bonusTimeRemaining = 10.f;
 	}
 
 	void HandleInput(State& gameState)
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && gameState.player.lastDirection != PlayerDirection::Down)
 		{
 			gameState.player.direction = PlayerDirection::Up;
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && gameState.player.lastDirection != PlayerDirection::Left)
 		{
 			gameState.player.direction = PlayerDirection::Right;
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && gameState.player.lastDirection != PlayerDirection::Up)
 		{
 			gameState.player.direction = PlayerDirection::Down;
 		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && gameState.player.lastDirection != PlayerDirection::Right)
 		{
 			gameState.player.direction = PlayerDirection::Left;
 		}
+	}
+
+	bool CheckFieldCell(State& gameState)
+	{
+		auto currentHeadPosition = gameState.player.partsPositions[0].position;
+
+		auto isXOutOfBound = currentHeadPosition.x < 0 || currentHeadPosition.x > gameState.xCellsNum;
+		auto isYOutOfBound = currentHeadPosition.y < 0 || currentHeadPosition.y > gameState.xCellsNum;
+
+		if (isXOutOfBound || isYOutOfBound)
+		{
+			return true;
+		}
+
+		auto fieldCell = &gameState.gameField.grid[currentHeadPosition.x][currentHeadPosition.y];
+
+		switch (fieldCell->type)
+		{
+		case ActorType::NONE:
+		{
+			for (int i = 1; i < gameState.player.partsPositions.size(); ++i) {
+				if (currentHeadPosition == gameState.player.partsPositions[i].position) {
+					return true;
+				}
+			}
+
+			break;
+		}
+		case ActorType::APPLE:
+		{
+			if (HasMaskFlag(gameState.gameMode, (int)GameMode::infiniteApple)) {
+				GenerateNewActorPosition(gameState, *fieldCell, currentHeadPosition.x, currentHeadPosition.y);
+			}
+			else {
+				fieldCell->type = ActorType::NONE;
+			}
+
+			gameState.score = gameState.score + (gameState.player.hasBonus ? 2 : 1);
+
+			if (HasMaskFlag(gameState.gameMode, (int)GameMode::withAcceleration)) {
+				gameState.player.speed += ACCELERATION;
+			}
+
+			PlaySound(gameState.applePickSound.sound);
+			gameState.player.AddPart();
+			break;
+		}
+		case ActorType::STONE:
+		{
+			return true;
+		}
+		case ActorType::BONUS:
+		{
+			fieldCell->type = ActorType::NONE;
+
+			gameState.player.hasBonus = true;
+			gameState.player.bonusTimeRemaining = 10.f;
+			PlaySound(gameState.bonusPickSound.sound);
+			break;
+		}
+		default:
+			return false;
+			break;
+		}
+
+		return false;
 	}
 
 	void UpdateActors(State& gameState, float timeDelta)
@@ -127,78 +232,7 @@ namespace ApplesGame
 			return;
 		}
 
-		// Update player
-		UpdatePlayer(gameState.player, timeDelta);
-
-
-		//auto nearestNeighbor = findNearestNeighbor(gameState.applesTree, gameState.player.position);
-
-		//auto nearestApples = findPointsWithinRadius(gameState.applesTree, gameState.player.position, gameState.player.size + RESPONSIVENESS_RADIUS);
-
-		//if (nearestNeighbor != nullptr && HasCirclesCollision(gameState.player.position, nearestNeighbor->apple->position, gameState.player.size, APPLE_SIZE))
-		//{
-		//	if (HasMaskFlag(gameState.gameMode, (int)GameMode::infiniteApple)) {
-		//		// Move apple to a new random position
-		//		InitApple(*nearestNeighbor->apple, gameState.appleTexture);
-		//	}
-		//	else {
-		//		nearestNeighbor->apple->position = { -30.f, -30.f };
-		//	}
-
-		//	// Increase eaten apples counter
-		//	gameState.numEatenApples++;
-
-		//	if (HasMaskFlag(gameState.gameMode, (int)GameMode::withAcceleration)) {
-		//		// Increase player speed
-		//		gameState.player.speed += ACCELERATION;
-		//	}
-
-		//	PlaySound(gameState.applePickSound.sound);
-		//}
-		//
-		//if (nearestNeighbor != nullptr && HasCirclesCollision(gameState.player.position, nearestNeighbor->apple->position, gameState.player.size + RESPONSIVENESS_RADIUS, APPLE_SIZE))
-		//{
-		//	UpdateApple(*nearestNeighbor->apple, gameState.player, timeDelta);
-		//}
-
-		for (int i = 0; i < NUM_APPLES; i++)
-		{
-			// Check collision with apple
-			if (HasCirclesCollision(gameState.player.position, gameState.apples[i].position, gameState.player.size, APPLE_SIZE))
-			{
-				if (HasMaskFlag(gameState.gameMode, (int)GameMode::infiniteApple)) {
-					// Move apple to a new random position
-					InitApple(gameState.apples[i], gameState.appleTexture);
-				}
-				else {
-					gameState.apples[i].position = { -30.f, -30.f };
-				}
-					
-				// Increase eaten apples counter
-				gameState.numEatenApples++;
-					
-				if (HasMaskFlag(gameState.gameMode, (int)GameMode::withAcceleration)) {
-					// Increase player speed
-					gameState.player.speed += ACCELERATION;
-				}
-
-				PlaySound(gameState.applePickSound.sound);
-			}
-			else if (HasCirclesCollision(gameState.player.position, gameState.apples[i].position, gameState.player.size + RESPONSIVENESS_RADIUS, APPLE_SIZE))
-			{
-				UpdateApple(gameState.apples[i], gameState.player, timeDelta);
-			}
-		}
-
-		bool hasPlayerCollisionWithStone = false;
-
-		for (const Actor stone : gameState.stones)
-		{
-			if (HasActorCollisionWithCircleShape(stone, gameState.player.position, gameState.player.size)) {
-				hasPlayerCollisionWithStone = true;
-				break;
-			}
-		}
+		gameState.player.Update(timeDelta);
 
 		if (gameState.player.hasBonus) {
 			gameState.player.bonusTimeRemaining -= timeDelta;
@@ -210,41 +244,18 @@ namespace ApplesGame
 			}
 		}
 
-		for (int i = 0; i < NUM_BONUSES; i++)
+		auto isGameOver = CheckFieldCell(gameState);
+
+		if (isGameOver)
 		{
-			if (HasCirclesCollision(gameState.bonuses[i].position, gameState.player.position, ACTOR_SIZE, gameState.player.size)) {
-				gameState.bonuses[i].position = { -30.f, -30.f };
-
-				if (!gameState.player.hasBonus) {
-					gameState.player.size += 15;
-				}
-
-				gameState.player.hasBonus = true;
-				gameState.player.bonusTimeRemaining = 10.f;
-				PlaySound(gameState.bonusPickSound.sound);
-				break;
-			}
-		}
-
-		// Check collision with screen border
-		if (HasCircleShapeCollisionWithScreenBorder(gameState.player.position, gameState.player.size) || hasPlayerCollisionWithStone)
-		{
-			//gameState.isGameOver = true;
 			gameState.gameState.push(GameState::GameOverMenu);
 			gameState.timeSinceGameOver = 0.f;
 
 			auto prevRecord = gameState.recordsList.find(PLAYER_NAME);
-			if (prevRecord->second < gameState.numEatenApples)
+			if (prevRecord->second < gameState.score)
 			{
-				prevRecord->second = gameState.numEatenApples;
+				prevRecord->second = gameState.score;
 			}
-
-			//auto cmp = [](std::pair<string, int>& a, std::pair<string, int>& b)
-			//	{
-			//		return a.second > b.second;
-			//	};
-
-			//std::sort(gameState.recordsList.begin(), gameState.recordsList.end(), cmp);
 
 			PlaySound(gameState.deathSound.sound);
 		}
@@ -260,53 +271,12 @@ namespace ApplesGame
 		UpdateUI(state.uiState, state);
 	}
 
-	void DrawAppleTree(NodePtr root, sf::RenderWindow& window)
-	{
-		if (root == nullptr)
-			return;
-
-		DrawAppleTree(root->right, window);
-
-		DrawApple(*root->apple, window);
-
-		DrawAppleTree(root->left, window);
-	}
-
-	void DrawActors(State& gameState, sf::RenderWindow& window)
-	{
-		DrawPlayer(gameState.player, window);
-
-		//DrawAppleTree(gameState.applesTree, window);
-		for (int i = 0; i < NUM_APPLES; i++)
-		{
-			DrawApple(gameState.apples[i], window);
-		}
-
-		for (int i = 0; i < NUM_STONES; i++)
-		{
-			DrawActor(gameState.stones[i], window);
-		}
-
-		for (int i = 0; i < NUM_BONUSES; i++)
-		{
-			DrawActor(gameState.bonuses[i], window);
-		}
-	}
-
-	void DrawGameEnvironment(State& gameState, sf::RenderWindow& window)
-	{
-		for (int i = 0; i < NUM_STONES; i++)
-		{
-			DrawActor(gameState.stones[i], window);
-		}
-	}
-
 	void DrawGame(State& state, sf::RenderWindow& window)
 	{
 		if (state.gameState.top() == GameState::Game)
 		{
-			DrawActors(state, window);
-			DrawGameEnvironment(state, window);
+			state.player.Draw(window);
+			state.gameField.Draw(state, window);
 		}
 
 		DrawUI(state, window);

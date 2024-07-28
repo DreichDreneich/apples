@@ -13,9 +13,6 @@
     <ClCompile Include="Math.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Apple.cpp">
-      <Filter>Sources</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
@@ -34,10 +31,10 @@
     <ClCompile Include="MainMenu.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="2dTree.cpp">
+    <ClCompile Include="Menu.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Menu.cpp">
+    <ClCompile Include="GameField.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -46,9 +43,6 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
-      <Filter>Sources</Filter>
-    </ClInclude>
-    <ClInclude Include="Apple.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="GameSettings.h">
@@ -69,10 +63,13 @@
     <ClInclude Include="MainMenu.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="2dTree.h">
+    <ClInclude Include="Menu.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="Menu.h">
+    <ClInclude Include="GameField.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="ActorInfo.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

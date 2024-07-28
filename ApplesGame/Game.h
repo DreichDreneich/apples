@@ -1,15 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <stack>
 
 #include "Player.h"
-#include "Apple.h"
 #include "UI.h"
 #include "GameSettings.h"
-#include "Actor.h"
 #include "Sound.h"
-#include "2dTree.h"
-#include <stack>
+#include "GameField.h"
+#include "ActorInfo.h"
 
 using namespace std;
 
@@ -27,16 +26,16 @@ namespace ApplesGame
 	struct State
 	{
 		Player player;
-		Apple apples[NUM_APPLES];
-		NodePtr applesTree;
-		Actor stones[NUM_STONES];
-		Actor bonuses[NUM_BONUSES];
+		GameField gameField;
 
 		UIState uiState;
+
+		map<ActorType, ActorInfo> actorsInfo;
 
 		// Game resources
 		sf::Font font;
 		sf::Texture playerTexture;
+		sf::Texture playerHeadTexture;
 		sf::Texture appleTexture;
 		sf::Texture stoneTexture;
 		sf::Texture bonusTexture;
@@ -45,7 +44,7 @@ namespace ApplesGame
 		SoundEntity bonusPickSound;
 		SoundEntity applePickSound;
 
-		int numEatenApples = 0;
+		int score = 0;
 		//bool isGameOver = false;
 		float timeSinceGameOver = 0.f;
 
@@ -61,6 +60,9 @@ namespace ApplesGame
 		// 1 - with infinite apples
 		// 2 - with acceleration after apple eating
 		int gameMode : 3;
+
+		int xCellsNum;
+		int yCellsNum;
 	};
 
 	void ToggleGameMode(State& gameState, int menuItem);
@@ -69,5 +71,4 @@ namespace ApplesGame
 	void HandleInput(State& gameState);
 	void UpdateGame(State& gameState, float timeDelta);
 	void DrawGame(State& gameState, sf::RenderWindow& window);
-	void DrawGameEnvironment(State& gameState, sf::RenderWindow& window);
 }

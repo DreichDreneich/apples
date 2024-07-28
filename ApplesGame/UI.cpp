@@ -76,7 +76,6 @@ namespace ApplesGame
 		uiState.inputHintText.setString("Use arrow keys to move, Space to restart, ESC to exit");
 		uiState.inputHintText.setOrigin(GetTextOrigin(uiState.inputHintText, { 1.f, 0.f } ));
 
-		//uiState.isGameOverTextVisible = false;
 		uiState.gameOverText.setFont(font);
 		uiState.gameOverText.setCharacterSize(48);
 		uiState.gameOverText.setStyle(sf::Text::Bold);
@@ -87,7 +86,7 @@ namespace ApplesGame
 		uiState.isBonusDurationVisible = false;
 		uiState.bonusDuration.setFont(font);
 		uiState.bonusDuration.setCharacterSize(14);
-		uiState.bonusDuration.setFillColor(sf::Color::Yellow);
+		uiState.bonusDuration.setFillColor(sf::Color::White);
 
 		InitMainMenu(uiState.mainMenu, font);
 		InitRecordsList(uiState, font);
@@ -96,15 +95,15 @@ namespace ApplesGame
 
 	void UpdateUI(UIState& uiState, const struct State& state)
 	{
-		uiState.scoreText.setString("Apples eaten: " + std::to_string(state.numEatenApples));
+		uiState.scoreText.setString("Score: " + std::to_string(state.score));
 
 		sf::Color gameOverTextColor = (int)state.timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
 		uiState.gameOverText.setFillColor(gameOverTextColor);
 
 		uiState.isBonusDurationVisible = state.player.hasBonus;
 		uiState.bonusDuration.setString(std::to_string((int)state.player.bonusTimeRemaining));
-		uiState.bonusDurationPosition.x = state.player.position.x + state.player.size * 0.7f;
-		uiState.bonusDurationPosition.y = state.player.position.y - state.player.size * 0.7f;
+		uiState.bonusDurationPosition.x = state.player.position.x;
+		uiState.bonusDurationPosition.y = state.player.position.y - state.player.size / 2;
 	}
 
 	void DrawRecordsList(const State& gameState, sf::RenderWindow& window, float topMargin = 0)

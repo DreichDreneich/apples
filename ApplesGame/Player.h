@@ -3,6 +3,9 @@
 #include "Math.h"
 #include "GameSettings.h"
 
+using namespace std;
+using namespace sf;
+
 namespace ApplesGame
 {
 	enum class PlayerDirection
@@ -13,23 +16,43 @@ namespace ApplesGame
 		Left
 	};
 
-	struct Player
+	class PartPosition
 	{
-		Position position;
-		float speed = 0.f; // Pixels per second
-		PlayerDirection direction = PlayerDirection::Up;
-		sf::Sprite sprite;
-		float size = INITIAL_PLAYER_SIZE;
-		bool hasBonus = false;
-		float bonusTimeRemaining = BONUS_DURATION;
+	public:
+		PartPosition() = default;
+		PartPosition(Vector2i, PlayerDirection);
+		PartPosition& operator=(const PartPosition& pp) {
+			position = pp.position;
+			direction = pp.direction;
+
+			return *this;
+		};
+
+		Vector2i position;
+		PlayerDirection direction;
 	};
 
-	void InitPlayer(Player& player, const sf::Texture& texture);
-	void UpdatePlayer(Player& player, float timeDelta);
+	struct Player
+	{
+		PlayerDirection direction = PlayerDirection::Up;
+		sf::Texture texture;
+		Vector2f position;
+		PartPosition prevTailPosition;
+		PlayerDirection lastDirection;
 
-	// TODO: move to separate file
-	bool HasCircleShapeCollisionWithScreenBorder(const Position& position, float size);
-	bool HasCirclesCollision(const Position& circle1, const Position& circle2, float circle1Size, float circle2Size);
+		std::vector<PartPosition> partsPositions;
+		std::vector<sf::Sprite> sprite;
 
-	void DrawPlayer(Player& player, sf::RenderWindow& window);
+		bool hasBonus = false;
+		float size = INITIAL_PLAYER_SIZE;
+		float speed = 1.f; // Cells per second
+		float nextSpeedUpdateTime = 0.f;
+		float bonusTimeRemaining = BONUS_DURATION;
+
+
+		void Init(const Vector2i& position, const sf::Texture& headTexture, const sf::Texture& texture);
+		void Draw(sf::RenderWindow& window);
+		void Update(float timeDelta);
+		void AddPart();
+	};
 }

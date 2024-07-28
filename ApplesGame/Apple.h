@@ -2,18 +2,14 @@
 #include <SFML/Graphics.hpp>
 #include "Math.h"
 #include "Player.h"
+#include "Actor.h"
 
 namespace ApplesGame
 {
-	struct Point {
-		int x, y;
-	};
-
-	struct Apple
+	struct Apple : Actor
 	{
 		Position position;
 		sf::Sprite sprite;
-		float speed;
 	};
 
 	void UpdateApple(Apple& apple, Player& player, float timeDelta);

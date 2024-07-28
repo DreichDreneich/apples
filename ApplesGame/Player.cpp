@@ -1,105 +1,172 @@
 #include "Player.h"
 #include <assert.h>
 #include "GameSettings.h"
-#include "Apple.h"
-
+#include "Game.h"
+#include "Actor.h"
 
 namespace ApplesGame
 {
-	void InitPlayer(Player& player, const sf::Texture& texture)
+	sf::Sprite InitSprite(const sf::Texture& texture, const float size)
 	{
-		// Init player state
-		player.position.x = (float)SCREEN_WIDTH / 2.f;
-		player.position.y = (float)SCREEN_HEGHT / 2.f;
-		player.speed = INITIAL_SPEED;
-		player.direction = PlayerDirection::Up;
+		sf::Sprite sprite{};
 
-		// Init sprite
-		player.sprite.setTexture(texture);
-		player.sprite.setOrigin(GetSpriteOrigin(player.sprite, {0.5f, 0.5f})); // We need to use texture as origin ignores scale
-		player.sprite.setScale(GetSpriteScale(player.sprite, { player.size, player.size}));
+		sprite.setTexture(texture);
+		sprite.setOrigin(GetSpriteOrigin(sprite, { ORIGIN_MULTIPLIER, ORIGIN_MULTIPLIER })); // We need to use texture as origin ignores scale
+		sprite.setScale(GetSpriteScale(sprite, { size, size }));
+
+		return sprite;
 	}
 
-	void UpdatePlayer(Player& player, float timeDelta)
+	void Player::Init(const Vector2i& position, const sf::Texture& headTexture, const sf::Texture& texture)
 	{
+		partsPositions.clear();
+		sprite.clear();
+
+		for (short i = 0; i < 3; ++i)
+		{
+			Vector2i vector;
+			vector.x = position.x;
+			vector.y = position.y + i;
+			PartPosition position(vector, PlayerDirection::Up);
+			partsPositions.push_back(position);
+		}
+
+		Player::texture = texture;
+
+		speed = INITIAL_SPEED;
+		direction = PlayerDirection::Up;
+		size = INITIAL_PLAYER_SIZE;
+		hasBonus = false;
+		bonusTimeRemaining = 10.f;
+
+		for (int i = 0; i < partsPositions.size(); ++i)
+		{
+			auto new_sprite = InitSprite(i == 0 ? headTexture : texture, size);
+			sprite.push_back(new_sprite);
+		}
+	}
+
+	void Player::Update(float timeDelta)
+	{
+		nextSpeedUpdateTime += timeDelta;;
+
+		if (speed * nextSpeedUpdateTime < 1.f) {
+			return;
+		}
+
+		lastDirection = direction;
+
+		prevTailPosition.direction = partsPositions.back().direction;
+		prevTailPosition.position = partsPositions.back().position;
+		partsPositions[0].direction = direction;
+
+		auto prevPartPosition = partsPositions[0];
+
+		for (int i = 1; i < partsPositions.size(); ++i) {
+			auto temp = partsPositions[i];
+			partsPositions[i].direction = prevPartPosition.direction;
+			partsPositions[i].position = prevPartPosition.position;
+			prevPartPosition = temp;
+		}
+
 		// Move player
-		switch (player.direction)
+		switch (direction)
 		{
 			case PlayerDirection::Up:
 			{
-				player.position.y -= player.speed * timeDelta;
+				--partsPositions[0].position.y;
 				break;
 			}
 			case PlayerDirection::Right:
 			{
-				player.position.x += player.speed * timeDelta;
+				++partsPositions[0].position.x;
 				break;
 			}
 			case PlayerDirection::Down:
 			{
-				player.position.y += player.speed * timeDelta;
+				++partsPositions[0].position.y;
 				break;
 			}
 			case PlayerDirection::Left:
 			{
-				player.position.x -= player.speed * timeDelta;
+				--partsPositions[0].position.x;
 				break;
 			}
 		}
+
+		nextSpeedUpdateTime = 0.f;
 	}
 
-	bool HasCircleShapeCollisionWithScreenBorder(const Position& position, float size)
+	void Player::AddPart()
 	{
-		return (position.x - size / 2.f < 0) ||
-			(position.x + size / 2.f > SCREEN_WIDTH) ||
-			(position.y - size / 2.f < 0) ||
-			(position.y + size / 2.f > SCREEN_HEGHT);
+		partsPositions.push_back(prevTailPosition);
 	}
 
-	bool HasCirclesCollision(const Position& circle1Pos, const Position& circle2Pos, float circle1Size, float circle2Size)
+	void Player::Draw(sf::RenderWindow& window)
 	{
-		float dx = circle1Pos.x - circle2Pos.x;
-		float dy = circle1Pos.y - circle2Pos.y;
-		// distance between two points on plane
-		float distance = sqrt(dx * dx + dy * dy);
-		return distance < (circle1Size + circle2Size) / 2.f;
-	}
+		auto newSpritesNum = partsPositions.size() - sprite.size();
 
-	void DrawPlayer(Player& player, sf::RenderWindow& window)
-	{
-		player.sprite.setPosition(OurVectorToSf(player.position));
-
-		const sf::Vector2f spriteScale = (GetSpriteScale(player.sprite, { player.size, player.size }));
-
-		// We need to rotate and flip sprite to match player direction
-		switch (player.direction)
+		if (newSpritesNum > 0)
 		{
+			for (int i = 0; i < newSpritesNum; ++i)
+			{
+				sprite.push_back(InitSprite(texture, size));
+			}
+		}
+
+		for (int i = 0; i < partsPositions.size(); ++i)
+		{
+			const sf::Vector2f spriteScale = (GetSpriteScale(sprite[i], { size, size }));
+
+			auto direction = i == 0 ? Player::direction : partsPositions[i].direction;
+
+			switch (direction)
+			{
 			case PlayerDirection::Up:
 			{
-				player.sprite.setScale(spriteScale.x, spriteScale.y);
-				player.sprite.setRotation(-90.f);
+				sprite[i].setScale(spriteScale.x, spriteScale.y);
+				sprite[i].setRotation(-90.f);
 				break;
 			}
 			case PlayerDirection::Right:
 			{
-				player.sprite.setScale(spriteScale.x, spriteScale.y);
-				player.sprite.setRotation(0.f);
+				sprite[i].setScale(spriteScale.x, spriteScale.y);
+				sprite[i].setRotation(0.f);
 				break;
 			}
 			case PlayerDirection::Down:
 			{
-				player.sprite.setScale(spriteScale.x, spriteScale.y);
-				player.sprite.setRotation(90.f);
+				sprite[i].setScale(spriteScale.x, spriteScale.y);
+				sprite[i].setRotation(90.f);
 				break;
 			}
 			case PlayerDirection::Left:
 			{
-				player.sprite.setScale(-spriteScale.x, spriteScale.y);
-				player.sprite.setRotation(0.f);
+				sprite[i].setScale(-spriteScale.x, spriteScale.y);
+				sprite[i].setRotation(0.f);
 				break;
 			}
-		}
+			}
 
-		window.draw(player.sprite);
+			auto screenPosition = GameField::FieldToScreenPosition(partsPositions[i].position);
+			
+			if (i == 0)
+			{
+				position = screenPosition;
+				if (hasBonus)
+				{
+					sprite[i].setColor(sf::Color::Yellow);
+				}
+			}
+
+			sprite[i].setPosition(screenPosition);
+			window.draw(sprite[i]);
+		}
+	}
+
+	PartPosition::PartPosition(Vector2i pos, PlayerDirection dir)
+	{
+		position = pos;
+		direction = dir;
 	}
 }
