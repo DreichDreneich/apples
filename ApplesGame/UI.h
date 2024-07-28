@@ -38,5 +38,5 @@ namespace ApplesGame
 	void UpdateUI(UIState& uiState, const struct State& gameState);
 	void DrawUI(const State& gamestate, sf::RenderWindow& window);
 	void DrawHint(ApplesGame::UIState& uiState, sf::RenderWindow& window);
-	void InitMenuItem(MenuItem& menuItem, sf::String str, const sf::Font& font);
+	void InitMenuItem(Checkbox& menuItem, sf::String str, const sf::Font& font);
 }

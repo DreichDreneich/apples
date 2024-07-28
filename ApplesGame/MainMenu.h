@@ -6,10 +6,10 @@ namespace ApplesGame
 {
 	struct MainMenu
 	{
-		sf::Text hintText;
-		MenuItem infiniteAppleMenuItem;
-		MenuItem withAccelerationMenuItem;
-		sf::Text startGameText;
+		TextField hintText;
+		Checkbox infiniteAppleMenuItem;
+		Checkbox withAccelerationMenuItem;
+		TextField startGameText;
 	};
 
 	void DrawMainMenu(MainMenu& mainMenu, int gameMode, sf::RenderWindow& window);

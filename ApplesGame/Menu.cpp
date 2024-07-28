@@ -6,26 +6,41 @@
 
 namespace ApplesGame
 {
-	void InitCheckbox(sf::RectangleShape& checkbox)
+	void Checkbox::InitCheckbox()
 	{
-		checkbox.setSize({ CheckboxSize, CheckboxSize });
-		checkbox.setOutlineColor(sf::Color::White);
-		checkbox.setFillColor(sf::Color::Black);
-		checkbox.setOutlineThickness(2.f);
+		checkboxRect.setSize({ CheckboxSize, CheckboxSize });
+		checkboxRect.setOutlineColor(sf::Color::White);
+		checkboxRect.setFillColor(sf::Color::Black);
+		checkboxRect.setOutlineThickness(2.f);
 	}
 
-	void InitMenuText(sf::Text& menuText, sf::String str, const sf::Font& font)
+	void Checkbox::InitMenuText(sf::String str, const sf::Font& font)
 	{
-		menuText.setFont(font);
-		menuText.setCharacterSize(24);
-		menuText.setFillColor(sf::Color::White);
-		menuText.setString(str);
-		menuText.setOrigin(GetTextOrigin(menuText, { 0.f, 0.5f }));
+		textObj.setFont(font);
+		textObj.setCharacterSize(24);
+		textObj.setFillColor(sf::Color::White);
+		textObj.setString(str);
+		textObj.setOrigin(GetTextOrigin(textObj, { 0.f, 0.5f }));
 	}
 
-	void InitMenuItem(MenuItem& menuItem, sf::String str, const sf::Font& font)
+	void Checkbox::Init(sf::String str, const sf::Font& font)
 	{
-		InitCheckbox(menuItem.checkbox);
-		InitMenuText(menuItem.textObj, str, font);
+		InitCheckbox();
+		InitMenuText(str, font);
+	}
+
+	void Checkbox::Draw(sf::RenderWindow& window)
+	{
+		window.draw(textObj);
+		window.draw(checkboxRect);
+	}
+
+	void TextField::Init(sf::String str, const sf::Font& font)
+	{
+		textObj.setFont(font);
+		textObj.setCharacterSize(32);
+		textObj.setFillColor(sf::Color::Yellow);
+		textObj.setString(str);
+		textObj.setOrigin(GetTextOrigin(textObj, { 0.5f, 0.5f }));
 	}
 }
