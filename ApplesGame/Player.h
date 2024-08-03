@@ -51,6 +51,7 @@ namespace ApplesGame
 
 
 		void Init(const Vector2i& position, const sf::Texture& headTexture, const sf::Texture& texture);
+		void HandleInput();
 		void Draw(sf::RenderWindow& window);
 		void Update(float timeDelta);
 		void AddPart();

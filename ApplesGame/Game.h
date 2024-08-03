@@ -23,8 +23,25 @@ namespace ApplesGame
 		Game, MainMenu, PauseMenu, GameOverMenu, Records
 	};
 
-	struct State
+	class State
 	{
+	private:
+		State();
+		//~State() {};
+		static State* _instance;
+		void GenerateRecordsList();
+		void UpdateActors(float timeDelta);
+		bool CheckFieldCell();
+		void GenerateNewActorPosition(GameEl& elem, int oldX, int oldY);
+
+	public:
+		State(State& other) = delete;
+		State operator=(const State&) = delete;
+
+		~State();
+
+		static State* Instance();
+
 		Player player;
 		GameField gameField;
 
@@ -63,12 +80,10 @@ namespace ApplesGame
 
 		int xCellsNum;
 		int yCellsNum;
-	};
 
-	void ToggleGameMode(State& gameState, int menuItem);
-	void InitGame(State& gameState);
-	void RestartGame(State& gameState);
-	void HandleInput(State& gameState);
-	void UpdateGame(State& gameState, float timeDelta);
-	void DrawGame(State& gameState, sf::RenderWindow& window);
+		void ToggleGameMode(int menuItem);
+		void Restart();
+		void Update(float timeDelta);
+		void Draw(sf::RenderWindow& window);
+	};
 }

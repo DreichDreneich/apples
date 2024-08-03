@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Player.h"
 #include <assert.h>
 #include "GameSettings.h"
@@ -43,6 +45,26 @@ namespace ApplesGame
 		{
 			auto new_sprite = InitSprite(i == 0 ? headTexture : texture, size);
 			sprite.push_back(new_sprite);
+		}
+	}
+
+	void Player::HandleInput()
+	{
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && lastDirection != PlayerDirection::Down)
+		{
+			direction = PlayerDirection::Up;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && lastDirection != PlayerDirection::Left)
+		{
+			direction = PlayerDirection::Right;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && lastDirection != PlayerDirection::Up)
+		{
+			direction = PlayerDirection::Down;
+		}
+		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && lastDirection != PlayerDirection::Right)
+		{
+			direction = PlayerDirection::Left;
 		}
 	}
 

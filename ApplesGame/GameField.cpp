@@ -16,19 +16,22 @@ namespace ApplesGame
 			float(TOP_PADDING + pos.y * FIELD_CELL_SIZE + ACTOR_SIZE * ORIGIN_MULTIPLIER)
 		};
 	}
+
 	void GameField::Draw(State& gameState, sf::RenderWindow& window)
 	{
-		for (int i = 0; i < gameState.gameField.grid.size(); i++)
+		auto gs = State::Instance();
+
+		for (int i = 0; i < gs->gameField.grid.size(); i++)
 		{
-			for (int j = 0; j < gameState.gameField.grid[j].size(); j++)
+			for (int j = 0; j < gs->gameField.grid[j].size(); j++)
 			{
-				auto el = gameState.gameField.grid[i][j];
+				auto el = gs->gameField.grid[i][j];
 
 				if (el.type == ActorType::NONE) {
 					continue;
 				}
 
-				auto actor = gameState.actorsInfo[el.type].store.at(el.idx);
+				auto actor = gs->actorsInfo[el.type].store.at(el.idx);
 
 				actor.position = GameField::FieldToScreenPosition({ i, j });
 				actor.Draw(window);

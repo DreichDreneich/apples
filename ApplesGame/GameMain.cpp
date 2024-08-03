@@ -9,32 +9,34 @@
 
 using namespace ApplesGame;
 
-void HandleKeyReleasedEvent(sf::Event event, State& state, sf::RenderWindow& window)
+void HandleKeyReleasedEvent(sf::Event event, sf::RenderWindow& window)
 {
+	auto state = State::Instance();
+
 	switch (event.key.code)
 	{
 	case sf::Keyboard::Num1:
 	case sf::Keyboard::Numpad1: 
 	{
-		if (state.gameState.top() == GameState::MainMenu)
+		if (state->gameState.top() == GameState::MainMenu)
 		{
-			ToggleGameMode(state, (int)GameMode::infiniteApple);
+			State::Instance()->ToggleGameMode((int)GameMode::infiniteApple);
 		}
-		else if (state.gameState.top() == GameState::PauseMenu)
+		else if (state->gameState.top() == GameState::PauseMenu)
 		{
-			state.gameState = {};
-			state.gameState.push(GameState::MainMenu);
+			state->gameState = {};
+			state->gameState.push(GameState::MainMenu);
 		}
 		break;
 	}
 	case sf::Keyboard::Num2:
 	case sf::Keyboard::Numpad2: 
 	{
-		if (state.gameState.top() == GameState::MainMenu)
+		if (state->gameState.top() == GameState::MainMenu)
 		{
-			ToggleGameMode(state, (int)GameMode::withAcceleration);
+			State::Instance()->ToggleGameMode((int)GameMode::withAcceleration);
 		}
-		else if (state.gameState.top() == GameState::PauseMenu)
+		else if (state->gameState.top() == GameState::PauseMenu)
 		{
 			window.close();
 		}
@@ -42,42 +44,42 @@ void HandleKeyReleasedEvent(sf::Event event, State& state, sf::RenderWindow& win
 	}
 	case sf::Keyboard::Num3:
 	{
-		if (state.gameState.top() == GameState::PauseMenu)
+		if (state->gameState.top() == GameState::PauseMenu)
 		{
-			state.gameState.pop();
+			state->gameState.pop();
 		}
 		break;
 	}
 	case sf::Keyboard::Space: 
 	{
-		if (state.gameState.top() == GameState::PauseMenu)
+		if (state->gameState.top() == GameState::PauseMenu)
 		{
-			state.gameState.pop();
+			state->gameState.pop();
 		}
-		else if(state.gameState.top() == GameState::GameOverMenu)
+		else if(state->gameState.top() == GameState::GameOverMenu)
 		{
-			RestartGame(state);
-			state.gameState.pop();
+			State::Instance()->Restart();
+			state->gameState.pop();
 		}
-		else if (state.gameState.top() == GameState::MainMenu)
+		else if (state->gameState.top() == GameState::MainMenu)
 		{
-			RestartGame(state);
-			state.gameState = {};
-			state.gameState.push(GameState::Game);
+			State::Instance()->Restart();
+			state->gameState = {};
+			state->gameState.push(GameState::Game);
 		}
-		else if (state.gameState.top() == GameState::Game)
+		else if (state->gameState.top() == GameState::Game)
 		{
-			state.gameState.push(GameState::PauseMenu);
+			state->gameState.push(GameState::PauseMenu);
 		}
 		break;
 	}
 	case sf::Keyboard::Tab:
 	{
-		if (state.gameState.top() == GameState::MainMenu) {
-			state.gameState.push(GameState::Records);
+		if (state->gameState.top() == GameState::MainMenu) {
+			state->gameState.push(GameState::Records);
 		}
-		else if (state.gameState.top() == GameState::Records) {
-			state.gameState.pop();
+		else if (state->gameState.top() == GameState::Records) {
+			state->gameState.pop();
 		}
 		break;
 	}
@@ -86,7 +88,7 @@ void HandleKeyReleasedEvent(sf::Event event, State& state, sf::RenderWindow& win
 	}
 }
 
-void HandleWindowEvents(sf::RenderWindow& window, State& state)
+void HandleWindowEvents(sf::RenderWindow& window)
 {
 	sf::Event event;
 	while (window.pollEvent(event))
@@ -99,7 +101,7 @@ void HandleWindowEvents(sf::RenderWindow& window, State& state)
 
 		if (event.type == sf::Event::KeyReleased)
 		{
-			HandleKeyReleasedEvent(event, state, window);
+			HandleKeyReleasedEvent(event, window);
 		}
 	}
 }
@@ -114,8 +116,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(ApplesGame::SCREEN_WIDTH, ApplesGame::SCREEN_HEGHT), "AppleGame");
 
 
-	ApplesGame::State gameState;
-	InitGame(gameState);
+	auto gameState = State::Instance();
 
 	// Init game clock
 	sf::Clock game_clock;
@@ -124,26 +125,26 @@ int main()
 	// Game loop
 	while (window.isOpen())
 	{
-		HandleWindowEvents(window, gameState);
+		HandleWindowEvents(window);
 
 		if (!window.isOpen())
 		{
 			return 0;
 		}
 
-		HandleInput(gameState);
+		State::Instance()->player.HandleInput();
 
 		// Calculate time delta
 		sf::Time currentTime = game_clock.getElapsedTime();
 		float timeDelta = currentTime.asSeconds() - lastTime.asSeconds();
 		lastTime = currentTime;
-		UpdateGame(gameState, timeDelta);
+		State::Instance()->Update(timeDelta);
 
 		// Draw everything here
 		// Clear the window first
 		window.clear();
 
-		DrawGame(gameState, window);
+		State::Instance()->Draw(window);
 
 		// End the current frame, display window contents on screen
 		window.display();

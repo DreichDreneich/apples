@@ -95,6 +95,9 @@ namespace ApplesGame
 
 	void UpdateUI(UIState& uiState, const struct State& state)
 	{
+		/*auto state = State::Instance();
+		auto uiState = state.uiState;*/
+
 		uiState.scoreText.setString("Score: " + std::to_string(state.score));
 
 		sf::Color gameOverTextColor = (int)state.timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;

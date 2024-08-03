@@ -1,3 +1,4 @@
+#pragma once
 #include <SFML/Audio.hpp>
 
 #include "Game.h"
@@ -10,175 +11,123 @@
 
 using namespace std;
 
-
 namespace ApplesGame
 {
-	void ToggleGameMode(State& gameState, int menuItem)
+	State* State::_instance;
+
+	void State::ToggleGameMode(int menuItem)
 	{
-		if (HasMaskFlag(gameState.gameMode, menuItem))
+		if (HasMaskFlag(gameMode, menuItem))
 		{
-			gameState.gameMode ^= menuItem;
+			gameMode ^= menuItem;
 		}
 		else
 		{
-			gameState.gameMode |= menuItem;
+			gameMode |= menuItem;
 		}
 	}
 
-	void GenerateRecordsList(State& gameState)
+	void State::GenerateRecordsList()
 	{
-		map<string, int>::iterator it = gameState.recordsList.begin();
+		map<string, int>::iterator it = recordsList.begin();
 
-		while (it != gameState.recordsList.end()) {
+		while (it != recordsList.end()) {
 			it->second = rand() % 10;
-			gameState.uiState.recordsList[it->first] = {};
+			uiState.recordsList[it->first] = {};
 			++it;
 		}
 
-		gameState.recordsList.insert({ PLAYER_NAME, 0 });
-		gameState.uiState.recordsList.insert({ PLAYER_NAME, {} });
+		recordsList.insert({ PLAYER_NAME, 0 });
+		uiState.recordsList.insert({ PLAYER_NAME, {} });
 	}
 
-	void InitGame(State& gameState)
-	{
-		gameState.gameMode = 0;
-		gameState.gameState.push(GameState::MainMenu);
-
-		gameState.actorsInfo[ActorType::APPLE].num = NUM_APPLES;
-		gameState.actorsInfo[ActorType::APPLE].store.resize(NUM_APPLES);
-
-		gameState.actorsInfo[ActorType::STONE].num = NUM_STONES;
-		gameState.actorsInfo[ActorType::STONE].store.resize(NUM_STONES);
-
-		gameState.actorsInfo[ActorType::BONUS].num = NUM_BONUSES;
-		gameState.actorsInfo[ActorType::BONUS].store.resize(NUM_BONUSES);
-
-		// Init game resources (terminate if error)
-		assert(gameState.playerTexture.loadFromFile(RESOURCES_PATH + "Snake_Body.png"));
-		assert(gameState.playerHeadTexture.loadFromFile(RESOURCES_PATH + "Snake_head.png"));
-		assert(gameState.actorsInfo[ActorType::APPLE].texture.loadFromFile(RESOURCES_PATH + "Apple.png"));
-		assert(gameState.actorsInfo[ActorType::STONE].texture.loadFromFile(RESOURCES_PATH + "Stone.png"));
-		assert(gameState.actorsInfo[ActorType::BONUS].texture.loadFromFile(RESOURCES_PATH + "xyz-logo.png"));
-		assert(gameState.font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
-
-		LoadAndPrepareSound(gameState.deathSound, "Death.wav");
-		LoadAndPrepareSound(gameState.applePickSound, "AppleEat.wav");
-		LoadAndPrepareSound(gameState.bonusPickSound, "ding.flac");
-
-		gameState.xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
-		gameState.yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
-
-		GenerateRecordsList(gameState);
-		InitUI(gameState.uiState, gameState.font);
-		RestartGame(gameState);
-	}
-
-	void GenerateNewActorPosition(State& state, GameEl& elem, int oldX, int oldY)
+	void State::GenerateNewActorPosition(GameEl& elem, int oldX, int oldY)
 	{
 		bool generated = false;
 
 		while (!generated)
 		{
-			auto x = rand() % state.xCellsNum;
-			auto y = rand() % state.yCellsNum;
+			auto x = rand() % xCellsNum;
+			auto y = rand() % yCellsNum;
 
-			if (state.gameField.grid[x][y].type == ActorType::NONE)
+			if (gameField.grid[x][y].type == ActorType::NONE)
 			{
-				state.gameField.grid[x][y] = elem;
+				gameField.grid[x][y] = elem;
 				GameEl emptyGameEl{};
-				state.gameField.grid[oldX][oldY] = emptyGameEl;
+				gameField.grid[oldX][oldY] = emptyGameEl;
 
 				generated = true;
 			}
 		}
 	}
 
-	void CreateActors(State& state, ActorType type)
+	void CreateActors(ActorType type)
 	{
+		auto state = State::Instance();
 		int counter = 0;
 
-		while (counter < state.actorsInfo[type].num)
+		while (counter < state->actorsInfo[type].num)
 		{
-			auto x = rand() % state.xCellsNum;
-			auto y = rand() % state.yCellsNum;
+			auto x = rand() % state->xCellsNum;
+			auto y = rand() % state->yCellsNum;
 
-			if (state.gameField.grid[x][y].type == ActorType::NONE)
+			if (state->gameField.grid[x][y].type == ActorType::NONE)
 			{
-				state.actorsInfo[type].store[counter].Init(state.actorsInfo[type].texture);
+				state->actorsInfo[type].store[counter].Init(state->actorsInfo[type].texture);
 
 				GameEl el{};
 				el.idx = counter;
 				el.type = type;
-				state.gameField.grid[x][y] = el;
+				state->gameField.grid[x][y] = el;
 				++counter;
 			}
 		}
 	}
 
-	void RestartGame(State& state)
+	void State::Restart()
 	{
-		auto middleX = state.xCellsNum / 2;
-		auto middleY = state.yCellsNum / 2;
+		auto middleX = xCellsNum / 2;
+		auto middleY = yCellsNum / 2;
 
-		state.gameField.grid.clear();
-		state.gameField.grid.resize(state.xCellsNum);
+		gameField.grid.clear();
+		gameField.grid.resize(xCellsNum);
 
-		for (int i = 0; i < state.xCellsNum; i++)
+		for (int i = 0; i < xCellsNum; i++)
 		{
-			state.gameField.grid[i].clear();
-			state.gameField.grid[i].resize(state.yCellsNum);
+			gameField.grid[i].clear();
+			gameField.grid[i].resize(yCellsNum);
 		}
 
-		state.player.Init({ middleX, middleY}, state.playerHeadTexture, state.playerTexture);
+		player.Init({ middleX, middleY}, playerHeadTexture, playerTexture);
 
-		CreateActors(state, ActorType::APPLE);
-		CreateActors(state, ActorType::STONE);
- 		CreateActors(state, ActorType::BONUS);
+		CreateActors(ActorType::APPLE);
+		CreateActors(ActorType::STONE);
+ 		CreateActors(ActorType::BONUS);
 
- 		state.score = 0;
-		state.timeSinceGameOver = 0.f;
+ 		score = 0;
+		timeSinceGameOver = 0.f;
 	}
 
-	void HandleInput(State& gameState)
+	bool State::CheckFieldCell()
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && gameState.player.lastDirection != PlayerDirection::Down)
-		{
-			gameState.player.direction = PlayerDirection::Up;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) && gameState.player.lastDirection != PlayerDirection::Left)
-		{
-			gameState.player.direction = PlayerDirection::Right;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) && gameState.player.lastDirection != PlayerDirection::Up)
-		{
-			gameState.player.direction = PlayerDirection::Down;
-		}
-		else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) && gameState.player.lastDirection != PlayerDirection::Right)
-		{
-			gameState.player.direction = PlayerDirection::Left;
-		}
-	}
+		auto currentHeadPosition = player.partsPositions[0].position;
 
-	bool CheckFieldCell(State& gameState)
-	{
-		auto currentHeadPosition = gameState.player.partsPositions[0].position;
-
-		auto isXOutOfBound = currentHeadPosition.x < 0 || currentHeadPosition.x > gameState.xCellsNum;
-		auto isYOutOfBound = currentHeadPosition.y < 0 || currentHeadPosition.y > gameState.xCellsNum;
+		auto isXOutOfBound = currentHeadPosition.x < 0 || currentHeadPosition.x > xCellsNum;
+		auto isYOutOfBound = currentHeadPosition.y < 0 || currentHeadPosition.y > xCellsNum;
 
 		if (isXOutOfBound || isYOutOfBound)
 		{
 			return true;
 		}
 
-		auto fieldCell = &gameState.gameField.grid[currentHeadPosition.x][currentHeadPosition.y];
+		auto fieldCell = &gameField.grid[currentHeadPosition.x][currentHeadPosition.y];
 
 		switch (fieldCell->type)
 		{
 		case ActorType::NONE:
 		{
-			for (int i = 1; i < gameState.player.partsPositions.size(); ++i) {
-				if (currentHeadPosition == gameState.player.partsPositions[i].position) {
+			for (int i = 1; i < player.partsPositions.size(); ++i) {
+				if (currentHeadPosition == player.partsPositions[i].position) {
 					return true;
 				}
 			}
@@ -187,21 +136,21 @@ namespace ApplesGame
 		}
 		case ActorType::APPLE:
 		{
-			if (HasMaskFlag(gameState.gameMode, (int)GameMode::infiniteApple)) {
-				GenerateNewActorPosition(gameState, *fieldCell, currentHeadPosition.x, currentHeadPosition.y);
+			if (HasMaskFlag(gameMode, (int)GameMode::infiniteApple)) {
+				GenerateNewActorPosition(*fieldCell, currentHeadPosition.x, currentHeadPosition.y);
 			}
 			else {
 				fieldCell->type = ActorType::NONE;
 			}
 
-			gameState.score = gameState.score + (gameState.player.hasBonus ? 2 : 1);
+			score = score + (player.hasBonus ? 2 : 1);
 
-			if (HasMaskFlag(gameState.gameMode, (int)GameMode::withAcceleration)) {
-				gameState.player.speed += ACCELERATION;
+			if (HasMaskFlag(gameMode, (int)GameMode::withAcceleration)) {
+				player.speed += ACCELERATION;
 			}
 
-			PlaySound(gameState.applePickSound.sound);
-			gameState.player.AddPart();
+			PlaySound(applePickSound.sound);
+			player.AddPart();
 			break;
 		}
 		case ActorType::STONE:
@@ -212,9 +161,9 @@ namespace ApplesGame
 		{
 			fieldCell->type = ActorType::NONE;
 
-			gameState.player.hasBonus = true;
-			gameState.player.bonusTimeRemaining = 10.f;
-			PlaySound(gameState.bonusPickSound.sound);
+			player.hasBonus = true;
+			player.bonusTimeRemaining = 10.f;
+			PlaySound(bonusPickSound.sound);
 			break;
 		}
 		default:
@@ -225,60 +174,108 @@ namespace ApplesGame
 		return false;
 	}
 
-	void UpdateActors(State& gameState, float timeDelta)
+	void State::UpdateActors(float timeDelta)
 	{
-		if (gameState.gameState.top() == GameState::GameOverMenu) {
-			gameState.timeSinceGameOver += timeDelta;
+		if (gameState.top() == GameState::GameOverMenu) {
+			timeSinceGameOver += timeDelta;
 			return;
 		}
 
-		gameState.player.Update(timeDelta);
+		player.Update(timeDelta);
 
-		if (gameState.player.hasBonus) {
-			gameState.player.bonusTimeRemaining -= timeDelta;
+		if (player.hasBonus) {
+			player.bonusTimeRemaining -= timeDelta;
 
-			if ((int)gameState.player.bonusTimeRemaining <= 0)
+			if ((int)player.bonusTimeRemaining <= 0)
 			{
-				gameState.player.hasBonus = false;
-				gameState.player.size = INITIAL_PLAYER_SIZE;
+				player.hasBonus = false;
+				player.size = INITIAL_PLAYER_SIZE;
 			}
 		}
 
-		auto isGameOver = CheckFieldCell(gameState);
+		auto isGameOver = CheckFieldCell();
 
 		if (isGameOver)
 		{
-			gameState.gameState.push(GameState::GameOverMenu);
-			gameState.timeSinceGameOver = 0.f;
+			gameState.push(GameState::GameOverMenu);
+			timeSinceGameOver = 0.f;
 
-			auto prevRecord = gameState.recordsList.find(PLAYER_NAME);
-			if (prevRecord->second < gameState.score)
+			auto prevRecord = recordsList.find(PLAYER_NAME);
+			if (prevRecord->second < score)
 			{
-				prevRecord->second = gameState.score;
+				prevRecord->second = score;
 			}
 
-			PlaySound(gameState.deathSound.sound);
+			PlaySound(deathSound.sound);
 		}
 	}
 
-	void UpdateGame(State& state, float timeDelta)
+	void State::Update(float timeDelta)
 	{
-		if (state.gameState.top() == GameState::Game)
+		if (gameState.top() == GameState::Game)
 		{
-			UpdateActors(state, timeDelta);
+			UpdateActors(timeDelta);
 		}
 
-		UpdateUI(state.uiState, state);
+		UpdateUI(this->uiState, *this);
 	}
 
-	void DrawGame(State& state, sf::RenderWindow& window)
+	void State::Draw(sf::RenderWindow& window)
 	{
-		if (state.gameState.top() == GameState::Game)
+		if (gameState.top() == GameState::Game)
 		{
-			state.player.Draw(window);
-			state.gameField.Draw(state, window);
+			player.Draw(window);
+			gameField.Draw(*this, window);
 		}
 
-		DrawUI(state, window);
+		DrawUI(*this, window);
+	}
+
+	State* State::Instance()
+	{
+		if (_instance == nullptr) {
+			_instance = new State();
+			return _instance;
+		}
+
+		return _instance;
+	}
+
+	State::~State()
+	{
+		delete State::_instance;
+	}
+
+	State::State()
+	{
+		gameMode = 0;
+		gameState.push(GameState::MainMenu);
+
+		actorsInfo[ActorType::APPLE].num = NUM_APPLES;
+		actorsInfo[ActorType::APPLE].store.resize(NUM_APPLES);
+
+		actorsInfo[ActorType::STONE].num = NUM_STONES;
+		actorsInfo[ActorType::STONE].store.resize(NUM_STONES);
+
+		actorsInfo[ActorType::BONUS].num = NUM_BONUSES;
+		actorsInfo[ActorType::BONUS].store.resize(NUM_BONUSES);
+
+		// Init game resources (terminate if error)
+		assert(playerTexture.loadFromFile(RESOURCES_PATH + "Snake_Body.png"));
+		assert(playerHeadTexture.loadFromFile(RESOURCES_PATH + "Snake_head.png"));
+		assert(actorsInfo[ActorType::APPLE].texture.loadFromFile(RESOURCES_PATH + "Apple.png"));
+		assert(actorsInfo[ActorType::STONE].texture.loadFromFile(RESOURCES_PATH + "Stone.png"));
+		assert(actorsInfo[ActorType::BONUS].texture.loadFromFile(RESOURCES_PATH + "xyz-logo.png"));
+		assert(font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
+
+		LoadAndPrepareSound(deathSound, "Death.wav");
+		LoadAndPrepareSound(applePickSound, "AppleEat.wav");
+		LoadAndPrepareSound(bonusPickSound, "ding.flac");
+
+		xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
+		yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
+
+		GenerateRecordsList();
+		InitUI(uiState, font);
 	}
 }
