@@ -37,6 +37,9 @@
     <ClCompile Include="GameField.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -70,6 +73,9 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="ActorInfo.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>
