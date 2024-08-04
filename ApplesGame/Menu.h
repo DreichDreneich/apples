@@ -11,19 +11,23 @@ namespace ApplesGame
 		sf::Text textObj;
 
 		MenuItem(string text, const float xOrigin);
+
+		void Hover();
+		void UnHover();
 	};
 
 	class Menu {
 		vector<pair<string, MenuItem>> items;
 		MenuItem* hoveredMenuItem;
-		string hoveredMenuItemId;
+		short hoveredMenuItemNumber;
+		void(*handleSelect)(string id);
 
 	public:
 		Menu();
 		
-		void Update();
+		void Hover(short number);
+		void HandleKeyboardEvent(const sf::Event& event);
 		void AddItem(string id, string text);
-		void Hover(string id);
 		void OnSelect(void(*func)(string id));
 		void Draw(Vector2f pos, sf::RenderWindow& window);
 	};
@@ -35,7 +39,7 @@ namespace ApplesGame
 		MenuPage() = default;
 
 		void Init();
-		void Update();
+		void HandleKeyboardEvent(const sf::Event& event);
 		void Draw(sf::RenderWindow& window);
 	};
 }

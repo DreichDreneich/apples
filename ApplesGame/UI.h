@@ -17,6 +17,13 @@ namespace ApplesGame
 
 	class UIState
 	{
+		sf::RenderWindow* window;
+
+		void DrawRecordsList(float topMargin = 0);
+		void DrawGameOverScreen();
+		void DrawHint();
+		void DrawPauseMenu();
+
 	public:
 		Text scoreText;
 		Text inputHintText;
@@ -35,9 +42,10 @@ namespace ApplesGame
 
 		bool isBonusDurationVisible = false;
 
-		UIState();
-		void InitUI();
+		UIState() = default;
+
+		void InitUI(sf::RenderWindow* window);
 		void Update(const struct State& gameState);
-		void Draw(const State& gamestate, sf::RenderWindow& window);
+		void Draw();
 	};
 }

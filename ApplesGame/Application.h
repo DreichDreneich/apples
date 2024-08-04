@@ -7,13 +7,18 @@ namespace ApplesGame {
 		sf::Clock game_clock;
 		sf::Time lastTime = game_clock.getElapsedTime();
 
+		Application();
+		static Application* _instance;
 	public:
 
-		Application();
+		Application(Application& other) = delete;
+		Application operator=(const Application&) = delete;
+
+		static Application* Instance();
 
 		~Application();
 
-		static sf::RenderWindow& GetWindow();
+		sf::RenderWindow& GetWindow();
 
 		bool isOpen();
 

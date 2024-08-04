@@ -65,13 +65,13 @@ namespace ApplesGame
 		InitRegularText(pauseGameMenu.resumeGame, 0.f);
 	}
 
-	void DrawRecordsList(sf::RenderWindow& window, float topMargin = 0)
+	void UIState::DrawRecordsList(float topMargin)
 	{
 		auto gameState = State::Instance();
 		UIState uiState = gameState->uiState;
-		uiState.recordsListHeader.setPosition(window.getSize().x / 2.f, topMargin + 100);
+		uiState.recordsListHeader.setPosition(window->getSize().x / 2.f, topMargin + 100);
 
-		window.draw(uiState.recordsListHeader);
+		window->draw(uiState.recordsListHeader);
 
 		vector<pair<string, int>> pairs(gameState->recordsList.begin(), gameState->recordsList.end());
 		std::sort(pairs.begin(), pairs.end(), [](pair<string, int> a, pair<string, int> b) {
@@ -86,77 +86,73 @@ namespace ApplesGame
 
 			auto recordY = topMargin + 150 + i * 50;
 
-			recordTexts.first.setPosition(window.getSize().x / 2.f - 100, recordY);
-			recordTexts.second.setPosition(window.getSize().x / 2.f + 100, recordY);
+			recordTexts.first.setPosition(window->getSize().x / 2.f - 100, recordY);
+			recordTexts.second.setPosition(window->getSize().x / 2.f + 100, recordY);
 
-			window.draw(recordTexts.first);
-			window.draw(recordTexts.second);
+			window->draw(recordTexts.first);
+			window->draw(recordTexts.second);
 		}
 	}
 
-	void DrawGameOverScreen(const State& gameState, sf::RenderWindow& window)
+	void UIState::DrawGameOverScreen()
 	{
-		UIState uiState = gameState.uiState;
-
-		auto gameOverTextY = window.getSize().y / 5.f;
-		uiState.gameOverText.setPosition(window.getSize().x / 2.f, gameOverTextY);
+		auto gameOverTextY = window->getSize().y / 5.f;
+		gameOverText.setPosition(window->getSize().x / 2.f, gameOverTextY);
 
 		sf::RectangleShape background;
 		background.setPosition(0.f, 0.f);
-		background.setSize({ (float)window.getSize().x, (float)window.getSize().y });
+		background.setSize({ (float)window->getSize().x, (float)window->getSize().y });
 		background.setFillColor({ 0, 0, 0, 200 });
 
-		window.draw(background);
+		window->draw(background);
 
-		DrawRecordsList(window, gameOverTextY);
+		DrawRecordsList(gameOverTextY);
 
-		window.draw(uiState.gameOverText);
+		window->draw(gameOverText);
 	}
 	
-	void DrawHint(UIState& uiState, sf::RenderWindow& window)
+	void UIState::DrawHint()
 	{
-		uiState.inputHintText.setPosition(window.getSize().x - 10.f, 10.f);
-		window.draw(uiState.inputHintText);
+		inputHintText.setPosition(window->getSize().x - 10.f, 10.f);
+		window->draw(inputHintText);
 	}
 
-	void DrawPauseMenu(UIState& uiState, sf::RenderWindow& window)
+	void UIState::DrawPauseMenu()
 	{
-		auto pauseMenu = uiState.pauseGameMenu;
 		//TODO: find longest string
-		auto mainMenuItemWidth = pauseMenu.resumeGame.getLocalBounds().width / 2;
+		auto mainMenuItemWidth = pauseGameMenu.resumeGame.getLocalBounds().width / 2;
 
-		float windowX = (float)window.getSize().x / 2;
-		float windowY = (float)window.getSize().y / 3;
+		float windowX = (float)window->getSize().x / 2;
+		float windowY = (float)window->getSize().y / 3;
 
-		uiState.gameTitle.setPosition(windowX, 60.f);
+		gameTitle.setPosition(windowX, 60.f);
 
 		auto xWithOffset = windowX - mainMenuItemWidth;
 
-		pauseMenu.mainMenu.setPosition(xWithOffset, windowY);
-		pauseMenu.quitGame.setPosition(xWithOffset, windowY + 35.f);
-		pauseMenu.resumeGame.setPosition(xWithOffset, windowY + 70.f);
+		pauseGameMenu.mainMenu.setPosition(xWithOffset, windowY);
+		pauseGameMenu.quitGame.setPosition(xWithOffset, windowY + 35.f);
+		pauseGameMenu.resumeGame.setPosition(xWithOffset, windowY + 70.f);
 		
-		window.draw(pauseMenu.mainMenu);
-		window.draw(pauseMenu.quitGame);
-		window.draw(pauseMenu.resumeGame);
-		window.draw(uiState.gameTitle);
+		window->draw(pauseGameMenu.mainMenu);
+		window->draw(pauseGameMenu.quitGame);
+		window->draw(pauseGameMenu.resumeGame);
+		window->draw(gameTitle);
 	}
 
-	UIState::UIState()
+	void UIState::InitUI(sf::RenderWindow* window)
 	{
-	}
+		UIState::window = window;
 
-	void UIState::InitUI()
-	{
 		InitGameTitle(gameTitle);
 
 		scoreText.setFont(State::Instance()->font);
 		scoreText.setCharacterSize(24);
-		scoreText.setFillColor(sf::Color::Yellow);
+		scoreText.setFillColor(sf::Color::Black);
+		scoreText.setStyle(sf::Text::Bold);
 
 		inputHintText.setFont(State::Instance()->font);
 		inputHintText.setCharacterSize(24);
-		inputHintText.setFillColor(sf::Color::White);
+		inputHintText.setFillColor(sf::Color::Black);
 		inputHintText.setString("Use arrow keys to move, Space to restart, ESC to exit");
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
 
@@ -192,25 +188,25 @@ namespace ApplesGame
 		bonusDurationPosition.y = state.player.position.y - state.player.size / 2;
 	}
 
-	void UIState::Draw(const State& state, sf::RenderWindow& window)
+	void UIState::Draw()
 	{
-		switch (state.gameState.top())
+		switch (State::Instance()->gameState.top())
 		{
 		case GameState::MainMenu:
 		{
-			menuPage.Draw(window);
+			menuPage.Draw(*window);
 
-			gameTitle.setPosition((float)window.getSize().x / 2, 60.f);
-			window.draw(gameTitle);
+			gameTitle.setPosition((float)window->getSize().x / 2, 60.f);
+			window->draw(gameTitle);
 
 			//DrawMainMenu(uiState.mainMenu, state.gameMode, window);
 			break;
 		}
 		case GameState::GameOverMenu:
 		{
-			DrawGameOverScreen(state, window);
+			DrawGameOverScreen();
 
-			DrawHint(*this, window);
+			DrawHint();
 
 			break;
 		}
@@ -219,26 +215,26 @@ namespace ApplesGame
 			if (isBonusDurationVisible) 
 			{
 				bonusDuration.setPosition(bonusDurationPosition);
-				window.draw(bonusDuration);
+				window->draw(bonusDuration);
 			}
 
 			scoreText.setPosition(10.f, 10.f);
-			window.draw(scoreText);
+			window->draw(scoreText);
 
-			inputHintText.setPosition(window.getSize().x - 10.f, 10.f);
-			window.draw(inputHintText);
+			inputHintText.setPosition(window->getSize().x - 10.f, 10.f);
+			window->draw(inputHintText);
 
 			break;
 		}
 		case GameState::Records:
 		{
-			DrawRecordsList(window);
+			DrawRecordsList();
 
 			break;
 		}
 		case GameState::PauseMenu:
 		{
-			DrawPauseMenu(*this, window);
+			DrawPauseMenu();
 
 			break;
 		}

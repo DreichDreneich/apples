@@ -220,15 +220,15 @@ namespace ApplesGame
 		this->uiState.Update(*this);
 	}
 
-	void State::Draw(sf::RenderWindow& window)
+	void State::Draw()
 	{
 		if (gameState.top() == GameState::Game)
 		{
-			player.Draw(window);
-			gameField.Draw(*this, window);
+			gameField.Draw(*this);
+			player.Draw();
 		}
 
-		uiState.Draw(*this, window);
+		uiState.Draw();
 	}
 
 	State* State::Instance()
@@ -276,9 +276,9 @@ namespace ApplesGame
 		yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
 	}
 
-	void State::Init()
+	void State::Init(sf::RenderWindow& window)
 	{
 		GenerateRecordsList();
-		uiState.InitUI();
+		uiState.InitUI(&window);
 	}
 }

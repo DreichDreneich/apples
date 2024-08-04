@@ -41,7 +41,7 @@ namespace ApplesGame
 
 		static State* Instance();
 
-		void Init();
+		void Init(sf::RenderWindow& window);
 
 		Player player;
 		GameField gameField;
@@ -85,6 +85,6 @@ namespace ApplesGame
 		void ToggleGameMode(int menuItem);
 		void Restart();
 		void Update(float timeDelta);
-		void Draw(sf::RenderWindow& window);
+		void Draw();
 	};
 }

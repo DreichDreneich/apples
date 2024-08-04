@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "GameField.h"
+#include "Application.h"
 
 #include <assert.h>
 
@@ -17,9 +18,22 @@ namespace ApplesGame
 		};
 	}
 
-	void GameField::Draw(State& gameState, sf::RenderWindow& window)
+	void GameField::Draw(State& gameState)
 	{
 		auto gs = State::Instance();
+
+		sf::RectangleShape border(sf::Vector2f(SCREEN_WIDTH - 4, SCREEN_HEGHT - TOP_PADDING - 4));
+		border.setPosition(2, TOP_PADDING + 2);
+		border.setOutlineThickness(2);
+		border.setOutlineColor(sf::Color(70, 148, 0));
+		border.setFillColor(sf::Color::Black);
+		Application::Instance()->GetWindow().draw(border);
+
+		sf::RectangleShape shape(sf::Vector2f(SCREEN_WIDTH, TOP_PADDING));
+		shape.setPosition(0, 0);
+		shape.setFillColor(sf::Color(70, 148, 0, 220));
+		Application::Instance()->GetWindow().draw(shape);
+
 
 		for (int i = 0; i < gs->gameField.grid.size(); i++)
 		{
@@ -34,7 +48,7 @@ namespace ApplesGame
 				auto actor = gs->actorsInfo[el.type].store.at(el.idx);
 
 				actor.position = GameField::FieldToScreenPosition({ i, j });
-				actor.Draw(window);
+				actor.Draw();
 			}
 		}
 
@@ -62,9 +76,9 @@ namespace ApplesGame
 			sf::Vertex(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEGHT)),
 		};
 
-		window.draw(b1, 3, sf::Lines);
-		window.draw(b2, 3, sf::Lines);
-		window.draw(b3, 3, sf::Lines);
-		window.draw(b4, 3, sf::Lines);
+		//Application::Instance()->GetWindow().draw(b1, 3, sf::Lines);
+		//Application::Instance()->GetWindow().draw(b2, 3, sf::Lines);
+		//Application::Instance()->GetWindow().draw(b3, 3, sf::Lines);
+		//Application::Instance()->GetWindow().draw(b4, 3, sf::Lines);
 	}
 }

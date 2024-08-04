@@ -9,10 +9,7 @@ namespace ApplesGame
 		sf::Vector2f position;
 		sf::Sprite sprite;
 
-		void Draw(sf::RenderWindow& window) {
-			sprite.setPosition(position);
-			window.draw(sprite);
-		}
+		void Draw();
 
 		void Init(const sf::Texture& texture);
 	};

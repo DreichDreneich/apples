@@ -22,6 +22,6 @@ namespace ApplesGame
 	public:
 		vector<vector<GameEl>> grid;
 		static Vector2f FieldToScreenPosition(Vector2i);
-		void Draw(State& gameState, sf::RenderWindow& window);
+		void Draw(State& gameState);
 	};
 }

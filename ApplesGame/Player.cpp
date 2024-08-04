@@ -5,6 +5,7 @@
 #include "GameSettings.h"
 #include "Game.h"
 #include "Actor.h"
+#include "Application.h"
 
 namespace ApplesGame
 {
@@ -124,7 +125,7 @@ namespace ApplesGame
 		partsPositions.push_back(prevTailPosition);
 	}
 
-	void Player::Draw(sf::RenderWindow& window)
+	void Player::Draw()
 	{
 		auto newSpritesNum = partsPositions.size() - sprite.size();
 
@@ -182,7 +183,7 @@ namespace ApplesGame
 			}
 
 			sprite[i].setPosition(screenPosition);
-			window.draw(sprite[i]);
+			Application::Instance()->GetWindow().draw(sprite[i]);
 		}
 	}
 

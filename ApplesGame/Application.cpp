@@ -5,10 +5,22 @@
 #include "Game.h"
 
 namespace ApplesGame {
+	Application* Application::_instance;
+
 	sf::RenderWindow* Application::window;
 
 	Application::Application() {
 		window = new sf::RenderWindow(sf::VideoMode(ApplesGame::SCREEN_WIDTH, ApplesGame::SCREEN_HEGHT), "AppleGame");
+	}
+
+	Application* Application::Instance()
+	{
+		if (_instance == nullptr) {
+			_instance = new Application();
+			return _instance;
+		}
+
+		return _instance;
 	}
 
 	Application::~Application() {
@@ -115,12 +127,17 @@ namespace ApplesGame {
 			{
 				HandleKeyReleasedEvent(event);
 			}
+
+			auto state = State::Instance();
+			if (state->gameState.top() == GameState::MainMenu) {
+				state->uiState.menuPage.HandleKeyboardEvent(event);
+			}
 		}
 	}
 
 	int Application::Loop()
 	{
-		State::Instance()->Init();
+		State::Instance()->Init(*window);
 
 		while (isOpen())
 		{
@@ -144,7 +161,7 @@ namespace ApplesGame {
 			// Clear the window first
 			window->clear();
 
-			State::Instance()->Draw(*window);
+			State::Instance()->Draw();
 
 			// End the current frame, display window contents on screen
 			window->display();

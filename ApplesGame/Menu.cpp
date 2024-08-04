@@ -5,6 +5,7 @@
 #include "Menu.h"
 #include "Math.h"
 #include "Game.h"
+#include "Application.h"
 
 using namespace sf;
 using namespace std;
@@ -20,42 +21,74 @@ namespace ApplesGame
 		textObj.setOrigin(GetTextOrigin(textObj, { 0.5f, 0.f }));
 	}
 
+	void MenuItem::Hover()
+	{
+		textObj.setFillColor(sf::Color::Yellow);
+	}
+
+	void MenuItem::UnHover()
+	{
+		textObj.setFillColor(sf::Color::White);
+	}
+
 	Menu::Menu()
 	{
 
 	}
 
-	void Menu::Update()
+	void Menu::HandleKeyboardEvent(const sf::Event& evt)
 	{
-
+		if (evt.type == sf::Event::KeyReleased)
+		{
+			switch (evt.key.code) {
+			case sf::Keyboard::W:
+			case sf::Keyboard::Up:
+			{
+				Hover(hoveredMenuItemNumber == 0 ? short(items.size() - 1) : hoveredMenuItemNumber - 1);
+				break;
+			}
+			case sf::Keyboard::S:
+			case sf::Keyboard::Down:
+			{
+				auto a = hoveredMenuItemNumber == short(items.size() - 1) ? 0 : hoveredMenuItemNumber + 1;
+				Hover(a);
+				break;
+			}
+			case sf::Keyboard::Enter:
+			{
+				if (handleSelect != nullptr) {
+					handleSelect(items[hoveredMenuItemNumber].first);
+				}
+				break;
+			}
+			}
+		}
 	}
 
 	void Menu::AddItem(string id, string text)
 	{
 		MenuItem item({ text });
+
 		items.push_back({ id, item });
 	}
 
-	void Menu::Hover(string id)
+	void Menu::Hover(short number)
 	{
-		auto nextHovered = find_if(items.begin(), items.end(), [id](pair<string, MenuItem> el) {
-			return el.first == id;
-		});
-
-		if (nextHovered == items.end()) {
+		if (number > items.size() - 1) {
 			return;
 		}
 
-		(*nextHovered).second.textObj.setFillColor(sf::Color::Yellow);
+		items[number].second.Hover();
 		if (hoveredMenuItem != nullptr) {
-			hoveredMenuItem->textObj.setFillColor(sf::Color::White);
+			hoveredMenuItem->UnHover();
 		}
-		hoveredMenuItem = &(*nextHovered).second;
+		hoveredMenuItem = &items[number].second;
+		hoveredMenuItemNumber = number;
 	}
 
 	void Menu::OnSelect(void(*func)(string id))
 	{
-		func(hoveredMenuItemId);
+		handleSelect = func;
 	}
 
 	void Menu::Draw(Vector2f pos, sf::RenderWindow& window)
@@ -74,21 +107,28 @@ namespace ApplesGame
 		menu.AddItem("SETTINGS", "Настройки");
 		menu.AddItem("EXIT", "Выход");
 
-		menu.Hover("START");
+		menu.Hover(0);
 
 		auto func = [](string id) { 
 			if (id == "START") {
+				State::Instance()->Restart();
+				State::Instance()->gameState = {};
 				State::Instance()->gameState.push(GameState::Game);
+			} 
+			else if (id == "RECORDS") {
+				State::Instance()->gameState.push(GameState::Records);
 			}
-
+			else if (id == "EXIT") {
+				Application::Instance()->GetWindow().close();
+			}
 		};
 
 		menu.OnSelect(func);
 	}
 
-	void MenuPage::Update()
+	void MenuPage::HandleKeyboardEvent(const sf::Event& evt)
 	{
-
+		menu.HandleKeyboardEvent(evt);
 	}
 
 	void MenuPage::Draw(sf::RenderWindow& window)
