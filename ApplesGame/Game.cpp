@@ -279,6 +279,6 @@ namespace ApplesGame
 	void State::Init()
 	{
 		GenerateRecordsList();
-		uiState.InitUI(font);
+		uiState.InitUI();
 	}
 }

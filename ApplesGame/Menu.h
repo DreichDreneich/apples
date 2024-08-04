@@ -10,11 +10,11 @@ namespace ApplesGame
 	struct MenuItem {
 		sf::Text textObj;
 
-		MenuItem(string text, const sf::Font& font, const float xOrigin);
+		MenuItem(string text, const float xOrigin);
 	};
 
 	class Menu {
-		unordered_map<string, MenuItem> items;
+		vector<pair<string, MenuItem>> items;
 		MenuItem* hoveredMenuItem;
 		string hoveredMenuItemId;
 
@@ -22,7 +22,7 @@ namespace ApplesGame
 		Menu();
 		
 		void Update();
-		void AddItem(string id, string text, const sf::Font& font);
+		void AddItem(string id, string text);
 		void Hover(string id);
 		void OnSelect(void(*func)(string id));
 		void Draw(Vector2f pos, sf::RenderWindow& window);
@@ -32,10 +32,9 @@ namespace ApplesGame
 		Menu menu;
 
 	public:
-		sf::Font font;
-		MenuPage() {};
-		MenuPage(const sf::Font& font);
+		MenuPage() = default;
 
+		void Init();
 		void Update();
 		void Draw(sf::RenderWindow& window);
 	};

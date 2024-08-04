@@ -24,7 +24,6 @@ namespace ApplesGame
 		Text recordsListHeader;
 		map<string, pair<Text, Text>> recordsList;
 
-
 		sf::Text bonusDuration;
 		sf::Vector2f bonusDurationPosition;
 
@@ -36,7 +35,8 @@ namespace ApplesGame
 
 		bool isBonusDurationVisible = false;
 
-		void InitUI(const sf::Font& font);
+		UIState();
+		void InitUI();
 		void Update(const struct State& gameState);
 		void Draw(const State& gamestate, sf::RenderWindow& window);
 	};

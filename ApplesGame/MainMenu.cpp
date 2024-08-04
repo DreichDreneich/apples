@@ -7,14 +7,14 @@
 
 namespace ApplesGame
 {
-	void InitMainMenu(MainMenu& mainMenu, const sf::Font& font)
+	void InitMainMenu(MainMenu& mainMenu)
 	{
-		mainMenu.hintText.Init("Choose game modes by pressing <numbers>:", font);
+		mainMenu.hintText.Init("Choose game modes by pressing <numbers>:", State::Instance()->font);
 
-		mainMenu.infiniteAppleMenuItem.Init("<1>  With infinite apples", font);
-		mainMenu.withAccelerationMenuItem.Init("<2>  With acceleration after apple eating", font);
+		mainMenu.infiniteAppleMenuItem.Init("<1>  With infinite apples", State::Instance()->font);
+		mainMenu.withAccelerationMenuItem.Init("<2>  With acceleration after apple eating", State::Instance()->font);
 
-		mainMenu.startGameText.Init("Press <Space> to start the game", font);
+		mainMenu.startGameText.Init("Press <Space> to start the game", State::Instance()->font);
 	}
 
 	void CalculateMenuItem(Checkbox& menuItem, GameMode menuType, int gameMode, Position position)

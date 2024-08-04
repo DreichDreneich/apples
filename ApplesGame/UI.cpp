@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include "UI.h"
 #include "MainMenu.h"
@@ -9,9 +11,9 @@ using namespace sf;
 
 namespace ApplesGame
 {
-	void InitGameTitle(Text& gameTitle, const sf::Font& font)
+	void InitGameTitle(Text& gameTitle)
 	{
-		gameTitle.setFont(font);
+		gameTitle.setFont(State::Instance()->font);
 		gameTitle.setCharacterSize(48);
 		gameTitle.setFillColor(sf::Color::Red);
 		gameTitle.setStyle(sf::Text::Bold);
@@ -19,17 +21,17 @@ namespace ApplesGame
 		gameTitle.setOrigin(GetTextOrigin(gameTitle, { 0.5f, 0.5f }));
 	}
 
-	void InitRegularText(sf::Text& text, const sf::Font& font, const float xOrigin = 1.f)
+	void InitRegularText(sf::Text& text, const float xOrigin = 1.f)
 	{
-		text.setFont(font);
+		text.setFont(State::Instance()->font);
 		text.setCharacterSize(24);
 		text.setFillColor(sf::Color::White);
 		text.setOrigin(GetTextOrigin(text, { xOrigin, 0.f }));
 	}
 
-	void InitRecordsList(UIState& uiState, const sf::Font& font)
+	void InitRecordsList(UIState& uiState)
 	{
-		uiState.recordsListHeader.setFont(font);
+		uiState.recordsListHeader.setFont(State::Instance()->font);
 		uiState.recordsListHeader.setCharacterSize(32);
 		uiState.recordsListHeader.setStyle(sf::Text::Bold);
 		uiState.recordsListHeader.setFillColor(sf::Color::Yellow);
@@ -42,35 +44,36 @@ namespace ApplesGame
 		{
 			Text key;
 			Text value;
-			InitRegularText(key, font);
+			InitRegularText(key);
 			key.setString(it->first + " ");
-			InitRegularText(value, font);
+			InitRegularText(value);
 
 			it->second = { key, value };
 			++it;
 		}
 	}
 
-	void InitPauseGame(PauseGameMenu& pauseGameMenu, const sf::Font& font)
+	void InitPauseGame(PauseGameMenu& pauseGameMenu)
 	{
 		pauseGameMenu.mainMenu.setString("<1>  Main menu");
-		InitRegularText(pauseGameMenu.mainMenu, font, 0.f);
+		InitRegularText(pauseGameMenu.mainMenu, 0.f);
 
 		pauseGameMenu.quitGame.setString("<2>  Quit game");
-		InitRegularText(pauseGameMenu.quitGame, font, 0.f);
+		InitRegularText(pauseGameMenu.quitGame, 0.f);
 
 		pauseGameMenu.resumeGame.setString("<3>  Resume game");
-		InitRegularText(pauseGameMenu.resumeGame, font, 0.f);
+		InitRegularText(pauseGameMenu.resumeGame, 0.f);
 	}
 
-	void DrawRecordsList(const State& gameState, sf::RenderWindow& window, float topMargin = 0)
+	void DrawRecordsList(sf::RenderWindow& window, float topMargin = 0)
 	{
-		UIState uiState = gameState.uiState;
+		auto gameState = State::Instance();
+		UIState uiState = gameState->uiState;
 		uiState.recordsListHeader.setPosition(window.getSize().x / 2.f, topMargin + 100);
 
 		window.draw(uiState.recordsListHeader);
 
-		vector<pair<string, int>> pairs(gameState.recordsList.begin(), gameState.recordsList.end());
+		vector<pair<string, int>> pairs(gameState->recordsList.begin(), gameState->recordsList.end());
 		std::sort(pairs.begin(), pairs.end(), [](pair<string, int> a, pair<string, int> b) {
 			return a.second > b.second;
 			});
@@ -105,7 +108,7 @@ namespace ApplesGame
 
 		window.draw(background);
 
-		DrawRecordsList(gameState, window, gameOverTextY);
+		DrawRecordsList(window, gameOverTextY);
 
 		window.draw(uiState.gameOverText);
 	}
@@ -139,21 +142,25 @@ namespace ApplesGame
 		window.draw(uiState.gameTitle);
 	}
 
-	void UIState::InitUI(const sf::Font& font)
+	UIState::UIState()
 	{
-		InitGameTitle(gameTitle, font);
+	}
 
-		scoreText.setFont(font);
+	void UIState::InitUI()
+	{
+		InitGameTitle(gameTitle);
+
+		scoreText.setFont(State::Instance()->font);
 		scoreText.setCharacterSize(24);
 		scoreText.setFillColor(sf::Color::Yellow);
 
-		inputHintText.setFont(font);
+		inputHintText.setFont(State::Instance()->font);
 		inputHintText.setCharacterSize(24);
 		inputHintText.setFillColor(sf::Color::White);
 		inputHintText.setString("Use arrow keys to move, Space to restart, ESC to exit");
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
 
-		gameOverText.setFont(font);
+		gameOverText.setFont(State::Instance()->font);
 		gameOverText.setCharacterSize(48);
 		gameOverText.setStyle(sf::Text::Bold);
 		gameOverText.setFillColor(sf::Color::Red);
@@ -161,15 +168,15 @@ namespace ApplesGame
 		gameOverText.setOrigin(GetTextOrigin(gameOverText, { 0.5f, 0.5f }));
 
 		isBonusDurationVisible = false;
-		bonusDuration.setFont(font);
+		bonusDuration.setFont(State::Instance()->font);
 		bonusDuration.setCharacterSize(14);
 		bonusDuration.setFillColor(sf::Color::White);
 
-		menuPage = *new MenuPage(font);
+		menuPage.Init();
 
-		InitMainMenu(mainMenu, font);
-		InitRecordsList(*this, font);
-		InitPauseGame(pauseGameMenu, font);
+		InitMainMenu(mainMenu);
+		InitRecordsList(*this);
+		InitPauseGame(pauseGameMenu);
 	}
 
 	void UIState::Update(const struct State& state)
@@ -187,17 +194,14 @@ namespace ApplesGame
 
 	void UIState::Draw(const State& state, sf::RenderWindow& window)
 	{
-		UIState uiState = state.uiState;
-
 		switch (state.gameState.top())
 		{
 		case GameState::MainMenu:
 		{
-			uiState.menuPage.Draw(window);
+			menuPage.Draw(window);
 
-			uiState.gameTitle.setPosition((float)window.getSize().x / 2, 60.f);
-			window.draw(uiState.gameTitle);
-			auto i = uiState.gameTitle.getString().toAnsiString();
+			gameTitle.setPosition((float)window.getSize().x / 2, 60.f);
+			window.draw(gameTitle);
 
 			//DrawMainMenu(uiState.mainMenu, state.gameMode, window);
 			break;
@@ -206,35 +210,35 @@ namespace ApplesGame
 		{
 			DrawGameOverScreen(state, window);
 
-			DrawHint(uiState, window);
+			DrawHint(*this, window);
 
 			break;
 		}
 		case GameState::Game:
 		{
-			if (uiState.isBonusDurationVisible) 
+			if (isBonusDurationVisible) 
 			{
-				uiState.bonusDuration.setPosition(uiState.bonusDurationPosition);
-				window.draw(uiState.bonusDuration);
+				bonusDuration.setPosition(bonusDurationPosition);
+				window.draw(bonusDuration);
 			}
 
-			uiState.scoreText.setPosition(10.f, 10.f);
-			window.draw(uiState.scoreText);
+			scoreText.setPosition(10.f, 10.f);
+			window.draw(scoreText);
 
-			uiState.inputHintText.setPosition(window.getSize().x - 10.f, 10.f);
-			window.draw(uiState.inputHintText);
+			inputHintText.setPosition(window.getSize().x - 10.f, 10.f);
+			window.draw(inputHintText);
 
 			break;
 		}
 		case GameState::Records:
 		{
-			DrawRecordsList(state, window);
+			DrawRecordsList(window);
 
 			break;
 		}
 		case GameState::PauseMenu:
 		{
-			DrawPauseMenu(uiState, window);
+			DrawPauseMenu(*this, window);
 
 			break;
 		}
