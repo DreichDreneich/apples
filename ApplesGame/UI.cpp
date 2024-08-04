@@ -2,6 +2,7 @@
 #include "UI.h"
 #include "MainMenu.h"
 #include "Game.h"
+#include "Menu.h"
 
 using namespace std;
 using namespace sf;
@@ -87,6 +88,8 @@ namespace ApplesGame
 		uiState.bonusDuration.setFont(font);
 		uiState.bonusDuration.setCharacterSize(14);
 		uiState.bonusDuration.setFillColor(sf::Color::White);
+
+		uiState.menuPage = *new MenuPage(font);
 
 		InitMainMenu(uiState.mainMenu, font);
 		InitRecordsList(uiState, font);
@@ -193,10 +196,13 @@ namespace ApplesGame
 		{
 		case GameState::MainMenu:
 		{
+			uiState.menuPage.Draw(window);
+
 			uiState.gameTitle.setPosition((float)window.getSize().x / 2, 60.f);
 			window.draw(uiState.gameTitle);
+			auto i = uiState.gameTitle.getString().toAnsiString();
 
-			DrawMainMenu(uiState.mainMenu, state.gameMode, window);
+			//DrawMainMenu(uiState.mainMenu, state.gameMode, window);
 			break;
 		}
 		case GameState::GameOverMenu:

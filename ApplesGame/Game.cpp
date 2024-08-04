@@ -274,7 +274,10 @@ namespace ApplesGame
 
 		xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
 		yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
+	}
 
+	void State::Init()
+	{
 		GenerateRecordsList();
 		InitUI(uiState, font);
 	}

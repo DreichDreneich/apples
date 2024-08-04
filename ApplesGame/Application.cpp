@@ -5,6 +5,8 @@
 #include "Game.h"
 
 namespace ApplesGame {
+	sf::RenderWindow* Application::window;
+
 	Application::Application() {
 		window = new sf::RenderWindow(sf::VideoMode(ApplesGame::SCREEN_WIDTH, ApplesGame::SCREEN_HEGHT), "AppleGame");
 	}
@@ -118,6 +120,8 @@ namespace ApplesGame {
 
 	int Application::Loop()
 	{
+		State::Instance()->Init();
+
 		while (isOpen())
 		{
 			HandleWindowEvents();
@@ -126,6 +130,7 @@ namespace ApplesGame {
 			{
 				return 0;
 			}
+
 
 			State::Instance()->player.HandleInput();
 

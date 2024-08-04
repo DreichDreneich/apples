@@ -3,7 +3,7 @@
 
 namespace ApplesGame {
 	class Application {
-		sf::RenderWindow* window;
+		static sf::RenderWindow* window;
 		sf::Clock game_clock;
 		sf::Time lastTime = game_clock.getElapsedTime();
 
@@ -13,7 +13,7 @@ namespace ApplesGame {
 
 		~Application();
 
-		sf::RenderWindow& GetWindow();
+		static sf::RenderWindow& GetWindow();
 
 		bool isOpen();
 

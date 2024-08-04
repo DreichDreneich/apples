@@ -27,7 +27,6 @@ namespace ApplesGame
 	{
 	private:
 		State();
-		//~State() {};
 		static State* _instance;
 		void GenerateRecordsList();
 		void UpdateActors(float timeDelta);
@@ -41,6 +40,8 @@ namespace ApplesGame
 		~State();
 
 		static State* Instance();
+
+		void Init();
 
 		Player player;
 		GameField gameField;

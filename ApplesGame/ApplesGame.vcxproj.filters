@@ -31,13 +31,16 @@
     <ClCompile Include="MainMenu.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="Menu.cpp">
+    <ClCompile Include="Checkbox.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="GameField.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="Application.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Menu.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
   </ItemGroup>
@@ -66,7 +69,7 @@
     <ClInclude Include="MainMenu.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="Menu.h">
+    <ClInclude Include="Checkbox.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="GameField.h">
@@ -76,6 +79,9 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Application.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

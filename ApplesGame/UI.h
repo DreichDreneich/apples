@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "MainMenu.h"
+#include "Menu.h"
 
 using namespace std;
 using namespace sf;
@@ -28,12 +29,11 @@ namespace ApplesGame
 
 		sf::Text gameTitle;
 		MainMenu mainMenu;
+		MenuPage menuPage;
 
 		PauseGameMenu pauseGameMenu;
 
 		bool isBonusDurationVisible = false;
-
-
 	};
 
 	void InitUI(UIState& uiState, const sf::Font& font);

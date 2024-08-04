@@ -1,27 +1,42 @@
 #pragma once
 #include "SFML/Graphics.hpp"
+#include <unordered_map>
+
+using namespace std;
+using namespace sf;
 
 namespace ApplesGame
 {
-	const float CheckboxSize = 10.f;
-
-	class Checkbox {
-	public:
+	struct MenuItem {
 		sf::Text textObj;
-		bool isChecked;
-		sf::RectangleShape checkboxRect;
 
-		void Init(sf::String str, const sf::Font& font);
-		void Draw(sf::RenderWindow& window);
-
-	private:
-		void InitCheckbox();
-		void InitMenuText(sf::String str, const sf::Font& font);
+		MenuItem(string text, const sf::Font& font, const float xOrigin);
 	};
 
-	class TextField {
+	class Menu {
+		unordered_map<string, MenuItem> items;
+		MenuItem* hoveredMenuItem;
+		string hoveredMenuItemId;
+
 	public:
-		sf::Text textObj;
-		void Init(sf::String str, const sf::Font& font);
+		Menu();
+		
+		void Update();
+		void AddItem(string id, string text, const sf::Font& font);
+		void Hover(string id);
+		void OnSelect(void(*func)(string id));
+		void Draw(Vector2f pos, sf::RenderWindow& window);
+	};
+
+	class MenuPage{
+		Menu menu;
+
+	public:
+		sf::Font font;
+		MenuPage() {};
+		MenuPage(const sf::Font& font);
+
+		void Update();
+		void Draw(sf::RenderWindow& window);
 	};
 }
