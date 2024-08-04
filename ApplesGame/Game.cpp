@@ -217,7 +217,7 @@ namespace ApplesGame
 			UpdateActors(timeDelta);
 		}
 
-		UpdateUI(this->uiState, *this);
+		this->uiState.Update(*this);
 	}
 
 	void State::Draw(sf::RenderWindow& window)
@@ -228,7 +228,7 @@ namespace ApplesGame
 			gameField.Draw(*this, window);
 		}
 
-		DrawUI(*this, window);
+		uiState.Draw(*this, window);
 	}
 
 	State* State::Instance()
@@ -279,6 +279,6 @@ namespace ApplesGame
 	void State::Init()
 	{
 		GenerateRecordsList();
-		InitUI(uiState, font);
+		uiState.InitUI(font);
 	}
 }

@@ -63,55 +63,6 @@ namespace ApplesGame
 		InitRegularText(pauseGameMenu.resumeGame, font, 0.f);
 	}
 
-	void InitUI(UIState& uiState, const sf::Font& font) 
-	{
-		InitGameTitle(uiState.gameTitle, font);
-
-		uiState.scoreText.setFont(font);
-		uiState.scoreText.setCharacterSize(24);
-		uiState.scoreText.setFillColor(sf::Color::Yellow);
-
-		uiState.inputHintText.setFont(font);
-		uiState.inputHintText.setCharacterSize(24);
-		uiState.inputHintText.setFillColor(sf::Color::White);
-		uiState.inputHintText.setString("Use arrow keys to move, Space to restart, ESC to exit");
-		uiState.inputHintText.setOrigin(GetTextOrigin(uiState.inputHintText, { 1.f, 0.f } ));
-
-		uiState.gameOverText.setFont(font);
-		uiState.gameOverText.setCharacterSize(48);
-		uiState.gameOverText.setStyle(sf::Text::Bold);
-		uiState.gameOverText.setFillColor(sf::Color::Red);
-		uiState.gameOverText.setString("GAME OVER");
-		uiState.gameOverText.setOrigin(GetTextOrigin(uiState.gameOverText, { 0.5f, 0.5f }));
-
-		uiState.isBonusDurationVisible = false;
-		uiState.bonusDuration.setFont(font);
-		uiState.bonusDuration.setCharacterSize(14);
-		uiState.bonusDuration.setFillColor(sf::Color::White);
-
-		uiState.menuPage = *new MenuPage(font);
-
-		InitMainMenu(uiState.mainMenu, font);
-		InitRecordsList(uiState, font);
-		InitPauseGame(uiState.pauseGameMenu, font);
-	}
-
-	void UpdateUI(UIState& uiState, const struct State& state)
-	{
-		/*auto state = State::Instance();
-		auto uiState = state.uiState;*/
-
-		uiState.scoreText.setString("Score: " + std::to_string(state.score));
-
-		sf::Color gameOverTextColor = (int)state.timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
-		uiState.gameOverText.setFillColor(gameOverTextColor);
-
-		uiState.isBonusDurationVisible = state.player.hasBonus;
-		uiState.bonusDuration.setString(std::to_string((int)state.player.bonusTimeRemaining));
-		uiState.bonusDurationPosition.x = state.player.position.x;
-		uiState.bonusDurationPosition.y = state.player.position.y - state.player.size / 2;
-	}
-
 	void DrawRecordsList(const State& gameState, sf::RenderWindow& window, float topMargin = 0)
 	{
 		UIState uiState = gameState.uiState;
@@ -188,7 +139,53 @@ namespace ApplesGame
 		window.draw(uiState.gameTitle);
 	}
 
-	void DrawUI(const State& state, sf::RenderWindow& window)
+	void UIState::InitUI(const sf::Font& font)
+	{
+		InitGameTitle(gameTitle, font);
+
+		scoreText.setFont(font);
+		scoreText.setCharacterSize(24);
+		scoreText.setFillColor(sf::Color::Yellow);
+
+		inputHintText.setFont(font);
+		inputHintText.setCharacterSize(24);
+		inputHintText.setFillColor(sf::Color::White);
+		inputHintText.setString("Use arrow keys to move, Space to restart, ESC to exit");
+		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
+
+		gameOverText.setFont(font);
+		gameOverText.setCharacterSize(48);
+		gameOverText.setStyle(sf::Text::Bold);
+		gameOverText.setFillColor(sf::Color::Red);
+		gameOverText.setString("GAME OVER");
+		gameOverText.setOrigin(GetTextOrigin(gameOverText, { 0.5f, 0.5f }));
+
+		isBonusDurationVisible = false;
+		bonusDuration.setFont(font);
+		bonusDuration.setCharacterSize(14);
+		bonusDuration.setFillColor(sf::Color::White);
+
+		menuPage = *new MenuPage(font);
+
+		InitMainMenu(mainMenu, font);
+		InitRecordsList(*this, font);
+		InitPauseGame(pauseGameMenu, font);
+	}
+
+	void UIState::Update(const struct State& state)
+	{
+		scoreText.setString("Score: " + std::to_string(state.score));
+
+		sf::Color gameOverTextColor = (int)state.timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
+		gameOverText.setFillColor(gameOverTextColor);
+
+		isBonusDurationVisible = state.player.hasBonus;
+		bonusDuration.setString(std::to_string((int)state.player.bonusTimeRemaining));
+		bonusDurationPosition.x = state.player.position.x;
+		bonusDurationPosition.y = state.player.position.y - state.player.size / 2;
+	}
+
+	void UIState::Draw(const State& state, sf::RenderWindow& window)
 	{
 		UIState uiState = state.uiState;
 

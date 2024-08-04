@@ -15,8 +15,9 @@ namespace ApplesGame
 		Text resumeGame;
 	};
 
-	struct UIState
+	class UIState
 	{
+	public:
 		Text scoreText;
 		Text inputHintText;
 		Text gameOverText;
@@ -34,12 +35,9 @@ namespace ApplesGame
 		PauseGameMenu pauseGameMenu;
 
 		bool isBonusDurationVisible = false;
-	};
 
-	void InitUI(UIState& uiState, const sf::Font& font);
-	void UpdateUI(UIState& uiState, const struct State& gameState);
-	//void UpdateUI();
-	void DrawUI(const State& gamestate, sf::RenderWindow& window);
-	void DrawHint(ApplesGame::UIState& uiState, sf::RenderWindow& window);
-	void InitMenuItem(Checkbox& menuItem, sf::String str, const sf::Font& font);
+		void InitUI(const sf::Font& font);
+		void Update(const struct State& gameState);
+		void Draw(const State& gamestate, sf::RenderWindow& window);
+	};
 }
