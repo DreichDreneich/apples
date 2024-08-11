@@ -15,12 +15,12 @@ namespace ApplesGame
 {
 	State* State::_instance;
 
-	string* State::getDifficulty()
+	Difficulty* State::getDifficulty()
 	{
 		return difficulty;
 	}
 
-	void State::setDifficulty(string value)
+	void State::setDifficulty(Difficulty value)
 	{
 		difficulty = &value;
 	}

@@ -5,33 +5,18 @@
 #include "Application.h"
 #include "Menu.h"
 #include "UIComponents.h"
-#include "GameSettings.h"
 
 namespace ApplesGame
 {
-	void DifficultyPage::handleSelect(string id) {
-		if (id == "START") {
-			State::Instance()->Restart();
-			State::Instance()->gameState = {};
-			State::Instance()->gameState.push(GameState::Game);
-		}
-		else if (id == "RECORDS") {
-			State::Instance()->gameState.push(GameState::Records);
-		}
-		else if (id == "EXIT") {
-			Application::Instance()->GetWindow().close();
-		}
-	};
-
 	void DifficultyPage::Init() 
 	{
 		header = new PageHeader("Уровень сложности");
 
-		menu = new RadioMenu(State::Instance()->getDifficulty());
+		menu = new RadioMenu<Difficulty>(State::Instance()->getDifficulty());
 
-		menu->AddItem(DIFFICULTY_EASY, "Легкий");
-		menu->AddItem(DIFFICULTY_MEDIUM, "Средний");
-		menu->AddItem(DIFFICULTY_HARD, "Тяжелый");
+		menu->AddItem(Difficulty::EASY, "Легкий");
+		menu->AddItem(Difficulty::MEDIUM, "Средний");
+		menu->AddItem(Difficulty::HARD, "Тяжелый");
 
 		menu->Hover(0);
 

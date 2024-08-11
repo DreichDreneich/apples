@@ -9,6 +9,7 @@
 #include "Sound.h"
 #include "GameField.h"
 #include "ActorInfo.h"
+#include "DifficultyPage.h"
 
 using namespace std;
 
@@ -33,11 +34,11 @@ namespace ApplesGame
 		bool CheckFieldCell();
 		void GenerateNewActorPosition(GameEl& elem, int oldX, int oldY);
 
-		string* difficulty;
+		Difficulty* difficulty;
 
 	public:
-		string* getDifficulty();
-		void setDifficulty(string);
+		Difficulty* getDifficulty();
+		void setDifficulty(Difficulty);
 
 		State(State& other) = delete;
 		State operator=(const State&) = delete;

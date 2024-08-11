@@ -7,13 +7,14 @@
 
 namespace ApplesGame
 {
+	enum class Difficulty {
+		EASY, MEDIUM, HARD,
+	};
+
 	class DifficultyPage : Page {
 		PageHeader* header;
-		RadioMenu* menu;
+		RadioMenu<Difficulty>* menu;
 		CommonText* backText;
-
-
-		void handleSelect(string id);
 
 	public:
 		DifficultyPage() = default;

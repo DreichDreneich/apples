@@ -12,29 +12,29 @@ namespace ApplesGame
 {
 	void MenuPage::Init()
 	{
-		menu = new Menu();
+		menu = new Menu<Pages>();
 
-		menu->AddItem("START", "Начать игру");
-		menu->AddItem("DIFFICULTY", "Уровень сложности");
-		menu->AddItem("RECORDS", "Рекорды");
-		menu->AddItem("SETTINGS", "Настройки");
-		menu->AddItem("EXIT", "Выход");
+		menu->AddItem(Pages::START, "Начать игру");
+		menu->AddItem(Pages::DIFFICULTY, "Уровень сложности");
+		menu->AddItem(Pages::RECORDS, "Рекорды");
+		menu->AddItem(Pages::SETTINGS, "Настройки");
+		menu->AddItem(Pages::EXIT, "Выход");
 
 		menu->Hover(0);
 
-		menu->OnSelect([](string& id) {
-			if (id == "START") {
+		menu->OnSelect([](Pages& id) {
+			if (id == Pages::START) {
 				State::Instance()->Restart();
 				State::Instance()->gameState = {};
 				State::Instance()->gameState.push(GameState::Game);
 			}
-			else if (id == "DIFFICULTY") {
+			else if (id == Pages::DIFFICULTY) {
 				State::Instance()->gameState.push(GameState::DifficultyPage);
 			}
-			else if (id == "RECORDS") {
+			else if (id == Pages::RECORDS) {
 				State::Instance()->gameState.push(GameState::Records);
 			}
-			else if (id == "EXIT") {
+			else if (id == Pages::EXIT) {
 				Application::Instance()->GetWindow().close();
 			}
 		});

@@ -1,6 +1,8 @@
 #pragma once
 #include <functional>
 #include "SFML/Graphics.hpp"
+#include "Math.h"
+#include "Application.h"
 
 using namespace std;
 using namespace sf;
@@ -10,40 +12,122 @@ namespace ApplesGame
 	struct MenuItem {
 		sf::Text textObj;
 
-		MenuItem(string text, const float xOrigin);
+		MenuItem(string text, const float xOrigin = 1.f);
 
 		void Hover();
 		void UnHover();
 	};
 
+	template<typename T>
 	class Menu {
 	protected:
-		vector<pair<string, MenuItem>> items;
+		vector<pair<T, MenuItem>> items;
 		MenuItem* hoveredMenuItem;
 		short hoveredMenuItemNumber;
-		std::function<void(string&)> handleSelect;
+		std::function<void(T&)> handleSelect;
 
-		FloatRect* GetMenuItemGlPositionById(string& id);
+		FloatRect* GetMenuItemGlPositionById(T& id) {
+			for (auto item : items) {
+				if (item.first == id) {
+					auto a = item.second.textObj.getGlobalBounds();
+					return &a;
+				}
+			}
+
+			return nullptr;
+		}
 
 	public:
-		Menu();
+		Menu() = default;
 		
-		void Hover(short number);
-		void HandleKeyboardEvent(const sf::Event& event);
-		void AddItem(string id, string text);
-		void OnSelect(std::function<void(string&)> func);
-		void Draw(Vector2f pos);
+		void Hover(short number)
+		{
+			if (number > items.size() - 1) {
+				return;
+			}
+
+			items[number].second.Hover();
+			if (hoveredMenuItem != nullptr) {
+				hoveredMenuItem->UnHover();
+			}
+			hoveredMenuItem = &items[number].second;
+			hoveredMenuItemNumber = number;
+		}
+
+		void HandleKeyboardEvent(const sf::Event& evt) {
+			if (evt.type == sf::Event::KeyReleased)
+			{
+				switch (evt.key.code) {
+				case sf::Keyboard::W:
+				case sf::Keyboard::Up:
+				{
+					Hover(hoveredMenuItemNumber == 0 ? short(items.size() - 1) : hoveredMenuItemNumber - 1);
+					break;
+				}
+				case sf::Keyboard::S:
+				case sf::Keyboard::Down:
+				{
+					auto a = hoveredMenuItemNumber == short(items.size() - 1) ? 0 : hoveredMenuItemNumber + 1;
+					Hover(a);
+					break;
+				}
+				case sf::Keyboard::Enter:
+				{
+					if (handleSelect != nullptr) {
+						handleSelect(items[hoveredMenuItemNumber].first);
+					}
+					break;
+				}
+				}
+			}
+		}
+		void AddItem(T id, string text) {
+			MenuItem item({ text });
+
+			items.push_back({ id, item });
+		}
+		void OnSelect(std::function<void(T&)> func) {
+			handleSelect = func;
+		}
+		void Draw(Vector2f pos) {
+			for (int i = 0; i < items.size(); ++i) {
+				items[i].second.textObj.setPosition({ pos.x, pos.y + 35 * i });
+				Application::Instance()->GetWindow().draw(items[i].second.textObj);
+			}
+		}
 	};
 
-	class RadioMenu : public Menu
+	template<typename T>
+	class RadioMenu : public Menu<T>
 	{
-		string* selectedItem = nullptr;
+		T* selectedItem = nullptr;
 		sf::RectangleShape selectedPointerRect;
 
 	public:
-		RadioMenu(string* selectedItem = nullptr);
+		RadioMenu(T* selectedItem = nullptr) {
+			selectedPointerRect.setSize({ 10.f, 10.f });
+			selectedPointerRect.setFillColor(sf::Color::Yellow);
 
-		void Draw(Vector2f pos);
+			RadioMenu::selectedItem = selectedItem;
+
+			auto func = [&](T& id) {
+				RadioMenu::selectedItem = &id;
+				};
+
+			Menu<T>::OnSelect(func);
+		}
+
+		void Draw(Vector2f pos) {
+			Menu<T>::Draw(pos);
+
+			if (selectedItem != nullptr) {
+				auto position = Menu<T>::GetMenuItemGlPositionById(*selectedItem);
+				if (position != nullptr) {
+					selectedPointerRect.setPosition({ position->left - 20.f, position->top + 4.f });
+					Application::Instance()->GetWindow().draw(selectedPointerRect);
+				}
+			}
+		}
 
 		void OnSelect(void(*func)(string id)) = delete;
 	};
