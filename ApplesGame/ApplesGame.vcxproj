@@ -159,6 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
+    <ClCompile Include="DifficultyPage.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameField.cpp" />
     <ClCompile Include="GameMain.cpp" />
@@ -170,10 +171,12 @@
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="UI.cpp" />
+    <ClCompile Include="UIComponents.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ActorInfo.h" />
     <ClInclude Include="Application.h" />
+    <ClInclude Include="DifficultyPage.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameSettings.h" />
     <ClInclude Include="GameField.h" />
@@ -181,10 +184,12 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="Checkbox.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Page.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="UI.h" />
+    <ClInclude Include="UIComponents.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

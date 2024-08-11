@@ -24,4 +24,9 @@ namespace ApplesGame
 	const unsigned int SCREEN_WIDTH = 800;
 	const unsigned int SCREEN_HEGHT = 600;
 	const std::string PLAYER_NAME = "Player";
+
+	// move to consts
+	const string DIFFICULTY_EASY = "EASY";
+	const string DIFFICULTY_MEDIUM = "DIFFICULTY_MEDIUM";
+	const string DIFFICULTY_HARD = "DIFFICULTY_HARD";
 }

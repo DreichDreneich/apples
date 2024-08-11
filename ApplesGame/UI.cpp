@@ -139,6 +139,11 @@ namespace ApplesGame
 		window->draw(gameTitle);
 	}
 
+	UIState::UIState()
+	{
+		difficultyPage = new DifficultyPage();
+	}
+
 	void UIState::InitUI(sf::RenderWindow* window)
 	{
 		UIState::window = window;
@@ -169,8 +174,9 @@ namespace ApplesGame
 		bonusDuration.setFillColor(sf::Color::White);
 
 		menuPage.Init();
+		difficultyPage->Init();
 
-		InitMainMenu(mainMenu);
+		//InitMainMenu(mainMenu);
 		InitRecordsList(*this);
 		InitPauseGame(pauseGameMenu);
 	}
@@ -194,12 +200,16 @@ namespace ApplesGame
 		{
 		case GameState::MainMenu:
 		{
-			menuPage.Draw(*window);
+			menuPage.Draw();
 
 			gameTitle.setPosition((float)window->getSize().x / 2, 60.f);
 			window->draw(gameTitle);
 
-			//DrawMainMenu(uiState.mainMenu, state.gameMode, window);
+			break;
+		}
+		case GameState::DifficultyPage:
+		{
+			difficultyPage->Draw();
 			break;
 		}
 		case GameState::GameOverMenu:

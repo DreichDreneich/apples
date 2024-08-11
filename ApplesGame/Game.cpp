@@ -15,6 +15,16 @@ namespace ApplesGame
 {
 	State* State::_instance;
 
+	string* State::getDifficulty()
+	{
+		return difficulty;
+	}
+
+	void State::setDifficulty(string value)
+	{
+		difficulty = &value;
+	}
+
 	void State::ToggleGameMode(int menuItem)
 	{
 		if (HasMaskFlag(gameMode, menuItem))
@@ -112,8 +122,8 @@ namespace ApplesGame
 	{
 		auto currentHeadPosition = player.partsPositions[0].position;
 
-		auto isXOutOfBound = currentHeadPosition.x < 0 || currentHeadPosition.x > xCellsNum;
-		auto isYOutOfBound = currentHeadPosition.y < 0 || currentHeadPosition.y > xCellsNum;
+		auto isXOutOfBound = currentHeadPosition.x < 0 || currentHeadPosition.x >= xCellsNum;
+		auto isYOutOfBound = currentHeadPosition.y < 0 || currentHeadPosition.y >= yCellsNum;
 
 		if (isXOutOfBound || isYOutOfBound)
 		{

@@ -20,7 +20,7 @@ namespace ApplesGame
 	};
 
 	enum class GameState : short {
-		Game, MainMenu, PauseMenu, GameOverMenu, Records
+		Game, MainMenu, PauseMenu, GameOverMenu, Records, DifficultyPage,
 	};
 
 	class State
@@ -33,7 +33,12 @@ namespace ApplesGame
 		bool CheckFieldCell();
 		void GenerateNewActorPosition(GameEl& elem, int oldX, int oldY);
 
+		string* difficulty;
+
 	public:
+		string* getDifficulty();
+		void setDifficulty(string);
+
 		State(State& other) = delete;
 		State operator=(const State&) = delete;
 

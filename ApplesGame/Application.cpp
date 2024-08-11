@@ -132,6 +132,10 @@ namespace ApplesGame {
 			if (state->gameState.top() == GameState::MainMenu) {
 				state->uiState.menuPage.HandleKeyboardEvent(event);
 			}
+
+			if (state->gameState.top() == GameState::DifficultyPage) {
+				state->uiState.difficultyPage->HandleKeyboardEvent(event);
+			}
 		}
 	}
 

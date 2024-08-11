@@ -1,6 +1,6 @@
 #pragma once
+#include <functional>
 #include "SFML/Graphics.hpp"
-#include <unordered_map>
 
 using namespace std;
 using namespace sf;
@@ -17,10 +17,13 @@ namespace ApplesGame
 	};
 
 	class Menu {
+	protected:
 		vector<pair<string, MenuItem>> items;
 		MenuItem* hoveredMenuItem;
 		short hoveredMenuItemNumber;
-		void(*handleSelect)(string id);
+		std::function<void(string&)> handleSelect;
+
+		FloatRect* GetMenuItemGlPositionById(string& id);
 
 	public:
 		Menu();
@@ -28,18 +31,20 @@ namespace ApplesGame
 		void Hover(short number);
 		void HandleKeyboardEvent(const sf::Event& event);
 		void AddItem(string id, string text);
-		void OnSelect(void(*func)(string id));
-		void Draw(Vector2f pos, sf::RenderWindow& window);
+		void OnSelect(std::function<void(string&)> func);
+		void Draw(Vector2f pos);
 	};
 
-	class MenuPage{
-		Menu menu;
+	class RadioMenu : public Menu
+	{
+		string* selectedItem = nullptr;
+		sf::RectangleShape selectedPointerRect;
 
 	public:
-		MenuPage() = default;
+		RadioMenu(string* selectedItem = nullptr);
 
-		void Init();
-		void HandleKeyboardEvent(const sf::Event& event);
-		void Draw(sf::RenderWindow& window);
+		void Draw(Vector2f pos);
+
+		void OnSelect(void(*func)(string id)) = delete;
 	};
 }

@@ -31,6 +31,18 @@ namespace ApplesGame
 		textObj.setFillColor(sf::Color::White);
 	}
 
+	FloatRect* Menu::GetMenuItemGlPositionById(string& id)
+	{
+		for (auto item : items) {
+			if (item.first == id) {
+				auto a = item.second.textObj.getGlobalBounds();
+				return &a;
+			}
+		}
+
+		return nullptr;
+	}
+
 	Menu::Menu()
 	{
 
@@ -86,56 +98,44 @@ namespace ApplesGame
 		hoveredMenuItemNumber = number;
 	}
 
-	void Menu::OnSelect(void(*func)(string id))
+	void Menu::OnSelect(std::function<void(string&)> func)
 	{
 		handleSelect = func;
 	}
 
-	void Menu::Draw(Vector2f pos, sf::RenderWindow& window)
+	void Menu::Draw(Vector2f pos)
 	{
 		for(int i = 0; i < items.size(); ++i) {
 			items[i].second.textObj.setPosition({ pos.x, pos.y + 35 * i });
-			window.draw(items[i].second.textObj);
+			Application::Instance()->GetWindow().draw(items[i].second.textObj);
 		}
 	}
 
-	void MenuPage::Init()
+	RadioMenu::RadioMenu(string* selectedItemRef)
 	{
-		menu.AddItem("START", "Start игру");
-		menu.AddItem("DIFFICULTY", "Уровень сложности");
-		menu.AddItem("RECORDS", "Таблица рекордов");
-		menu.AddItem("SETTINGS", "Настройки");
-		menu.AddItem("EXIT", "Выход");
+		selectedPointerRect.setSize({ 10.f, 10.f });
+		selectedPointerRect.setFillColor(sf::Color::Yellow);
 
-		menu.Hover(0);
+		RadioMenu::selectedItem = selectedItemRef;
 
-		auto func = [](string id) { 
-			if (id == "START") {
-				State::Instance()->Restart();
-				State::Instance()->gameState = {};
-				State::Instance()->gameState.push(GameState::Game);
-			} 
-			else if (id == "RECORDS") {
-				State::Instance()->gameState.push(GameState::Records);
-			}
-			else if (id == "EXIT") {
-				Application::Instance()->GetWindow().close();
-			}
+		auto func = [&](string& id) {
+			RadioMenu::selectedItem = &id;
 		};
 
-		menu.OnSelect(func);
+		Menu::OnSelect(func);
+
 	}
 
-	void MenuPage::HandleKeyboardEvent(const sf::Event& evt)
+	void RadioMenu::Draw(Vector2f pos)
 	{
-		menu.HandleKeyboardEvent(evt);
-	}
+		Menu::Draw(pos);
 
-	void MenuPage::Draw(sf::RenderWindow& window)
-	{
-		float windowX = (float)window.getSize().x / 2;
-		float windowY = (float)window.getSize().y / 3;
-
-		menu.Draw({ windowX, windowY }, window);
+		if (selectedItem != nullptr) {
+			auto position = GetMenuItemGlPositionById(*selectedItem);
+			if (position != nullptr) {
+				selectedPointerRect.setPosition({ position->left - 20.f, position->top + 4.f });
+				Application::Instance()->GetWindow().draw(selectedPointerRect);
+			}
+		}
 	}
 }

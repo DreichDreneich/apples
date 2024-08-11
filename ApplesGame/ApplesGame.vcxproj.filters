@@ -43,6 +43,12 @@
     <ClCompile Include="Menu.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="DifficultyPage.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="UIComponents.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -82,6 +88,15 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="Menu.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Page.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="DifficultyPage.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="UIComponents.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

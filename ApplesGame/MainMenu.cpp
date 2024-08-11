@@ -1,52 +1,55 @@
 #pragma once
+#include <functional>
 #include "MainMenu.h"
 #include "Math.h"
 #include "Checkbox.h"
 #include "Game.h"
 #include "UI.h"
+#include "Application.h"
+#include "Menu.h"
 
 namespace ApplesGame
 {
-	void InitMainMenu(MainMenu& mainMenu)
+	void MenuPage::Init()
 	{
-		mainMenu.hintText.Init("Choose game modes by pressing <numbers>:", State::Instance()->font);
+		menu = new Menu();
 
-		mainMenu.infiniteAppleMenuItem.Init("<1>  With infinite apples", State::Instance()->font);
-		mainMenu.withAccelerationMenuItem.Init("<2>  With acceleration after apple eating", State::Instance()->font);
+		menu->AddItem("START", "Начать игру");
+		menu->AddItem("DIFFICULTY", "Уровень сложности");
+		menu->AddItem("RECORDS", "Рекорды");
+		menu->AddItem("SETTINGS", "Настройки");
+		menu->AddItem("EXIT", "Выход");
 
-		mainMenu.startGameText.Init("Press <Space> to start the game", State::Instance()->font);
+		menu->Hover(0);
+
+		menu->OnSelect([](string& id) {
+			if (id == "START") {
+				State::Instance()->Restart();
+				State::Instance()->gameState = {};
+				State::Instance()->gameState.push(GameState::Game);
+			}
+			else if (id == "DIFFICULTY") {
+				State::Instance()->gameState.push(GameState::DifficultyPage);
+			}
+			else if (id == "RECORDS") {
+				State::Instance()->gameState.push(GameState::Records);
+			}
+			else if (id == "EXIT") {
+				Application::Instance()->GetWindow().close();
+			}
+		});
 	}
 
-	void CalculateMenuItem(Checkbox& menuItem, GameMode menuType, int gameMode, Position position)
+	void MenuPage::HandleKeyboardEvent(const sf::Event& evt)
 	{
-		float checkboxMargin = 20;
-
-		menuItem.textObj.setPosition(OurVectorToSf({ position.x + checkboxMargin, position.y }));
-		sf::FloatRect textRect = menuItem.textObj.getGlobalBounds();
-		menuItem.checkboxRect.setPosition({ textRect.left - checkboxMargin, textRect.top + CheckboxSize / 2 });
-
-		sf::Color color = HasMaskFlag(gameMode, (int)menuType)
-			? sf::Color::Yellow
-			: sf::Color::Black;
-		menuItem.checkboxRect.setFillColor(color);
+		menu->HandleKeyboardEvent(evt);
 	}
 
-	void DrawMainMenu(MainMenu& mainMenu, int gameMode, sf::RenderWindow& window)
+	void MenuPage::Draw()
 	{
-		float windowX = (float)window.getSize().x;
-		float windowY = (float)window.getSize().y;
+		float windowX = (float)Application::Instance()->GetWindow().getSize().x / 2;
+		float windowY = (float)Application::Instance()->GetWindow().getSize().y / 3;
 
-		mainMenu.hintText.textObj.setPosition(windowX / 2, 170.f);
-		mainMenu.startGameText.textObj.setPosition(windowX / 2, windowY - 100.f);
-
-		sf::FloatRect hintTextRect = mainMenu.hintText.textObj.getGlobalBounds();
-
-		CalculateMenuItem(mainMenu.infiniteAppleMenuItem, GameMode::infiniteApple, gameMode, { hintTextRect.left, 230.f });
-		CalculateMenuItem(mainMenu.withAccelerationMenuItem, GameMode::withAcceleration, gameMode, { hintTextRect.left, 265.f });
-
-		window.draw(mainMenu.hintText.textObj);
-		mainMenu.infiniteAppleMenuItem.Draw(window);
-		mainMenu.withAccelerationMenuItem.Draw(window);
-		window.draw(mainMenu.startGameText.textObj);
+		menu->Draw({ windowX, windowY });
 	}
 }

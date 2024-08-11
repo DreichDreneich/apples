@@ -1,7 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "MainMenu.h"
-#include "Menu.h"
+#include "DifficultyPage.h"
 
 using namespace std;
 using namespace sf;
@@ -35,14 +35,15 @@ namespace ApplesGame
 		sf::Vector2f bonusDurationPosition;
 
 		sf::Text gameTitle;
-		MainMenu mainMenu;
+
 		MenuPage menuPage;
+		DifficultyPage* difficultyPage;
 
 		PauseGameMenu pauseGameMenu;
 
 		bool isBonusDurationVisible = false;
 
-		UIState() = default;
+		UIState();
 
 		void InitUI(sf::RenderWindow* window);
 		void Update(const struct State& gameState);
