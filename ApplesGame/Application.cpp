@@ -33,85 +33,6 @@ namespace ApplesGame {
 
 	sf::RenderWindow& Application::GetWindow() { return *window; }
 
-	void Application::HandleKeyReleasedEvent(sf::Event event)
-	{
-		auto state = State::Instance();
-
-		switch (event.key.code)
-		{
-		case sf::Keyboard::Num1:
-		case sf::Keyboard::Numpad1:
-		{
-			if (state->gameState.top() == GameState::MainMenu)
-			{
-				State::Instance()->ToggleGameMode((int)GameMode::infiniteApple);
-			}
-			else if (state->gameState.top() == GameState::PauseMenu)
-			{
-				state->gameState = {};
-				state->gameState.push(GameState::MainMenu);
-			}
-			break;
-		}
-		case sf::Keyboard::Num2:
-		case sf::Keyboard::Numpad2:
-		{
-			if (state->gameState.top() == GameState::MainMenu)
-			{
-				State::Instance()->ToggleGameMode((int)GameMode::withAcceleration);
-			}
-			else if (state->gameState.top() == GameState::PauseMenu)
-			{
-				window->close();
-			}
-			break;
-		}
-		case sf::Keyboard::Num3:
-		{
-			if (state->gameState.top() == GameState::PauseMenu)
-			{
-				state->gameState.pop();
-			}
-			break;
-		}
-		case sf::Keyboard::Space:
-		{
-			if (state->gameState.top() == GameState::PauseMenu)
-			{
-				state->gameState.pop();
-			}
-			else if (state->gameState.top() == GameState::GameOverMenu)
-			{
-				State::Instance()->Restart();
-				state->gameState.pop();
-			}
-			else if (state->gameState.top() == GameState::MainMenu)
-			{
-				State::Instance()->Restart();
-				state->gameState = {};
-				state->gameState.push(GameState::Game);
-			}
-			else if (state->gameState.top() == GameState::Game)
-			{
-				state->gameState.push(GameState::PauseMenu);
-			}
-			break;
-		}
-		case sf::Keyboard::Tab:
-		{
-			if (state->gameState.top() == GameState::MainMenu) {
-				state->gameState.push(GameState::Records);
-			}
-			else if (state->gameState.top() == GameState::Records) {
-				state->gameState.pop();
-			}
-			break;
-		}
-		default:
-			break;
-		}
-	}
-
 	void Application::HandleWindowEvents()
 	{
 		sf::Event event;
@@ -125,17 +46,10 @@ namespace ApplesGame {
 
 			if (event.type == sf::Event::KeyReleased)
 			{
-				HandleKeyReleasedEvent(event);
+				State::Instance()->HandleKeyReleasedEvent(event);
 			}
 
-			auto state = State::Instance();
-			if (state->gameState.top() == GameState::MainMenu) {
-				state->uiState.menuPage.HandleKeyboardEvent(event);
-			}
-
-			if (state->gameState.top() == GameState::DifficultyPage) {
-				state->uiState.difficultyPage->HandleKeyboardEvent(event);
-			}
+			State::Instance()->HandleKeyboardEvent(event);
 		}
 	}
 
@@ -153,7 +67,7 @@ namespace ApplesGame {
 			}
 
 
-			State::Instance()->player.HandleInput();
+			State::Instance()->getPlayer()->HandleInput();
 
 			// Calculate time delta
 			sf::Time currentTime = game_clock.getElapsedTime();

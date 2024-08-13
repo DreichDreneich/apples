@@ -46,7 +46,7 @@ namespace ApplesGame
 		UIState();
 
 		void InitUI(sf::RenderWindow* window);
-		void Update(const struct State& gameState);
+		void Update();
 		void Draw();
 	};
 }

@@ -23,16 +23,18 @@ namespace ApplesGame
 		menu->Hover(0);
 
 		menu->OnSelect([](Pages& id) {
+			auto state = State::Instance();
+
 			if (id == Pages::START) {
-				State::Instance()->Restart();
-				State::Instance()->gameState = {};
-				State::Instance()->gameState.push(GameState::Game);
+				state->Restart();
+				state->clearGameState();
+				state->getGameState()->push(GameState::Game);
 			}
 			else if (id == Pages::DIFFICULTY) {
-				State::Instance()->gameState.push(GameState::DifficultyPage);
+				state->getGameState()->push(GameState::DifficultyPage);
 			}
 			else if (id == Pages::RECORDS) {
-				State::Instance()->gameState.push(GameState::Records);
+				state->getGameState()->push(GameState::Records);
 			}
 			else if (id == Pages::EXIT) {
 				Application::Instance()->GetWindow().close();

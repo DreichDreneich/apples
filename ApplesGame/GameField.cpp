@@ -18,7 +18,7 @@ namespace ApplesGame
 		};
 	}
 
-	void GameField::Draw(State& gameState)
+	void GameField::Draw()
 	{
 		auto gs = State::Instance();
 
@@ -34,12 +34,11 @@ namespace ApplesGame
 		shape.setFillColor(sf::Color(70, 148, 0, 220));
 		Application::Instance()->GetWindow().draw(shape);
 
-
-		for (int i = 0; i < gs->gameField.grid.size(); i++)
+		for (int i = 0; i < gs->getGameField()->grid.size(); i++)
 		{
-			for (int j = 0; j < gs->gameField.grid[j].size(); j++)
+			for (int j = 0; j < gs->getGameField()->grid[j].size(); j++)
 			{
-				auto el = gs->gameField.grid[i][j];
+				auto el = gs->getGameField()->grid[i][j];
 
 				if (el.type == ActorType::NONE) {
 					continue;
@@ -51,34 +50,5 @@ namespace ApplesGame
 				actor.Draw();
 			}
 		}
-
-		sf::Vertex b1[] =
-		{
-			sf::Vertex(sf::Vector2f(0, TOP_PADDING)),
-			sf::Vertex(sf::Vector2f(SCREEN_WIDTH, TOP_PADDING)),
-		};
-
-		sf::Vertex b2[] =
-		{
-			sf::Vertex(sf::Vector2f(1, TOP_PADDING)),
-			sf::Vertex(sf::Vector2f(1, SCREEN_HEGHT)),
-		};
-
-		sf::Vertex b3[] =
-		{
-			sf::Vertex(sf::Vector2f(1, SCREEN_HEGHT - 1)),
-			sf::Vertex(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEGHT - 1)),
-		};
-
-		sf::Vertex b4[] =
-		{
-			sf::Vertex(sf::Vector2f(SCREEN_WIDTH, TOP_PADDING)),
-			sf::Vertex(sf::Vector2f(SCREEN_WIDTH, SCREEN_HEGHT)),
-		};
-
-		//Application::Instance()->GetWindow().draw(b1, 3, sf::Lines);
-		//Application::Instance()->GetWindow().draw(b2, 3, sf::Lines);
-		//Application::Instance()->GetWindow().draw(b3, 3, sf::Lines);
-		//Application::Instance()->GetWindow().draw(b4, 3, sf::Lines);
 	}
 }

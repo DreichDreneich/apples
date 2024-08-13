@@ -1,4 +1,5 @@
 #pragma once
+
 using namespace std;
 
 namespace ApplesGame
@@ -22,6 +23,6 @@ namespace ApplesGame
 	public:
 		vector<vector<GameEl>> grid;
 		static Vector2f FieldToScreenPosition(Vector2i);
-		void Draw(State& gameState);
+		void Draw();
 	};
 }

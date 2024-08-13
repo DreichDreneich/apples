@@ -25,6 +25,37 @@ namespace ApplesGame
 		difficulty = &value;
 	}
 
+	Player* State::getPlayer() 
+	{
+		return &player;
+	}
+
+	GameField* State::getGameField()
+	{
+		return &gameField;
+	}
+
+	stack<GameState>* State::getGameState()
+	{
+		return &gameState;
+	}
+
+	void State::clearGameState()
+	{
+		gameState = {};
+	}
+
+	void State::HandleKeyboardEvent(const sf::Event& evt)
+	{
+		if (gameState.top() == GameState::MainMenu) {
+			uiState.menuPage.HandleKeyboardEvent(evt);
+		}
+
+		if (gameState.top() == GameState::DifficultyPage) {
+			uiState.difficultyPage->HandleKeyboardEvent(evt);
+		}
+	}
+
 	void State::ToggleGameMode(int menuItem)
 	{
 		if (HasMaskFlag(gameMode, menuItem))
@@ -49,6 +80,83 @@ namespace ApplesGame
 
 		recordsList.insert({ PLAYER_NAME, 0 });
 		uiState.recordsList.insert({ PLAYER_NAME, {} });
+	}
+
+	void State::HandleKeyReleasedEvent(sf::Event event)
+	{
+		switch (event.key.code)
+		{
+		case sf::Keyboard::Num1:
+		case sf::Keyboard::Numpad1:
+		{
+			if (gameState.top() == GameState::MainMenu)
+			{
+				State::Instance()->ToggleGameMode((int)GameMode::infiniteApple);
+			}
+			else if (gameState.top() == GameState::PauseMenu)
+			{
+				gameState = {};
+				gameState.push(GameState::MainMenu);
+			}
+			break;
+		}
+		case sf::Keyboard::Num2:
+		case sf::Keyboard::Numpad2:
+		{
+			if (gameState.top() == GameState::MainMenu)
+			{
+				State::Instance()->ToggleGameMode((int)GameMode::withAcceleration);
+			}
+			else if (gameState.top() == GameState::PauseMenu)
+			{
+				Application::Instance()->GetWindow().close();
+			}
+			break;
+		}
+		case sf::Keyboard::Num3:
+		{
+			if (gameState.top() == GameState::PauseMenu)
+			{
+				gameState.pop();
+			}
+			break;
+		}
+		case sf::Keyboard::Space:
+		{
+			if (gameState.top() == GameState::PauseMenu)
+			{
+				gameState.pop();
+			}
+			else if (gameState.top() == GameState::GameOverMenu)
+			{
+				State::Instance()->Restart();
+				gameState.pop();
+			}
+			else if (gameState.top() == GameState::MainMenu)
+			{
+				State::Instance()->Restart();
+				gameState = {};
+				gameState.push(GameState::Game);
+			}
+			else if (gameState.top() == GameState::Game)
+			{
+				gameState.push(GameState::PauseMenu);
+			}
+			break;
+		}
+		case sf::Keyboard::Tab:
+		{
+			if (gameState.top() == GameState::MainMenu) {
+				gameState.push(GameState::Records);
+			}
+			else if (gameState.top() == GameState::Records) {
+				gameState.pop();
+			}
+			break;
+		}
+		default:
+			break;
+		}
 	}
 
 	void State::GenerateNewActorPosition(GameEl& elem, int oldX, int oldY)
@@ -81,14 +189,14 @@ namespace ApplesGame
 			auto x = rand() % state->xCellsNum;
 			auto y = rand() % state->yCellsNum;
 
-			if (state->gameField.grid[x][y].type == ActorType::NONE)
+			if (state->getGameField()->grid[x][y].type == ActorType::NONE)
 			{
 				state->actorsInfo[type].store[counter].Init(state->actorsInfo[type].texture);
 
 				GameEl el{};
 				el.idx = counter;
 				el.type = type;
-				state->gameField.grid[x][y] = el;
+				state->getGameField()->grid[x][y] = el;
 				++counter;
 			}
 		}
@@ -227,14 +335,14 @@ namespace ApplesGame
 			UpdateActors(timeDelta);
 		}
 
-		this->uiState.Update(*this);
+		this->uiState.Update();
 	}
 
 	void State::Draw()
 	{
 		if (gameState.top() == GameState::Game)
 		{
-			gameField.Draw(*this);
+			gameField.Draw();
 			player.Draw();
 		}
 

@@ -68,19 +68,18 @@ namespace ApplesGame
 	void UIState::DrawRecordsList(float topMargin)
 	{
 		auto gameState = State::Instance();
-		UIState uiState = gameState->uiState;
-		uiState.recordsListHeader.setPosition(window->getSize().x / 2.f, topMargin + 100);
+		recordsListHeader.setPosition(window->getSize().x / 2.f, topMargin + 100);
 
-		window->draw(uiState.recordsListHeader);
+		window->draw(recordsListHeader);
 
 		vector<pair<string, int>> pairs(gameState->recordsList.begin(), gameState->recordsList.end());
 		std::sort(pairs.begin(), pairs.end(), [](pair<string, int> a, pair<string, int> b) {
 			return a.second > b.second;
-			});
+		});
 
 		for (short i = 0; i < pairs.size(); ++i)
 		{
-			auto recordTexts = uiState.recordsList[pairs[i].first];
+			auto recordTexts = recordsList[pairs[i].first];
 
 			recordTexts.second.setString(to_string(pairs[i].second));
 
@@ -181,22 +180,22 @@ namespace ApplesGame
 		InitPauseGame(pauseGameMenu);
 	}
 
-	void UIState::Update(const struct State& state)
+	void UIState::Update()
 	{
-		scoreText.setString("Score: " + std::to_string(state.score));
+		scoreText.setString("Score: " + std::to_string(State::Instance()->score));
 
-		sf::Color gameOverTextColor = (int)state.timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
+		sf::Color gameOverTextColor = (int)State::Instance()->timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
 		gameOverText.setFillColor(gameOverTextColor);
 
-		isBonusDurationVisible = state.player.hasBonus;
-		bonusDuration.setString(std::to_string((int)state.player.bonusTimeRemaining));
-		bonusDurationPosition.x = state.player.position.x;
-		bonusDurationPosition.y = state.player.position.y - state.player.size / 2;
+		isBonusDurationVisible = State::Instance()->getPlayer()->hasBonus;
+		bonusDuration.setString(std::to_string((int)State::Instance()->getPlayer()->bonusTimeRemaining));
+		bonusDurationPosition.x = State::Instance()->getPlayer()->position.x;
+		bonusDurationPosition.y = State::Instance()->getPlayer()->position.y - State::Instance()->getPlayer()->size / 2;
 	}
 
 	void UIState::Draw()
 	{
-		switch (State::Instance()->gameState.top())
+		switch (State::Instance()->getGameState()->top())
 		{
 		case GameState::MainMenu:
 		{

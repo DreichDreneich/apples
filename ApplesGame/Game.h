@@ -35,10 +35,21 @@ namespace ApplesGame
 		void GenerateNewActorPosition(GameEl& elem, int oldX, int oldY);
 
 		Difficulty* difficulty;
+		Player player;
+		GameField gameField;
+		UIState uiState;
+		stack<GameState> gameState;
 
 	public:
 		Difficulty* getDifficulty();
 		void setDifficulty(Difficulty);
+
+		Player* getPlayer();
+
+		GameField* getGameField();
+
+		stack<GameState>* getGameState();
+		void clearGameState();
 
 		State(State& other) = delete;
 		State operator=(const State&) = delete;
@@ -48,11 +59,6 @@ namespace ApplesGame
 		static State* Instance();
 
 		void Init(sf::RenderWindow& window);
-
-		Player player;
-		GameField gameField;
-
-		UIState uiState;
 
 		map<ActorType, ActorInfo> actorsInfo;
 
@@ -72,7 +78,6 @@ namespace ApplesGame
 		//bool isGameOver = false;
 		float timeSinceGameOver = 0.f;
 
-		stack<GameState> gameState;
 
 		map<string, int> recordsList = {
 			{"Petr", 0},
@@ -88,6 +93,8 @@ namespace ApplesGame
 		int xCellsNum;
 		int yCellsNum;
 
+		void HandleKeyReleasedEvent(sf::Event event);
+		void HandleKeyboardEvent(const sf::Event& evt);
 		void ToggleGameMode(int menuItem);
 		void Restart();
 		void Update(float timeDelta);
