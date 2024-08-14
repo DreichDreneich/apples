@@ -92,13 +92,6 @@ namespace ApplesGame
 		inputHintText.setString("Use arrow keys to move, Space to restart, ESC to exit");
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
 
-		gameOverText.setFont(State::Instance()->font);
-		gameOverText.setCharacterSize(48);
-		gameOverText.setStyle(sf::Text::Bold);
-		gameOverText.setFillColor(sf::Color::Red);
-		gameOverText.setString("GAME OVER");
-		gameOverText.setOrigin(GetTextOrigin(gameOverText, { 0.5f, 0.5f }));
-
 		isBonusDurationVisible = false;
 		bonusDuration.setFont(State::Instance()->font);
 		bonusDuration.setCharacterSize(14);
@@ -106,6 +99,8 @@ namespace ApplesGame
 
 		menuPage.Init();
 		difficultyPage->Init();
+		gameOverPage = make_unique<GameOverPage>();
+		recordsList = make_unique<RecordsList>();
 
 		InitPauseGame(pauseGameMenu);
 	}
@@ -115,7 +110,6 @@ namespace ApplesGame
 		scoreText.setString("Score: " + std::to_string(State::Instance()->score));
 
 		sf::Color gameOverTextColor = (int)State::Instance()->timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
-		gameOverText.setFillColor(gameOverTextColor);
 
 		isBonusDurationVisible = State::Instance()->getPlayer()->hasBonus;
 		bonusDuration.setString(std::to_string((int)State::Instance()->getPlayer()->bonusTimeRemaining));
@@ -131,8 +125,8 @@ namespace ApplesGame
 		{
 			menuPage.Draw();
 
-			/*gameTitle.setPosition((float)window->getSize().x / 2, 60.f);
-			window->draw(gameTitle);*/
+			gameTitle.setPosition((float)window->getSize().x / 2, 60.f);
+			window->draw(gameTitle);
 
 			break;
 		}
@@ -143,9 +137,7 @@ namespace ApplesGame
 		}
 		case GameState::GameOverMenu:
 		{
-			gameOverPage = make_unique<GameOverPage>();
 			gameOverPage->Draw();
-
 			break;
 		}
 		case GameState::Game:
@@ -166,15 +158,12 @@ namespace ApplesGame
 		}
 		case GameState::Records:
 		{
-			recordsList1 = make_unique<RecordsList>();
-			recordsList1->Draw();
-
+			recordsList->Draw();
 			break;
 		}
 		case GameState::PauseMenu:
 		{
 			DrawPauseMenu();
-
 			break;
 		}
 		}

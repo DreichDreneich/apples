@@ -26,8 +26,6 @@ namespace ApplesGame
 	public:
 		Text scoreText;
 		Text inputHintText;
-		Text gameOverText;
-		Text recordsListHeader;
 
 		sf::Text bonusDuration;
 		sf::Vector2f bonusDurationPosition;
@@ -36,7 +34,7 @@ namespace ApplesGame
 
 		MenuPage menuPage;
 		DifficultyPage* difficultyPage;
-		unique_ptr<RecordsList> recordsList1;
+		unique_ptr<RecordsList> recordsList;
 		unique_ptr<GameOverPage> gameOverPage;
 
 		unique_ptr<Page> currentPage;

@@ -21,8 +21,7 @@ namespace ApplesGame
 
 	public:
 		RecordsList();
-
-
+		~RecordsList() = default;
 		// Inherited via Page
 		void Init() override;
 

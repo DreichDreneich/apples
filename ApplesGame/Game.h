@@ -34,7 +34,13 @@ namespace ApplesGame
 		bool CheckFieldCell();
 		void GenerateNewActorPosition(GameEl& elem, int oldX, int oldY);
 
-		Difficulty* difficulty;
+		map<Difficulty, float> accelerationByDifficulty = {
+			{Difficulty::EASY, 0.f},
+			{Difficulty::MEDIUM, 0.5f},
+			{Difficulty::HARD, 1.f},
+		};
+
+		Difficulty difficulty;
 		Player player;
 		GameField gameField;
 		UIState uiState;
@@ -63,6 +69,7 @@ namespace ApplesGame
 		map<ActorType, ActorInfo> actorsInfo;
 
 		// Game resources
+		//TODO: movee to application?
 		sf::Font font;
 		sf::Texture playerTexture;
 		sf::Texture playerHeadTexture;

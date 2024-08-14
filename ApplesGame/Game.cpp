@@ -17,12 +17,12 @@ namespace ApplesGame
 
 	Difficulty* State::getDifficulty()
 	{
-		return difficulty;
+		return &difficulty;
 	}
 
 	void State::setDifficulty(Difficulty value)
 	{
-		difficulty = &value;
+		difficulty = value;
 	}
 
 	Player* State::getPlayer() 
@@ -50,8 +50,7 @@ namespace ApplesGame
 		if (gameState.top() == GameState::MainMenu) {
 			uiState.menuPage.HandleKeyboardEvent(evt);
 		}
-
-		if (gameState.top() == GameState::DifficultyPage) {
+		else if (gameState.top() == GameState::DifficultyPage) {
 			uiState.difficultyPage->HandleKeyboardEvent(evt);
 		}
 	}
@@ -253,18 +252,15 @@ namespace ApplesGame
 		}
 		case ActorType::APPLE:
 		{
-			if (HasMaskFlag(gameMode, (int)GameMode::infiniteApple)) {
+			if (difficulty != Difficulty::EASY)
 				GenerateNewActorPosition(*fieldCell, currentHeadPosition.x, currentHeadPosition.y);
-			}
 			else {
 				fieldCell->type = ActorType::NONE;
 			}
 
 			score = score + (player.hasBonus ? 2 : 1);
 
-			if (HasMaskFlag(gameMode, (int)GameMode::withAcceleration)) {
-				player.speed += ACCELERATION;
-			}
+			player.speed += accelerationByDifficulty[difficulty];
 
 			PlaySound(applePickSound.sound);
 			player.AddPart();
@@ -395,6 +391,7 @@ namespace ApplesGame
 
 	void State::Init(sf::RenderWindow& window)
 	{
+		difficulty = Difficulty::MEDIUM;
 		GenerateRecordsList();
 		uiState.InitUI(&window);
 	}

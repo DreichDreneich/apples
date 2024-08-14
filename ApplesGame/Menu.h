@@ -104,14 +104,14 @@ namespace ApplesGame
 		sf::RectangleShape selectedPointerRect;
 
 	public:
-		RadioMenu(T* selectedItem = nullptr) {
+		RadioMenu(T* item) {
 			selectedPointerRect.setSize({ 10.f, 10.f });
 			selectedPointerRect.setFillColor(sf::Color::Yellow);
 
-			RadioMenu::selectedItem = selectedItem;
+			selectedItem = item;
 
 			auto func = [&](T& id) {
-				RadioMenu::selectedItem = &id;
+				*selectedItem = id;
 				};
 
 			Menu<T>::OnSelect(func);
