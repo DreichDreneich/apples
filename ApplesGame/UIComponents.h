@@ -13,20 +13,17 @@ namespace ApplesGame
 		Text textObj;
 
 	public:
-		void Draw();
+		void Draw(const Vector2f& position = {});
 	};
 
 	class PageHeader: public TextComponent
 	{
 	public:
-		PageHeader(string str);
+		PageHeader(string str, int size = 32);
 	};
 
 	class CommonText: public TextComponent {
 	public:
 		CommonText(string str, Vector2D origin = { 1.f, 0.f });
-
-		void Draw(float x, float y);
-		void Draw() = delete;
 	};
 }

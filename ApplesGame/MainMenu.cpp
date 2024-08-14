@@ -47,7 +47,7 @@ namespace ApplesGame
 		menu->HandleKeyboardEvent(evt);
 	}
 
-	void MenuPage::Draw()
+	void MenuPage::Draw(Vector2f margin)
 	{
 		float windowX = (float)Application::Instance()->GetWindow().getSize().x / 2;
 		float windowY = (float)Application::Instance()->GetWindow().getSize().y / 3;

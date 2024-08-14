@@ -1,6 +1,7 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "MainMenu.h"
+#include "RecordsListPage.h"
 #include "DifficultyPage.h"
 
 using namespace std;
@@ -19,8 +20,6 @@ namespace ApplesGame
 	{
 		sf::RenderWindow* window;
 
-		void DrawRecordsList(float topMargin = 0);
-		void DrawGameOverScreen();
 		void DrawHint();
 		void DrawPauseMenu();
 
@@ -29,7 +28,6 @@ namespace ApplesGame
 		Text inputHintText;
 		Text gameOverText;
 		Text recordsListHeader;
-		map<string, pair<Text, Text>> recordsList;
 
 		sf::Text bonusDuration;
 		sf::Vector2f bonusDurationPosition;
@@ -38,6 +36,10 @@ namespace ApplesGame
 
 		MenuPage menuPage;
 		DifficultyPage* difficultyPage;
+		unique_ptr<RecordsList> recordsList1;
+		unique_ptr<GameOverPage> gameOverPage;
+
+		unique_ptr<Page> currentPage;
 
 		PauseGameMenu pauseGameMenu;
 

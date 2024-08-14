@@ -5,6 +5,7 @@
 #include "MainMenu.h"
 #include "Game.h"
 #include "Menu.h"
+#include "RecordsListPage.h"
 
 using namespace std;
 using namespace sf;
@@ -29,30 +30,6 @@ namespace ApplesGame
 		text.setOrigin(GetTextOrigin(text, { xOrigin, 0.f }));
 	}
 
-	void InitRecordsList(UIState& uiState)
-	{
-		uiState.recordsListHeader.setFont(State::Instance()->font);
-		uiState.recordsListHeader.setCharacterSize(32);
-		uiState.recordsListHeader.setStyle(sf::Text::Bold);
-		uiState.recordsListHeader.setFillColor(sf::Color::Yellow);
-		uiState.recordsListHeader.setString("Records List");
-		uiState.recordsListHeader.setOrigin(GetTextOrigin(uiState.recordsListHeader, { 0.5f, 0.5f }));
-
-		auto it = uiState.recordsList.begin();
-
-		while (it != uiState.recordsList.end())
-		{
-			Text key;
-			Text value;
-			InitRegularText(key);
-			key.setString(it->first + " ");
-			InitRegularText(value);
-
-			it->second = { key, value };
-			++it;
-		}
-	}
-
 	void InitPauseGame(PauseGameMenu& pauseGameMenu)
 	{
 		pauseGameMenu.mainMenu.setString("<1>  Main menu");
@@ -63,51 +40,6 @@ namespace ApplesGame
 
 		pauseGameMenu.resumeGame.setString("<3>  Resume game");
 		InitRegularText(pauseGameMenu.resumeGame, 0.f);
-	}
-
-	void UIState::DrawRecordsList(float topMargin)
-	{
-		auto gameState = State::Instance();
-		recordsListHeader.setPosition(window->getSize().x / 2.f, topMargin + 100);
-
-		window->draw(recordsListHeader);
-
-		vector<pair<string, int>> pairs(gameState->recordsList.begin(), gameState->recordsList.end());
-		std::sort(pairs.begin(), pairs.end(), [](pair<string, int> a, pair<string, int> b) {
-			return a.second > b.second;
-		});
-
-		for (short i = 0; i < pairs.size(); ++i)
-		{
-			auto recordTexts = recordsList[pairs[i].first];
-
-			recordTexts.second.setString(to_string(pairs[i].second));
-
-			auto recordY = topMargin + 150 + i * 50;
-
-			recordTexts.first.setPosition(window->getSize().x / 2.f - 100, recordY);
-			recordTexts.second.setPosition(window->getSize().x / 2.f + 100, recordY);
-
-			window->draw(recordTexts.first);
-			window->draw(recordTexts.second);
-		}
-	}
-
-	void UIState::DrawGameOverScreen()
-	{
-		auto gameOverTextY = window->getSize().y / 5.f;
-		gameOverText.setPosition(window->getSize().x / 2.f, gameOverTextY);
-
-		sf::RectangleShape background;
-		background.setPosition(0.f, 0.f);
-		background.setSize({ (float)window->getSize().x, (float)window->getSize().y });
-		background.setFillColor({ 0, 0, 0, 200 });
-
-		window->draw(background);
-
-		DrawRecordsList(gameOverTextY);
-
-		window->draw(gameOverText);
 	}
 	
 	void UIState::DrawHint()
@@ -175,8 +107,6 @@ namespace ApplesGame
 		menuPage.Init();
 		difficultyPage->Init();
 
-		//InitMainMenu(mainMenu);
-		InitRecordsList(*this);
 		InitPauseGame(pauseGameMenu);
 	}
 
@@ -201,8 +131,8 @@ namespace ApplesGame
 		{
 			menuPage.Draw();
 
-			gameTitle.setPosition((float)window->getSize().x / 2, 60.f);
-			window->draw(gameTitle);
+			/*gameTitle.setPosition((float)window->getSize().x / 2, 60.f);
+			window->draw(gameTitle);*/
 
 			break;
 		}
@@ -213,9 +143,8 @@ namespace ApplesGame
 		}
 		case GameState::GameOverMenu:
 		{
-			DrawGameOverScreen();
-
-			DrawHint();
+			gameOverPage = make_unique<GameOverPage>();
+			gameOverPage->Draw();
 
 			break;
 		}
@@ -237,7 +166,8 @@ namespace ApplesGame
 		}
 		case GameState::Records:
 		{
-			DrawRecordsList();
+			recordsList1 = make_unique<RecordsList>();
+			recordsList1->Draw();
 
 			break;
 		}

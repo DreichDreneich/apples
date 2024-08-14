@@ -16,8 +16,8 @@ namespace ApplesGame
 	public:
 		MenuPage() = default;
 
-		void Init();
-		void HandleKeyboardEvent(const sf::Event& event);
-		void Draw();
+		void Init() override;
+		void HandleKeyboardEvent(const sf::Event& event) override;
+		void Draw(Vector2f margin = {}) override;
 	};
 }

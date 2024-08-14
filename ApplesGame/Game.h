@@ -78,7 +78,6 @@ namespace ApplesGame
 		//bool isGameOver = false;
 		float timeSinceGameOver = 0.f;
 
-
 		map<string, int> recordsList = {
 			{"Petr", 0},
 			{"Svetlana", 0},

@@ -74,12 +74,11 @@ namespace ApplesGame
 
 		while (it != recordsList.end()) {
 			it->second = rand() % 10;
-			uiState.recordsList[it->first] = {};
+			recordsList[it->first] = {};
 			++it;
 		}
 
 		recordsList.insert({ PLAYER_NAME, 0 });
-		uiState.recordsList.insert({ PLAYER_NAME, {} });
 	}
 
 	void State::HandleKeyReleasedEvent(sf::Event event)

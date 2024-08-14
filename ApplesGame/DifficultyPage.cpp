@@ -33,13 +33,13 @@ namespace ApplesGame
 		menu->HandleKeyboardEvent(evt);
 	}
 
-	void DifficultyPage::Draw()
+	void DifficultyPage::Draw(Vector2f margin)
 	{
 		float windowX = (float)Application::Instance()->GetWindow().getSize().x;
 		float windowY = (float)Application::Instance()->GetWindow().getSize().y;
 
 		menu->Draw({ windowX/2, windowY/3 });
 		header->Draw();
-		backText->Draw(windowX / 2, windowY - 100);
+		backText->Draw({ windowX / 2, windowY - 100 });
 	}
 }
