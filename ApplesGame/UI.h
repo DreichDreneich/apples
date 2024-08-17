@@ -44,7 +44,6 @@ namespace ApplesGame
 
 		PauseGameMenu pauseGameMenu;
 
-
 		UIState();
 
 		void InitUI(sf::RenderWindow* window);

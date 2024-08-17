@@ -26,15 +26,12 @@ namespace ApplesGame
 		short hoveredMenuItemNumber;
 		std::function<void(T&)> handleSelect;
 
-		FloatRect* GetMenuItemGlPositionById(T& id) {
-			for (auto item : items) {
-				if (item.first == id) {
-					auto a = item.second.textObj.getGlobalBounds();
-					return &a;
-				}
-			}
+		FloatRect GetMenuItemGlPositionById(T& id) {
+			auto it = find_if(items.begin(), items.end(), [id](pair<T, MenuItem> item) {
+				return item.first == id;
+				});
 
-			return nullptr;
+			return it->second.textObj.getGlobalBounds();
 		}
 
 	public:
@@ -122,10 +119,8 @@ namespace ApplesGame
 
 			if (selectedItem != nullptr) {
 				auto position = Menu<T>::GetMenuItemGlPositionById(*selectedItem);
-				if (position != nullptr) {
-					selectedPointerRect.setPosition({ position->left - 20.f, position->top + 4.f });
-					Application::Instance()->GetWindow().draw(selectedPointerRect);
-				}
+				selectedPointerRect.setPosition({ position.left - 20.f, position.top + 4.f });
+				Application::Instance()->GetWindow().draw(selectedPointerRect);
 			}
 		}
 
