@@ -103,9 +103,6 @@ namespace ApplesGame
 		gameOverPage = make_unique<GameOverPage>();
 		recordsList = make_unique<RecordsList>();
 
-		gameOverPage->Init();
-		recordsList->Init();
-
 		InitPauseGame(pauseGameMenu);
 	}
 

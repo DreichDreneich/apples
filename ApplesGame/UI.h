@@ -18,7 +18,10 @@ namespace ApplesGame
 
 	class UIState
 	{
+		// TODO: remove
 		sf::RenderWindow* window;
+
+		bool isBonusDurationVisible = false;
 
 		void DrawHint();
 		void DrawPauseMenu();
@@ -41,7 +44,6 @@ namespace ApplesGame
 
 		PauseGameMenu pauseGameMenu;
 
-		bool isBonusDurationVisible = false;
 
 		UIState();
 
