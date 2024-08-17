@@ -165,7 +165,6 @@
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="MainMenu.cpp" />
     <ClCompile Include="Math.cpp" />
-    <ClCompile Include="Checkbox.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Actor.cpp" />
@@ -183,7 +182,6 @@
     <ClInclude Include="GameField.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Math.h" />
-    <ClInclude Include="Checkbox.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Page.h" />
     <ClInclude Include="Player.h" />

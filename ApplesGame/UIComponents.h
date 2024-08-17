@@ -24,6 +24,7 @@ namespace ApplesGame
 
 	class CommonText: public TextComponent {
 	public:
-		CommonText(string str, Vector2D origin = { 1.f, 0.f });
+		CommonText(const string& str, Vector2D origin = { 1.f, 0.f });
+		void setString(const string& str);
 	};
 }

@@ -25,6 +25,9 @@ namespace ApplesGame {
 		{
 			auto recordTexts = recordsList[pairs[i].first];
 
+			recordTexts.first->setString(pairs[i].first);
+			recordTexts.second->setString(to_string(pairs[i].second));
+
 			auto recordY = float(150 + i * 50);
 
 			recordTexts.first->Draw({
@@ -53,7 +56,9 @@ namespace ApplesGame {
 		recordsListHeader = new PageHeader("Таблица рекордов");
 
 		backText = new CommonText("Нажмите <TAB> что бы выйти", { 0.5f, 0.f });
+	}
 
+	void RecordsList::Init() {
 		auto it = recordsListData->begin();
 
 		while (it != recordsListData->end())
@@ -65,8 +70,6 @@ namespace ApplesGame {
 			++it;
 		}
 	}
-
-	void RecordsList::Init() {}
 
 	GameOverPage::GameOverPage()
 	{

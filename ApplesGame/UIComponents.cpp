@@ -21,12 +21,18 @@ namespace ApplesGame
 		textObj.setOrigin(GetTextOrigin(textObj, { 0.5f, 0.5f }));
 	}
 
-	CommonText::CommonText(string str, Vector2D origin)
+	CommonText::CommonText(const string& str, Vector2D origin)
 	{
 		textObj.setFont(State::Instance()->font);
 		textObj.setCharacterSize(24);
 		textObj.setFillColor(sf::Color::White);
 		textObj.setString(sf::String::fromUtf8(str.begin(), str.end()));
 		textObj.setOrigin(GetTextOrigin(textObj, origin));
+	}
+
+	void CommonText::setString(const string& str)
+	{
+		textObj.setString(sf::String::fromUtf8(str.begin(), str.end()));
+		textObj.setOrigin(GetTextOrigin(textObj, { 0.5f, 0.5f }));
 	}
 }

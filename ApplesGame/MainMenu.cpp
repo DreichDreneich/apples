@@ -17,7 +17,6 @@ namespace ApplesGame
 		menu->AddItem(Pages::START, "Начать игру");
 		menu->AddItem(Pages::DIFFICULTY, "Уровень сложности");
 		menu->AddItem(Pages::RECORDS, "Рекорды");
-		menu->AddItem(Pages::SETTINGS, "Настройки");
 		menu->AddItem(Pages::EXIT, "Выход");
 
 		menu->Hover(0);

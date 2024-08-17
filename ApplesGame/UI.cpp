@@ -73,6 +73,7 @@ namespace ApplesGame
 	UIState::UIState()
 	{
 		difficultyPage = new DifficultyPage();
+
 	}
 
 	void UIState::InitUI(sf::RenderWindow* window)
@@ -101,6 +102,9 @@ namespace ApplesGame
 		difficultyPage->Init();
 		gameOverPage = make_unique<GameOverPage>();
 		recordsList = make_unique<RecordsList>();
+
+		gameOverPage->Init();
+		recordsList->Init();
 
 		InitPauseGame(pauseGameMenu);
 	}

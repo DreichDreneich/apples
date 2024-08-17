@@ -73,7 +73,6 @@ namespace ApplesGame
 
 		while (it != recordsList.end()) {
 			it->second = rand() % 10;
-			recordsList[it->first] = {};
 			++it;
 		}
 
