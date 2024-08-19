@@ -13,7 +13,6 @@ namespace ApplesGame {
 	void RecordsList::Draw(Vector2f margin)
 	{
 		auto app = Application::Instance();
-
 		auto gameState = State::Instance();
 
 		vector<pair<string, int>> pairs(gameState->recordsList.begin(), gameState->recordsList.end());
@@ -40,7 +39,7 @@ namespace ApplesGame {
 		float windowX = (float)app->GetWindow().getSize().x + margin.x;
 		float windowY = (float)app->GetWindow().getSize().y + margin.y;
 
-		backText->Draw({ windowX / 2, windowY - 100 });
+		backText->Draw({ windowX / 2, windowY - 100.f });
 	}
 
 	RecordsList::RecordsList()
@@ -49,7 +48,7 @@ namespace ApplesGame {
 
 		recordsListHeader = new PageHeader("Таблица рекордов");
 
-		backText = new CommonText("Нажмите <TAB> что бы выйти", { 0.5f, 0.f });
+		backText = new CommonText("<TAB> Назад", { 0.5f, 0.f });
 
 		auto it = recordsListData->begin();
 
@@ -73,7 +72,25 @@ namespace ApplesGame {
 		delete recordsListHeader;
 
 		recordsListHeader = new PageHeader("КОНЕЦ ИГРЫ");
-		backText = new CommonText("Нажмите <Space> что бы начать игру заново и <TAB> что бы выйти в главное меню", { 0.5f, 0.f });
+		backText = new CommonText("Нажмите <Space> что бы начать игру заново\n	 и <TAB> что бы выйти в главное меню", { 0.5f, 0.f });
+	}
+
+	void GameOverPage::HandleKeyboardEvent(const sf::Event& evt)
+	{
+		if (evt.type == sf::Event::KeyReleased)
+		{
+			if (evt.key.code == sf::Keyboard::Tab) 
+			{
+				State::Instance()->clearGameState();
+				State::Instance()->getGameState()->push(GameState::MainMenu);
+			}
+			
+			if (evt.key.code == sf::Keyboard::Space)
+			{
+				State::Instance()->getGameState()->pop();
+				State::Instance()->Restart();
+			}
+		}
 	}
 }
 

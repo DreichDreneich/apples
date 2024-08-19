@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <unordered_map>
 #include "SFML/Graphics.hpp"
 #include "Math.h"
 #include "Application.h"
@@ -26,7 +27,7 @@ namespace ApplesGame
 		short hoveredMenuItemNumber;
 		std::function<void(T&)> handleSelect;
 
-		FloatRect GetMenuItemGlPositionById(T& id) {
+		FloatRect GetMenuItemGlPositionById(const T& id) {
 			auto it = find_if(items.begin(), items.end(), [id](pair<T, MenuItem> item) {
 				return item.first == id;
 				});
@@ -125,5 +126,57 @@ namespace ApplesGame
 		}
 
 		void OnSelect(void(*func)(string id)) = delete;
+	};
+
+	struct CheckboxData {
+		sf::RectangleShape rect;
+		bool* isSelected;
+	};
+
+	template<typename T>
+	class CheckboxMenu : public Menu<T>
+	{
+		unordered_map<T, CheckboxData> selectedItems;
+		std::function<void(T&, bool)> callback;
+
+	public:
+		void Draw(Vector2f pos) {
+			Menu<T>::Draw(pos);
+
+			for (auto& item : selectedItems) {
+				auto position = Menu<T>::GetMenuItemGlPositionById(item.first);
+				item.second.rect.setPosition({ position.left - 20.f, position.top + 4.f });
+
+				if (*item.second.isSelected)
+				{
+					Application::Instance()->GetWindow().draw(item.second.rect);
+				}
+			}
+		}
+
+		CheckboxMenu(void(*cb)(T id, bool currValue))
+		{
+			auto func = [&](T& id) {
+				auto nextVal = !*selectedItems[id].isSelected;
+				*selectedItems[id].isSelected = nextVal;
+				callback(id, nextVal);
+				};
+
+			callback = cb;
+			Menu<T>::OnSelect(func);
+		};
+
+		void AddItem(T id, string text, bool* isSelected) {
+			Menu<T>::AddItem(id, text);
+
+			sf::RectangleShape newRect;
+
+			newRect.setSize({ 10.f, 10.f });
+			newRect.setFillColor(sf::Color::Yellow);
+
+			selectedItems.insert({ id, { newRect, isSelected } });
+		}
+
+		void OnSelect(void(*callback)(T id)) = delete;
 	};
 }

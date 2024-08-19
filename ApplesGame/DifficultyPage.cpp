@@ -20,7 +20,7 @@ namespace ApplesGame
 
 		menu->Hover(0);
 
-		backText = new CommonText("Нажмите <TAB> что бы вернуться назад", {0.5f, 0.f});
+		backText = new CommonText("<TAB> Назад", {0.5f, 0.f});
 	}
 
 	void DifficultyPage::HandleKeyboardEvent(const sf::Event& evt)
@@ -38,8 +38,11 @@ namespace ApplesGame
 		float windowX = (float)Application::Instance()->GetWindow().getSize().x;
 		float windowY = (float)Application::Instance()->GetWindow().getSize().y;
 
-		menu->Draw({ windowX/2, windowY/3 });
-		header->Draw();
-		backText->Draw({ windowX / 2, windowY - 100 });
+		Vector2f menuPosition = { windowX / 2, windowY / 3 };
+		Vector2f headerPosition = { menuPosition.x, menuPosition.y - 50.f };
+
+		menu->Draw(menuPosition);
+		header->Draw(headerPosition);
+		backText->Draw({ windowX / 2, windowY - 100.f });
 	}
 }

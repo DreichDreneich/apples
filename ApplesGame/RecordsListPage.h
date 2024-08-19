@@ -36,5 +36,6 @@ namespace ApplesGame
 
 	public:
 		GameOverPage();
+		void HandleKeyboardEvent(const sf::Event& event) override;
 	};
 }

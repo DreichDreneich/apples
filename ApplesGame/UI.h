@@ -3,6 +3,7 @@
 #include "MainMenu.h"
 #include "RecordsListPage.h"
 #include "DifficultyPage.h"
+#include "SettingsPage.h"
 
 using namespace std;
 using namespace sf;
@@ -37,6 +38,7 @@ namespace ApplesGame
 
 		MenuPage menuPage;
 		DifficultyPage* difficultyPage;
+		unique_ptr<SettingsPage> settingsPage;
 		unique_ptr<RecordsList> recordsList;
 		unique_ptr<GameOverPage> gameOverPage;
 

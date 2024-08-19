@@ -47,11 +47,22 @@ namespace ApplesGame
 
 	void State::HandleKeyboardEvent(const sf::Event& evt)
 	{
-		if (gameState.top() == GameState::MainMenu) {
+		switch (gameState.top())
+		{
+		case GameState::MainMenu:
 			uiState.menuPage.HandleKeyboardEvent(evt);
-		}
-		else if (gameState.top() == GameState::DifficultyPage) {
+			break;
+		case GameState::DifficultyPage:
 			uiState.difficultyPage->HandleKeyboardEvent(evt);
+			break;
+		case GameState::GameOverMenu:
+			uiState.gameOverPage->HandleKeyboardEvent(evt);
+			break;
+		case GameState::SettingsPage:
+			uiState.settingsPage->HandleKeyboardEvent(evt);
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -79,6 +90,7 @@ namespace ApplesGame
 		recordsList.insert({ PLAYER_NAME, 0 });
 	}
 
+	// TODO: move handlers into separate class
 	void State::HandleKeyReleasedEvent(sf::Event event)
 	{
 		switch (event.key.code)
@@ -86,11 +98,7 @@ namespace ApplesGame
 		case sf::Keyboard::Num1:
 		case sf::Keyboard::Numpad1:
 		{
-			if (gameState.top() == GameState::MainMenu)
-			{
-				State::Instance()->ToggleGameMode((int)GameMode::infiniteApple);
-			}
-			else if (gameState.top() == GameState::PauseMenu)
+			if (gameState.top() == GameState::PauseMenu)
 			{
 				gameState = {};
 				gameState.push(GameState::MainMenu);
@@ -100,11 +108,7 @@ namespace ApplesGame
 		case sf::Keyboard::Num2:
 		case sf::Keyboard::Numpad2:
 		{
-			if (gameState.top() == GameState::MainMenu)
-			{
-				State::Instance()->ToggleGameMode((int)GameMode::withAcceleration);
-			}
-			else if (gameState.top() == GameState::PauseMenu)
+			if (gameState.top() == GameState::PauseMenu)
 			{
 				Application::Instance()->GetWindow().close();
 			}
@@ -129,12 +133,6 @@ namespace ApplesGame
 				State::Instance()->Restart();
 				gameState.pop();
 			}
-			else if (gameState.top() == GameState::MainMenu)
-			{
-				State::Instance()->Restart();
-				gameState = {};
-				gameState.push(GameState::Game);
-			}
 			else if (gameState.top() == GameState::Game)
 			{
 				gameState.push(GameState::PauseMenu);
@@ -143,10 +141,7 @@ namespace ApplesGame
 		}
 		case sf::Keyboard::Tab:
 		{
-			if (gameState.top() == GameState::MainMenu) {
-				gameState.push(GameState::Records);
-			}
-			else if (gameState.top() == GameState::Records) {
+			if (gameState.top() == GameState::Records) {
 				gameState.pop();
 			}
 			break;
@@ -372,6 +367,7 @@ namespace ApplesGame
 		actorsInfo[ActorType::BONUS].num = NUM_BONUSES;
 		actorsInfo[ActorType::BONUS].store.resize(NUM_BONUSES);
 
+		// TODO: move resources loading into separate class
 		// Init game resources (terminate if error)
 		assert(playerTexture.loadFromFile(RESOURCES_PATH + "Snake_Body.png"));
 		assert(playerHeadTexture.loadFromFile(RESOURCES_PATH + "Snake_head.png"));
@@ -382,6 +378,7 @@ namespace ApplesGame
 
 		LoadAndPrepareSound(deathSound, "Death.wav");
 		LoadAndPrepareSound(applePickSound, "AppleEat.wav");
+		LoadAndPrepareSound(backgroundSound, "Clinthammer__Background_Music.wav");
 		LoadAndPrepareSound(bonusPickSound, "ding.flac");
 
 		xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
@@ -390,6 +387,12 @@ namespace ApplesGame
 
 	void State::Init(sf::RenderWindow& window)
 	{
+		*setings.getIsMusicOn() = true;
+		*setings.getisSoundOn() = true;
+
+		backgroundSound.sound.setLoop(true);
+		PlaySound(backgroundSound.sound);
+
 		difficulty = Difficulty::MEDIUM;
 		GenerateRecordsList();
 		uiState.InitUI(&window);

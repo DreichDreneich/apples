@@ -6,6 +6,7 @@
 #include "Game.h"
 #include "Menu.h"
 #include "RecordsListPage.h"
+#include "SettingsPage.h"
 
 using namespace std;
 using namespace sf;
@@ -18,28 +19,26 @@ namespace ApplesGame
 		gameTitle.setCharacterSize(48);
 		gameTitle.setFillColor(sf::Color::Red);
 		gameTitle.setStyle(sf::Text::Bold);
-		gameTitle.setString("APPLES GAME");
+		string str = "Змейка";
+		gameTitle.setString(String::fromUtf8(str.begin(), str.end()));
 		gameTitle.setOrigin(GetTextOrigin(gameTitle, { 0.5f, 0.5f }));
 	}
 
-	void InitRegularText(sf::Text& text, const float xOrigin = 1.f)
+	// TODO: use TextComponent
+	void InitRegularText(sf::Text& text, const string str)
 	{
 		text.setFont(State::Instance()->font);
 		text.setCharacterSize(24);
 		text.setFillColor(sf::Color::White);
-		text.setOrigin(GetTextOrigin(text, { xOrigin, 0.f }));
+		text.setOrigin(GetTextOrigin(text, { 0.f, 0.f }));
+		text.setString(sf::String::fromUtf8(str.begin(), str.end()));
 	}
 
 	void InitPauseGame(PauseGameMenu& pauseGameMenu)
 	{
-		pauseGameMenu.mainMenu.setString("<1>  Main menu");
-		InitRegularText(pauseGameMenu.mainMenu, 0.f);
-
-		pauseGameMenu.quitGame.setString("<2>  Quit game");
-		InitRegularText(pauseGameMenu.quitGame, 0.f);
-
-		pauseGameMenu.resumeGame.setString("<3>  Resume game");
-		InitRegularText(pauseGameMenu.resumeGame, 0.f);
+		InitRegularText(pauseGameMenu.mainMenu, "<1> Главное меню");
+		InitRegularText(pauseGameMenu.quitGame, "<2> Выйти из игры");
+		InitRegularText(pauseGameMenu.resumeGame, "<3> Продолжить игру");
 	}
 	
 	void UIState::DrawHint()
@@ -73,7 +72,6 @@ namespace ApplesGame
 	UIState::UIState()
 	{
 		difficultyPage = new DifficultyPage();
-
 	}
 
 	void UIState::InitUI(sf::RenderWindow* window)
@@ -90,7 +88,8 @@ namespace ApplesGame
 		inputHintText.setFont(State::Instance()->font);
 		inputHintText.setCharacterSize(24);
 		inputHintText.setFillColor(sf::Color::Black);
-		inputHintText.setString("Use arrow keys to move, Space to restart, ESC to exit");
+		string hintStr = "Используйте стрелки что бы двигаться,\nSpace для паузы, ESC для выхода";
+		inputHintText.setString(String::fromUtf8(hintStr.begin(), hintStr.end()));
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
 
 		isBonusDurationVisible = false;
@@ -102,13 +101,15 @@ namespace ApplesGame
 		difficultyPage->Init();
 		gameOverPage = make_unique<GameOverPage>();
 		recordsList = make_unique<RecordsList>();
+		settingsPage = make_unique<SettingsPage>();
 
 		InitPauseGame(pauseGameMenu);
 	}
 
 	void UIState::Update()
 	{
-		scoreText.setString("Score: " + std::to_string(State::Instance()->score));
+		string scoreStr = "Счет: ";
+		scoreText.setString(String::fromUtf8(scoreStr.begin(), scoreStr.end()) + std::to_string(State::Instance()->score));
 
 		sf::Color gameOverTextColor = (int)State::Instance()->timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
 
@@ -126,7 +127,7 @@ namespace ApplesGame
 		{
 			menuPage.Draw();
 
-			gameTitle.setPosition((float)window->getSize().x / 2, 60.f);
+			gameTitle.setPosition((float)window->getSize().x / 2, 100.f);
 			window->draw(gameTitle);
 
 			break;
@@ -141,6 +142,11 @@ namespace ApplesGame
 			gameOverPage->Draw();
 			break;
 		}
+		case GameState::SettingsPage:
+		{
+			settingsPage->Draw();
+			break;
+		}
 		case GameState::Game:
 		{
 			if (isBonusDurationVisible) 
@@ -152,7 +158,7 @@ namespace ApplesGame
 			scoreText.setPosition(10.f, 10.f);
 			window->draw(scoreText);
 
-			inputHintText.setPosition(window->getSize().x - 10.f, 10.f);
+			inputHintText.setPosition(window->getSize().x - 10.f, 3.f);
 			window->draw(inputHintText);
 
 			break;

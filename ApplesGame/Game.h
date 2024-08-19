@@ -21,7 +21,16 @@ namespace ApplesGame
 	};
 
 	enum class GameState : short {
-		Game, MainMenu, PauseMenu, GameOverMenu, Records, DifficultyPage,
+		Game, MainMenu, PauseMenu, GameOverMenu, Records, DifficultyPage, SettingsPage
+	};
+
+	class Settings {
+		bool isMusicOn;
+		bool isSoundOn;
+
+	public:
+		bool* getIsMusicOn() { return &isMusicOn; }
+		bool* getisSoundOn() { return &isSoundOn; }
 	};
 
 	class State
@@ -57,6 +66,8 @@ namespace ApplesGame
 		stack<GameState>* getGameState();
 		void clearGameState();
 
+
+
 		State(State& other) = delete;
 		State operator=(const State&) = delete;
 
@@ -67,6 +78,7 @@ namespace ApplesGame
 		void Init(sf::RenderWindow& window);
 
 		map<ActorType, ActorInfo> actorsInfo;
+		Settings setings;
 
 		// Game resources
 		//TODO: movee to application?
@@ -80,6 +92,7 @@ namespace ApplesGame
 		SoundEntity deathSound;
 		SoundEntity bonusPickSound;
 		SoundEntity applePickSound;
+		SoundEntity backgroundSound;
 
 		int score = 0;
 		//bool isGameOver = false;

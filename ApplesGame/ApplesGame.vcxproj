@@ -169,6 +169,7 @@
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="RecordsListPage.cpp" />
+    <ClCompile Include="SettingsPage.cpp" />
     <ClCompile Include="Sound.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="UIComponents.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Actor.h" />
     <ClInclude Include="RecordsListPage.h" />
+    <ClInclude Include="SettingsPage.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="UIComponents.h" />
