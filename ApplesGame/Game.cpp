@@ -380,7 +380,7 @@ namespace ApplesGame
 		soundManager = new SoundManager({
 			{Sounds::DeathSound, "Death.wav"},
 			{Sounds::ApplePickSound, "AppleEat.wav"},
-			{Sounds::DeathSound, "ding.flac"},
+			{Sounds::BonusPickSound, "ding.flac"},
 			},{
 			{Music::Background, "Clinthammer__Background_Music.wav"},
 			});
