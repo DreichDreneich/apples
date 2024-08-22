@@ -89,11 +89,6 @@ namespace ApplesGame
 		sf::Texture stoneTexture;
 		sf::Texture bonusTexture;
 
-		//SoundEntity deathSound;
-		//SoundEntity bonusPickSound;
-		//SoundEntity applePickSound;
-		//SoundEntity backgroundSound;
-
 		int score = 0;
 		float timeSinceGameOver = 0.f;
 

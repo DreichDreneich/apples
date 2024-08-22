@@ -385,11 +385,6 @@ namespace ApplesGame
 			{Music::Background, "Clinthammer__Background_Music.wav"},
 			});
 
-		//LoadAndPrepareSound(deathSound, "Death.wav");
-		//LoadAndPrepareSound(applePickSound, "AppleEat.wav");
-		//LoadAndPrepareSound(backgroundSound, "Clinthammer__Background_Music.wav");
-		//LoadAndPrepareSound(bonusPickSound, "ding.flac");
-
 		xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
 		yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
 	}
