@@ -34,7 +34,7 @@ namespace ApplesGame {
 			recordTexts.second->Draw({ xTextCoord + 100.f, recordY + margin.y });
 		}
 
-		recordsListHeader->Draw({ app->GetWindow().getSize().x / 2.f + margin.x, 100.f + margin.y });
+		recordsListHeader->Draw({ app->GetWindow().getSize().x / 2.f + margin.x, 80.f + margin.y });
 
 		float windowX = (float)app->GetWindow().getSize().x + margin.x;
 		float windowY = (float)app->GetWindow().getSize().y + margin.y;
