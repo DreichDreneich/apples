@@ -256,7 +256,8 @@ namespace ApplesGame
 
 			player.speed += accelerationByDifficulty[difficulty];
 
-			PlaySound(applePickSound.sound);
+			soundManager->Play(Sounds::ApplePickSound);
+			
 			player.AddPart();
 			break;
 		}
@@ -270,7 +271,7 @@ namespace ApplesGame
 
 			player.hasBonus = true;
 			player.bonusTimeRemaining = 10.f;
-			PlaySound(bonusPickSound.sound);
+			soundManager->Play(Sounds::BonusPickSound);
 			break;
 		}
 		default:
@@ -313,7 +314,7 @@ namespace ApplesGame
 				prevRecord->second = score;
 			}
 
-			PlaySound(deathSound.sound);
+			soundManager->Play(Sounds::DeathSound);
 		}
 	}
 
@@ -376,10 +377,18 @@ namespace ApplesGame
 		assert(actorsInfo[ActorType::BONUS].texture.loadFromFile(RESOURCES_PATH + "xyz-logo.png"));
 		assert(font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
-		LoadAndPrepareSound(deathSound, "Death.wav");
-		LoadAndPrepareSound(applePickSound, "AppleEat.wav");
-		LoadAndPrepareSound(backgroundSound, "Clinthammer__Background_Music.wav");
-		LoadAndPrepareSound(bonusPickSound, "ding.flac");
+		soundManager = new SoundManager({
+			{Sounds::DeathSound, "Death.wav"},
+			{Sounds::ApplePickSound, "AppleEat.wav"},
+			{Sounds::DeathSound, "ding.flac"},
+			},{
+			{Music::Background, "Clinthammer__Background_Music.wav"},
+			});
+
+		//LoadAndPrepareSound(deathSound, "Death.wav");
+		//LoadAndPrepareSound(applePickSound, "AppleEat.wav");
+		//LoadAndPrepareSound(backgroundSound, "Clinthammer__Background_Music.wav");
+		//LoadAndPrepareSound(bonusPickSound, "ding.flac");
 
 		xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
 		yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
@@ -390,8 +399,8 @@ namespace ApplesGame
 		*setings.getIsMusicOn() = true;
 		*setings.getisSoundOn() = true;
 
-		backgroundSound.sound.setLoop(true);
-		PlaySound(backgroundSound.sound);
+		soundManager->SetLoop(Music::Background, true);
+		soundManager->Play(Music::Background);
 
 		difficulty = Difficulty::MEDIUM;
 		GenerateRecordsList();

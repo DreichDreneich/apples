@@ -55,6 +55,7 @@ namespace ApplesGame
 		UIState uiState;
 		stack<GameState> gameState;
 
+
 	public:
 		Difficulty* getDifficulty();
 		void setDifficulty(Difficulty);
@@ -66,8 +67,6 @@ namespace ApplesGame
 		stack<GameState>* getGameState();
 		void clearGameState();
 
-
-
 		State(State& other) = delete;
 		State operator=(const State&) = delete;
 
@@ -78,10 +77,11 @@ namespace ApplesGame
 		void Init(sf::RenderWindow& window);
 
 		map<ActorType, ActorInfo> actorsInfo;
+
 		Settings setings;
+		SoundManager* soundManager;
 
 		// Game resources
-		//TODO: movee to application?
 		sf::Font font;
 		sf::Texture playerTexture;
 		sf::Texture playerHeadTexture;
@@ -89,13 +89,12 @@ namespace ApplesGame
 		sf::Texture stoneTexture;
 		sf::Texture bonusTexture;
 
-		SoundEntity deathSound;
-		SoundEntity bonusPickSound;
-		SoundEntity applePickSound;
-		SoundEntity backgroundSound;
+		//SoundEntity deathSound;
+		//SoundEntity bonusPickSound;
+		//SoundEntity applePickSound;
+		//SoundEntity backgroundSound;
 
 		int score = 0;
-		//bool isGameOver = false;
 		float timeSinceGameOver = 0.f;
 
 		map<string, int> recordsList = {

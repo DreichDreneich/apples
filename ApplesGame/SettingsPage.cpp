@@ -15,14 +15,12 @@ namespace ApplesGame
 			switch (id) {
 			case SettingsFlags::isMusicOn:
 			{
-				State::Instance()->backgroundSound.sound.setVolume(value ? 100.f : 0.f);
+				State::Instance()->soundManager->SetBackgroundMusicVolume(value ? 100.f : 0.f);
 				break;
 			}
 			case SettingsFlags::isSoundOn:
 			{
-				State::Instance()->applePickSound.sound.setVolume(value ? 100.f : 0.f);
-				State::Instance()->bonusPickSound.sound.setVolume(value ? 100.f : 0.f);
-				State::Instance()->deathSound.sound.setVolume(value ? 100.f : 0.f);
+				State::Instance()->soundManager->SetSoundsVolume(value ? 100.f : 0.f);
 				break;
 			}
 			default:
