@@ -15,11 +15,6 @@ using namespace std;
 
 namespace ApplesGame
 {
-	enum class GameMode : short
-	{
-		infiniteApple = 1, withAcceleration
-	};
-
 	enum class GameState : short {
 		Game, MainMenu, PauseMenu, GameOverMenu, Records, DifficultyPage, SettingsPage
 	};
@@ -42,6 +37,7 @@ namespace ApplesGame
 		void UpdateActors(float timeDelta);
 		bool CheckFieldCell();
 		void GenerateNewActorPosition(GameEl& elem, int oldX, int oldY);
+		void CreateActors(ActorType type);
 
 		map<Difficulty, float> accelerationByDifficulty = {
 			{Difficulty::EASY, 0.f},
@@ -54,7 +50,15 @@ namespace ApplesGame
 		GameField gameField;
 		UIState uiState;
 		stack<GameState> gameState;
+		map<ActorType, ActorInfo> actorsInfo;
 
+		Texture playerTexture;
+		Texture playerHeadTexture;
+		Font font;
+
+		int score = 0;
+		int xCellsNum;
+		int yCellsNum;
 
 	public:
 		Difficulty* getDifficulty();
@@ -63,6 +67,7 @@ namespace ApplesGame
 		Player* getPlayer();
 
 		GameField* getGameField();
+		Font* GetFont();
 
 		stack<GameState>* getGameState();
 		void clearGameState();
@@ -76,20 +81,10 @@ namespace ApplesGame
 
 		void Init(sf::RenderWindow& window);
 
-		map<ActorType, ActorInfo> actorsInfo;
 
 		Settings setings;
 		SoundManager* soundManager;
 
-		// Game resources
-		sf::Font font;
-		sf::Texture playerTexture;
-		sf::Texture playerHeadTexture;
-		sf::Texture appleTexture;
-		sf::Texture stoneTexture;
-		sf::Texture bonusTexture;
-
-		int score = 0;
 		float timeSinceGameOver = 0.f;
 
 		map<string, int> recordsList = {
@@ -99,16 +94,10 @@ namespace ApplesGame
 			{"Olga", 0},
 		};
 
-		// 1 - with infinite apples
-		// 2 - with acceleration after apple eating
-		int gameMode : 3;
-
-		int xCellsNum;
-		int yCellsNum;
-
+		Actor* GetActorByTypeAndIdx(ActorType type, int idx);
+		int GetScore();
 		void HandleKeyReleasedEvent(sf::Event event);
 		void HandleKeyboardEvent(const sf::Event& evt);
-		void ToggleGameMode(int menuItem);
 		void Restart();
 		void Update(float timeDelta);
 		void Draw();

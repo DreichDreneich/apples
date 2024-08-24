@@ -15,7 +15,7 @@ namespace ApplesGame
 {
 	void InitGameTitle(Text& gameTitle)
 	{
-		gameTitle.setFont(State::Instance()->font);
+		gameTitle.setFont(*State::Instance()->GetFont());
 		gameTitle.setCharacterSize(48);
 		gameTitle.setFillColor(sf::Color::Red);
 		gameTitle.setStyle(sf::Text::Bold);
@@ -27,7 +27,7 @@ namespace ApplesGame
 	// TODO: use TextComponent
 	void InitRegularText(sf::Text& text, const string str)
 	{
-		text.setFont(State::Instance()->font);
+		text.setFont(*State::Instance()->GetFont());
 		text.setCharacterSize(24);
 		text.setFillColor(sf::Color::White);
 		text.setOrigin(GetTextOrigin(text, { 0.f, 0.f }));
@@ -80,12 +80,12 @@ namespace ApplesGame
 
 		InitGameTitle(gameTitle);
 
-		scoreText.setFont(State::Instance()->font);
+		scoreText.setFont(*State::Instance()->GetFont());
 		scoreText.setCharacterSize(24);
 		scoreText.setFillColor(sf::Color::Black);
 		scoreText.setStyle(sf::Text::Bold);
 
-		inputHintText.setFont(State::Instance()->font);
+		inputHintText.setFont(*State::Instance()->GetFont());
 		inputHintText.setCharacterSize(24);
 		inputHintText.setFillColor(sf::Color::Black);
 		string hintStr = "Используйте стрелки что бы двигаться,\nSpace для паузы, ESC для выхода";
@@ -93,7 +93,7 @@ namespace ApplesGame
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
 
 		isBonusDurationVisible = false;
-		bonusDuration.setFont(State::Instance()->font);
+		bonusDuration.setFont(*State::Instance()->GetFont());
 		bonusDuration.setCharacterSize(14);
 		bonusDuration.setFillColor(sf::Color::White);
 
@@ -109,7 +109,7 @@ namespace ApplesGame
 	void UIState::Update()
 	{
 		string scoreStr = "Счет: ";
-		scoreText.setString(String::fromUtf8(scoreStr.begin(), scoreStr.end()) + std::to_string(State::Instance()->score));
+		scoreText.setString(String::fromUtf8(scoreStr.begin(), scoreStr.end()) + std::to_string(State::Instance()->GetScore()));
 
 		sf::Color gameOverTextColor = (int)State::Instance()->timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
 

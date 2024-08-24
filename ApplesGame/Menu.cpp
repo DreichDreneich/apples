@@ -15,7 +15,7 @@ namespace ApplesGame
 	MenuItem::MenuItem(string text, const float xOrigin)
 	{
 		textObj.setString(sf::String::fromUtf8(text.begin(), text.end()));
-		textObj.setFont(State::Instance()->font);
+		textObj.setFont(*State::Instance()->GetFont());
 		textObj.setCharacterSize(24);
 		textObj.setFillColor(sf::Color::White);
 		textObj.setOrigin(GetTextOrigin(textObj, { 0.5f, 0.f }));

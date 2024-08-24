@@ -66,18 +66,6 @@ namespace ApplesGame
 		}
 	}
 
-	void State::ToggleGameMode(int menuItem)
-	{
-		if (HasMaskFlag(gameMode, menuItem))
-		{
-			gameMode ^= menuItem;
-		}
-		else
-		{
-			gameMode |= menuItem;
-		}
-	}
-
 	void State::GenerateRecordsList()
 	{
 		map<string, int>::iterator it = recordsList.begin();
@@ -171,24 +159,23 @@ namespace ApplesGame
 		}
 	}
 
-	void CreateActors(ActorType type)
+	void State::CreateActors(ActorType type)
 	{
-		auto state = State::Instance();
 		int counter = 0;
 
-		while (counter < state->actorsInfo[type].num)
+		while (counter < actorsInfo[type].num)
 		{
-			auto x = rand() % state->xCellsNum;
-			auto y = rand() % state->yCellsNum;
+			auto x = rand() % xCellsNum;
+			auto y = rand() % yCellsNum;
 
-			if (state->getGameField()->grid[x][y].type == ActorType::NONE)
+			if (getGameField()->grid[x][y].type == ActorType::NONE)
 			{
-				state->actorsInfo[type].store[counter].Init(state->actorsInfo[type].texture);
+				actorsInfo[type].store[counter].Init(actorsInfo[type].texture);
 
 				GameEl el{};
 				el.idx = counter;
 				el.type = type;
-				state->getGameField()->grid[x][y] = el;
+				getGameField()->grid[x][y] = el;
 				++counter;
 			}
 		}
@@ -318,6 +305,15 @@ namespace ApplesGame
 		}
 	}
 
+	Font* State::GetFont() {
+		return &font;
+	}
+
+	int State::GetScore()
+	{
+		return score;
+	}
+
 	void State::Update(float timeDelta)
 	{
 		if (gameState.top() == GameState::Game)
@@ -354,9 +350,13 @@ namespace ApplesGame
 		delete State::_instance;
 	}
 
+	Actor* State::GetActorByTypeAndIdx(ActorType type, int idx)
+	{
+		return &actorsInfo[type].store[idx];
+	}
+
 	State::State()
 	{
-		gameMode = 0;
 		gameState.push(GameState::MainMenu);
 
 		actorsInfo[ActorType::APPLE].num = NUM_APPLES;
