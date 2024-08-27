@@ -2,6 +2,8 @@
 #include <SFML/Graphics.hpp>
 #include "Math.h"
 #include "GameSettings.h"
+#include "Actor.h"
+#include "Application.h"
 
 using namespace std;
 using namespace sf;
@@ -55,5 +57,74 @@ namespace ApplesGame
 		void Draw();
 		void Update(float timeDelta);
 		void AddPart();
+	};
+
+	class Platform : public GameObject, public ScreenCollision
+	{
+		virtual bool HasCollision() override { return ((Rectangle*)shape)->HasCollision(); }
+	public:
+		Platform(const sf::Texture& texture) {
+			auto sh = new Rectangle();
+
+			sh->setSize({ 180.f, 15.f });
+			sh->setFillColor(sf::Color::Green);
+
+			shape = sh;
+		}
+
+		Line GetTop() {
+			auto size = ((Rectangle*)shape)->getSize();
+
+			return { position, { position.x + size.x, position.y } };
+		}
+		Line GetBottom() {
+			auto size = ((Rectangle*)shape)->getSize();
+
+			return { { position.x,  position.y + size.y }, { position.x + size.x, position.y + size.y } };
+		}
+		Line GetLeft() {
+			auto size = ((Rectangle*)shape)->getSize();
+
+			return { position, { position.x, position.y + size.y } };
+		}
+		Line GetRight() {
+			auto size = ((Rectangle*)shape)->getSize();
+
+			return { { position.x + size.x, position.y }, { position.x + size.x, position.y + size.y } };
+		}
+
+		std::vector<Line> GetLines() {
+			return { GetTop(), GetRight(), GetBottom(), GetLeft() };
+		}
+
+		void Update(float timeDelta) override;
+		void HandleInput();
+		virtual Rectangle* GetShape() override { return (Rectangle*)shape; };
+	};
+
+	class Ball : public GameObject, public ScreenCollision
+	{
+		virtual bool HasCollision() override {
+			auto hasCollision = ((Circle*)shape)->HasCollision();
+
+			 
+			return hasCollision;
+		}
+
+	public:
+		Ball(const sf::Texture& texture) {
+			auto sh = new Circle();
+
+			auto radius = 10.f;
+
+			sh->setRadius(radius);
+			sh->setFillColor(sf::Color::White);
+			sh->setOrigin({ position.x + radius, position.y + radius });
+			shape = sh;
+		}
+
+		void Update(float timeDelta) override;
+		virtual Circle* GetShape() override { return (Circle*)shape; };
+		virtual void Bounce(const GameObject&);
 	};
 }

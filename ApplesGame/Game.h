@@ -36,8 +36,6 @@ namespace ApplesGame
 		void GenerateRecordsList();
 		void UpdateActors(float timeDelta);
 		bool CheckFieldCell();
-		void GenerateNewActorPosition(GameEl& elem, int oldX, int oldY);
-		void CreateActors(ActorType type);
 
 		map<Difficulty, float> accelerationByDifficulty = {
 			{Difficulty::EASY, 0.f},
@@ -67,7 +65,7 @@ namespace ApplesGame
 		Player* getPlayer();
 
 		GameField* getGameField();
-		Font* GetFont();
+		Font& GetFont();
 
 		stack<GameState>* getGameState();
 		void clearGameState();
@@ -94,7 +92,10 @@ namespace ApplesGame
 			{"Olga", 0},
 		};
 
-		Actor* GetActorByTypeAndIdx(ActorType type, int idx);
+		vector<GameObject*> gameObjects;
+		Platform* platform;
+		Ball* ball;
+
 		int GetScore();
 		void HandleKeyReleasedEvent(sf::Event event);
 		void HandleKeyboardEvent(const sf::Event& evt);

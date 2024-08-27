@@ -3,20 +3,37 @@
 #include "Math.h"
 #include "GameSettings.h"
 #include "Application.h"
-#include <math.h>
 
 namespace ApplesGame
 {
-	void Actor::Draw()
+	void GameObject::SetDirection(const sf::Vector2f& direction)
 	{
-		sprite.setPosition(position);
-		Application::Instance()->GetWindow().draw(sprite);
+		GameObject::direction = direction;
 	}
 
-	void Actor::Init(const sf::Texture& texture)
+	void GameObject::Update(float timeDelta)
 	{
-		sprite.setTexture(texture);
-		sprite.setOrigin(GetSpriteOrigin(sprite, { ORIGIN_MULTIPLIER, ORIGIN_MULTIPLIER })); // We need to use texture as origin ignores scale
-		sprite.setScale(GetSpriteScale(sprite, { ACTOR_SIZE, ACTOR_SIZE }));
+		prevPosition = position;
+		position.x += speed * timeDelta * direction.x;
+		position.y += speed * timeDelta * direction.y;
+		shape->setPosition(position);
+		//shape->setOrigin(GetOrigin(*shape, { ORIGIN_MULTIPLIER, ORIGIN_MULTIPLIER }));
+	}
+
+	void GameObject::UndoUpdate()
+	{
+		position = prevPosition;
+		shape->setPosition(position);
+		//shape->setOrigin(GetOrigin(*shape, { ORIGIN_MULTIPLIER, ORIGIN_MULTIPLIER }));
+	}
+
+	void GameObject::SetSpeed(const float& speed)
+	{
+		GameObject::speed = speed;
+	}
+
+	void GameObject::Draw()
+	{
+		Application::Instance()->GetWindow().draw(*shape);
 	}
 }

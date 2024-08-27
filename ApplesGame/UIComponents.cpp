@@ -13,7 +13,7 @@ namespace ApplesGame
 
 	PageHeader::PageHeader(string str, int size)
 	{
-		textObj.setFont(*State::Instance()->GetFont());
+		textObj.setFont(State::Instance()->GetFont());
 		textObj.setCharacterSize(size);
 		textObj.setStyle(sf::Text::Bold);
 		textObj.setFillColor(sf::Color::Yellow);
@@ -23,7 +23,7 @@ namespace ApplesGame
 
 	CommonText::CommonText(const string& str, Vector2D origin)
 	{
-		textObj.setFont(*State::Instance()->GetFont());
+		textObj.setFont(State::Instance()->GetFont());
 		textObj.setCharacterSize(24);
 		textObj.setFillColor(sf::Color::White);
 		textObj.setString(sf::String::fromUtf8(str.begin(), str.end()));

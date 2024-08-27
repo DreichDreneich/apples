@@ -44,10 +44,10 @@ namespace ApplesGame
 					continue;
 				}
 
-				auto actor = gs->GetActorByTypeAndIdx(el.type, el.idx);
+				//auto actor = gs->GetActorByTypeAndIdx(el.type, el.idx);
 
-				actor->position = GameField::FieldToScreenPosition({ i, j });
-				actor->Draw();
+				//actor->position = GameField::FieldToScreenPosition({ i, j });
+				//actor->Draw();
 			}
 		}
 	}

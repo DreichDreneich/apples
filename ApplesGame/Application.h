@@ -6,6 +6,7 @@ namespace ApplesGame {
 		static sf::RenderWindow* window;
 		sf::Clock game_clock;
 		sf::Time lastTime = game_clock.getElapsedTime();
+		float timeDelta = 0.f;
 
 		Application();
 		static Application* _instance;

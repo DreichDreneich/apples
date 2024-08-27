@@ -76,7 +76,7 @@ public:
     /// \param y Y coordinate of the listener's position
     /// \param z Z coordinate of the listener's position
     ///
-    /// \see getPosition, setDirection
+    /// \see getPosition, set
     ///
     ////////////////////////////////////////////////////////////
     static void setPosition(float x, float y, float z);
@@ -88,7 +88,7 @@ public:
     ///
     /// \param position New listener's position
     ///
-    /// \see getPosition, setDirection
+    /// \see getPosition, set
     ///
     ////////////////////////////////////////////////////////////
     static void setPosition(const Vector3f& position);
@@ -106,54 +106,54 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the forward vector of the listener in the scene
     ///
-    /// The direction (also called "at vector") is the vector
+    /// The  (also called "at vector") is the vector
     /// pointing forward from the listener's perspective. Together
     /// with the up vector, it defines the 3D orientation of the
-    /// listener in the scene. The direction vector doesn't
+    /// listener in the scene. The  vector doesn't
     /// have to be normalized.
-    /// The default listener's direction is (0, 0, -1).
+    /// The default listener's  is (0, 0, -1).
     ///
-    /// \param x X coordinate of the listener's direction
-    /// \param y Y coordinate of the listener's direction
-    /// \param z Z coordinate of the listener's direction
+    /// \param x X coordinate of the listener's 
+    /// \param y Y coordinate of the listener's 
+    /// \param z Z coordinate of the listener's 
     ///
-    /// \see getDirection, setUpVector, setPosition
+    /// \see get, setUpVector, setPosition
     ///
     ////////////////////////////////////////////////////////////
-    static void setDirection(float x, float y, float z);
+    static void set(float x, float y, float z);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the forward vector of the listener in the scene
     ///
-    /// The direction (also called "at vector") is the vector
+    /// The  (also called "at vector") is the vector
     /// pointing forward from the listener's perspective. Together
     /// with the up vector, it defines the 3D orientation of the
-    /// listener in the scene. The direction vector doesn't
+    /// listener in the scene. The  vector doesn't
     /// have to be normalized.
-    /// The default listener's direction is (0, 0, -1).
+    /// The default listener's  is (0, 0, -1).
     ///
-    /// \param direction New listener's direction
+    /// \param  New listener's 
     ///
-    /// \see getDirection, setUpVector, setPosition
+    /// \see get, setUpVector, setPosition
     ///
     ////////////////////////////////////////////////////////////
-    static void setDirection(const Vector3f& direction);
+    static void set(const Vector3f& );
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current forward vector of the listener in the scene
     ///
     /// \return Listener's forward vector (not normalized)
     ///
-    /// \see setDirection
+    /// \see set
     ///
     ////////////////////////////////////////////////////////////
-    static Vector3f getDirection();
+    static Vector3f get();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the upward vector of the listener in the scene
     ///
     /// The up vector is the vector that points upward from the
-    /// listener's perspective. Together with the direction, it
+    /// listener's perspective. Together with the , it
     /// defines the 3D orientation of the listener in the scene.
     /// The up vector doesn't have to be normalized.
     /// The default listener's up vector is (0, 1, 0). It is usually
@@ -163,7 +163,7 @@ public:
     /// \param y Y coordinate of the listener's up vector
     /// \param z Z coordinate of the listener's up vector
     ///
-    /// \see getUpVector, setDirection, setPosition
+    /// \see getUpVector, set, setPosition
     ///
     ////////////////////////////////////////////////////////////
     static void setUpVector(float x, float y, float z);
@@ -172,7 +172,7 @@ public:
     /// \brief Set the upward vector of the listener in the scene
     ///
     /// The up vector is the vector that points upward from the
-    /// listener's perspective. Together with the direction, it
+    /// listener's perspective. Together with the , it
     /// defines the 3D orientation of the listener in the scene.
     /// The up vector doesn't have to be normalized.
     /// The default listener's up vector is (0, 1, 0). It is usually
@@ -180,7 +180,7 @@ public:
     ///
     /// \param upVector New listener's up vector
     ///
-    /// \see getUpVector, setDirection, setPosition
+    /// \see getUpVector, set, setPosition
     ///
     ////////////////////////////////////////////////////////////
     static void setUpVector(const Vector3f& upVector);
@@ -213,7 +213,7 @@ public:
 /// same position, orientation, etc.).
 ///
 /// sf::Listener is a simple interface, which allows to setup the
-/// listener in the 3D audio environment (position, direction and
+/// listener in the 3D audio environment (position,  and
 /// up vector), and to adjust the global volume.
 ///
 /// Because the listener is unique in the scene, sf::Listener only
@@ -225,7 +225,7 @@ public:
 /// sf::Listener::setPosition(1, 0, -5);
 ///
 /// // Make it face the right axis (1, 0, 0)
-/// sf::Listener::setDirection(1, 0, 0);
+/// sf::Listener::set(1, 0, 0);
 ///
 /// // Reduce the global volume
 /// sf::Listener::setGlobalVolume(50);

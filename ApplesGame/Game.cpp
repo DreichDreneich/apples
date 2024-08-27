@@ -139,47 +139,6 @@ namespace ApplesGame
 		}
 	}
 
-	void State::GenerateNewActorPosition(GameEl& elem, int oldX, int oldY)
-	{
-		bool generated = false;
-
-		while (!generated)
-		{
-			auto x = rand() % xCellsNum;
-			auto y = rand() % yCellsNum;
-
-			if (gameField.grid[x][y].type == ActorType::NONE)
-			{
-				gameField.grid[x][y] = elem;
-				GameEl emptyGameEl{};
-				gameField.grid[oldX][oldY] = emptyGameEl;
-
-				generated = true;
-			}
-		}
-	}
-
-	void State::CreateActors(ActorType type)
-	{
-		int counter = 0;
-
-		while (counter < actorsInfo[type].num)
-		{
-			auto x = rand() % xCellsNum;
-			auto y = rand() % yCellsNum;
-
-			if (getGameField()->grid[x][y].type == ActorType::NONE)
-			{
-				actorsInfo[type].store[counter].Init(actorsInfo[type].texture);
-
-				GameEl el{};
-				el.idx = counter;
-				el.type = type;
-				getGameField()->grid[x][y] = el;
-				++counter;
-			}
-		}
-	}
 
 	void State::Restart()
 	{
@@ -196,10 +155,6 @@ namespace ApplesGame
 		}
 
 		player.Init({ middleX, middleY}, playerHeadTexture, playerTexture);
-
-		CreateActors(ActorType::APPLE);
-		CreateActors(ActorType::STONE);
- 		CreateActors(ActorType::BONUS);
 
  		score = 0;
 		timeSinceGameOver = 0.f;
@@ -233,11 +188,11 @@ namespace ApplesGame
 		}
 		case ActorType::APPLE:
 		{
-			if (difficulty != Difficulty::EASY)
+			/*if (difficulty != Difficulty::EASY)
 				GenerateNewActorPosition(*fieldCell, currentHeadPosition.x, currentHeadPosition.y);
-			else {
+			else {*/
 				fieldCell->type = ActorType::NONE;
-			}
+			//}
 
 			score = score + (player.hasBonus ? 2 : 1);
 
@@ -305,8 +260,8 @@ namespace ApplesGame
 		}
 	}
 
-	Font* State::GetFont() {
-		return &font;
+	Font& State::GetFont() {
+		return font;
 	}
 
 	int State::GetScore()
@@ -318,7 +273,19 @@ namespace ApplesGame
 	{
 		if (gameState.top() == GameState::Game)
 		{
-			UpdateActors(timeDelta);
+			auto ballShape = ball->GetShape();
+			auto platformLines = platform->GetLines();
+
+			auto line = findIntersectionCircleRectangle(ballShape->getPosition(), ballShape->getRadius(), platformLines);
+
+			if (line != platformLines.end()) {
+				auto nextDirection = reflectVector(ballShape->getPosition(), ballShape->getRadius(), ball->GetDirection(), line->p1, line->p2);
+				ball->SetDirection(nextDirection);
+			}
+
+			for (auto gameObject : gameObjects) {
+				gameObject->Update(timeDelta);
+			}
 		}
 
 		this->uiState.Update();
@@ -330,6 +297,10 @@ namespace ApplesGame
 		{
 			gameField.Draw();
 			player.Draw();
+
+			for (auto gameObject : gameObjects) {
+				gameObject->Draw();
+			}
 		}
 
 		uiState.Draw();
@@ -348,11 +319,6 @@ namespace ApplesGame
 	State::~State()
 	{
 		delete State::_instance;
-	}
-
-	Actor* State::GetActorByTypeAndIdx(ActorType type, int idx)
-	{
-		return &actorsInfo[type].store[idx];
 	}
 
 	State::State()
@@ -387,6 +353,19 @@ namespace ApplesGame
 
 		xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
 		yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
+
+		platform = new Platform(playerHeadTexture);
+		platform->SetSpeed(300.f);
+		platform->Move({ (SCREEN_WIDTH - 180.f) / 2.f, SCREEN_HEGHT - 50.f}); //TODO: remove magic numbers
+
+		gameObjects.push_back(platform);
+
+		ball = new Ball(actorsInfo[ActorType::APPLE].texture);
+		ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
+		ball->SetSpeed(250.f);
+		ball->SetDirection({ 0.1f, 1.f });
+
+		gameObjects.push_back(ball);
 	}
 
 	void State::Init(sf::RenderWindow& window)
@@ -399,6 +378,7 @@ namespace ApplesGame
 
 		difficulty = Difficulty::MEDIUM;
 		GenerateRecordsList();
+
 		uiState.InitUI(&window);
 	}
 }

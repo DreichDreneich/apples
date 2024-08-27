@@ -6,7 +6,7 @@ namespace ApplesGame {
 	struct ActorInfo
 	{
 		sf::Texture texture;
-		std::vector<Actor> store;
+		std::vector<GameObject> store;
 		int num;
 	};
 }

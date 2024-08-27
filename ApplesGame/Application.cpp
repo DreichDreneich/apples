@@ -66,14 +66,12 @@ namespace ApplesGame {
 				return 0;
 			}
 
-
-			State::Instance()->getPlayer()->HandleInput();
-
 			// Calculate time delta
 			sf::Time currentTime = game_clock.getElapsedTime();
 			float timeDelta = currentTime.asSeconds() - lastTime.asSeconds();
 			lastTime = currentTime;
 			State::Instance()->Update(timeDelta);
+			State::Instance()->platform->HandleInput();
 
 			// Draw everything here
 			// Clear the window first
