@@ -161,22 +161,21 @@ namespace ApplesGame
 
 	void State::CreateActors(ActorType type)
 	{
-		int counter = 0;
-
-		while (counter < actorsInfo[type].store.size())
-		{
+		const auto& texture = actorsInfo[type].texture;
+		auto& store = actorsInfo[type].store;
+		
+		for (int i = 0; i < store.size(); ++i) {
 			auto x = rand() % xCellsNum;
 			auto y = rand() % yCellsNum;
 
-			if (getGameField()->grid[x][y].type == ActorType::NONE)
-			{
-				actorsInfo[type].store[counter].Init(actorsInfo[type].texture);
+			auto& el = getGameField()->grid[x][y];
 
-				GameEl el{};
-				el.idx = counter;
+			if (el.type == ActorType::NONE)
+			{
+				store[i].Init(actorsInfo[type].texture);
+
+				el.idx = i;
 				el.type = type;
-				getGameField()->grid[x][y] = el;
-				++counter;
 			}
 		}
 	}
