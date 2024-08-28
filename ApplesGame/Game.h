@@ -20,8 +20,8 @@ namespace ApplesGame
 	};
 
 	class Settings {
-		bool isMusicOn;
-		bool isSoundOn;
+		bool isMusicOn = true;
+		bool isSoundOn = true;
 
 	public:
 		bool* getIsMusicOn() { return &isMusicOn; }
@@ -57,8 +57,8 @@ namespace ApplesGame
 		Font font;
 
 		int score = 0;
-		int xCellsNum;
-		int yCellsNum;
+		int xCellsNum = 0;
+		int yCellsNum = 0;
 
 	public:
 		Difficulty* getDifficulty();

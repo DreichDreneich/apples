@@ -7,6 +7,5 @@ namespace ApplesGame {
 	{
 		sf::Texture texture;
 		std::vector<Actor> store;
-		int num;
 	};
 }

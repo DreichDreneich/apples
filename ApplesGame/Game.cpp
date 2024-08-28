@@ -163,7 +163,7 @@ namespace ApplesGame
 	{
 		int counter = 0;
 
-		while (counter < actorsInfo[type].num)
+		while (counter < actorsInfo[type].store.size())
 		{
 			auto x = rand() % xCellsNum;
 			auto y = rand() % yCellsNum;
@@ -359,13 +359,10 @@ namespace ApplesGame
 	{
 		gameState.push(GameState::MainMenu);
 
-		actorsInfo[ActorType::APPLE].num = NUM_APPLES;
 		actorsInfo[ActorType::APPLE].store.resize(NUM_APPLES);
 
-		actorsInfo[ActorType::STONE].num = NUM_STONES;
 		actorsInfo[ActorType::STONE].store.resize(NUM_STONES);
 
-		actorsInfo[ActorType::BONUS].num = NUM_BONUSES;
 		actorsInfo[ActorType::BONUS].store.resize(NUM_BONUSES);
 
 		// TODO: move resources loading into separate class
