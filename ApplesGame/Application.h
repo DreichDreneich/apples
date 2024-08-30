@@ -23,8 +23,6 @@ namespace ApplesGame {
 
 		bool isOpen();
 
-		void HandleKeyReleasedEvent(sf::Event event);
-
 		void HandleWindowEvents();
 
 		int Loop();

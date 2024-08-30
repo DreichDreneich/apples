@@ -66,7 +66,7 @@ namespace ApplesGame {
 
 	}
 
-	GameOverPage::GameOverPage()
+	GameOverPage::GameOverPage() : RecordsList()
 	{
 		delete backText;
 		delete recordsListHeader;

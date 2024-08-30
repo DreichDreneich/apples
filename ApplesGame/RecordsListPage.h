@@ -21,7 +21,10 @@ namespace ApplesGame
 
 	public:
 		RecordsList();
-		~RecordsList() = default;
+		~RecordsList() {
+			delete recordsListHeader;
+			delete backText;
+		};
 		// Inherited via Page
 		void Init() override;
 
@@ -36,6 +39,9 @@ namespace ApplesGame
 
 	public:
 		GameOverPage();
+		~GameOverPage() {
+			delete gameOverText;
+		};
 		void HandleKeyboardEvent(const sf::Event& event) override;
 	};
 }

@@ -18,6 +18,11 @@ namespace ApplesGame
 
 	public:
 		SettingsPage();
+		~SettingsPage() {
+			delete header;
+			delete menu;
+			delete backText;
+		};
 
 		void Init() override;
 		void HandleKeyboardEvent(const sf::Event& event) override;

@@ -40,7 +40,7 @@ namespace ApplesGame
 		InitRegularText(pauseGameMenu.quitGame, "<2> Выйти из игры");
 		InitRegularText(pauseGameMenu.resumeGame, "<3> Продолжить игру");
 	}
-	
+
 	void UIState::DrawHint()
 	{
 		inputHintText.setPosition(window->getSize().x - 10.f, 10.f);
@@ -62,7 +62,7 @@ namespace ApplesGame
 		pauseGameMenu.mainMenu.setPosition(xWithOffset, windowY);
 		pauseGameMenu.quitGame.setPosition(xWithOffset, windowY + 35.f);
 		pauseGameMenu.resumeGame.setPosition(xWithOffset, windowY + 70.f);
-		
+
 		window->draw(pauseGameMenu.mainMenu);
 		window->draw(pauseGameMenu.quitGame);
 		window->draw(pauseGameMenu.resumeGame);
@@ -72,6 +72,21 @@ namespace ApplesGame
 	UIState::UIState()
 	{
 		difficultyPage = new DifficultyPage();
+		border = sf::RectangleShape(sf::Vector2f(SCREEN_WIDTH - 4, SCREEN_HEGHT - TOP_PADDING - 4));
+		border.setPosition(2, TOP_PADDING + 2);
+		border.setOutlineThickness(2);
+		border.setOutlineColor(sf::Color(70, 148, 0));
+		border.setFillColor(sf::Color::Black);
+	}
+
+	void UIState::DrawGameBorder() {
+		
+		Application::Instance()->GetWindow().draw(border);
+
+		sf::RectangleShape shape(sf::Vector2f(SCREEN_WIDTH, TOP_PADDING));
+		shape.setPosition(0, 0);
+		shape.setFillColor(sf::Color(70, 148, 0, 220));
+		Application::Instance()->GetWindow().draw(shape);
 	}
 
 	void UIState::InitUI(sf::RenderWindow* window)
@@ -112,11 +127,6 @@ namespace ApplesGame
 		scoreText.setString(String::fromUtf8(scoreStr.begin(), scoreStr.end()) + std::to_string(State::Instance()->GetScore()));
 
 		sf::Color gameOverTextColor = (int)State::Instance()->timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
-
-		isBonusDurationVisible = State::Instance()->getPlayer()->hasBonus;
-		bonusDuration.setString(std::to_string((int)State::Instance()->getPlayer()->bonusTimeRemaining));
-		bonusDurationPosition.x = State::Instance()->getPlayer()->position.x;
-		bonusDurationPosition.y = State::Instance()->getPlayer()->position.y - State::Instance()->getPlayer()->size / 2;
 	}
 
 	void UIState::Draw()
@@ -149,6 +159,8 @@ namespace ApplesGame
 		}
 		case GameState::Game:
 		{
+			DrawGameBorder();
+
 			if (isBonusDurationVisible) 
 			{
 				bonusDuration.setPosition(bonusDurationPosition);

@@ -2,6 +2,7 @@
 #include <cmath>
 #include "Math.h"
 #include <vector>
+#include "Actor.h"
 
 namespace ApplesGame
 {
@@ -184,5 +185,16 @@ namespace ApplesGame
 		}
 
 		return lineIt;
+	}
+
+	std::vector<Line> GetRectLines(const sf::RectangleShape& rect, sf::Vector2f position) {
+		auto size = rect.getSize();
+
+		return {
+			{ position, { position.x + size.x, position.y } },
+			{ { position.x,  position.y + size.y }, { position.x + size.x, position.y + size.y } },
+			{ position, { position.x, position.y + size.y } },
+			{ { position.x + size.x, position.y }, { position.x + size.x, position.y + size.y } }
+		};
 	}
 }

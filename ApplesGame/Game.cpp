@@ -1,11 +1,7 @@
 #pragma once
 #include <SFML/Audio.hpp>
-
 #include "Game.h"
-#include "GameField.h"
-
 #include <assert.h>
-
 #include <string>
 #include <iostream>
 
@@ -23,16 +19,6 @@ namespace ApplesGame
 	void State::setDifficulty(Difficulty value)
 	{
 		difficulty = value;
-	}
-
-	Player* State::getPlayer() 
-	{
-		return &player;
-	}
-
-	GameField* State::getGameField()
-	{
-		return &gameField;
 	}
 
 	stack<GameState>* State::getGameState()
@@ -142,86 +128,8 @@ namespace ApplesGame
 
 	void State::Restart()
 	{
-		auto middleX = xCellsNum / 2;
-		auto middleY = yCellsNum / 2;
-
-		gameField.grid.clear();
-		gameField.grid.resize(xCellsNum);
-
-		for (int i = 0; i < xCellsNum; i++)
-		{
-			gameField.grid[i].clear();
-			gameField.grid[i].resize(yCellsNum);
-		}
-
-		player.Init({ middleX, middleY}, playerHeadTexture, playerTexture);
-
  		score = 0;
 		timeSinceGameOver = 0.f;
-	}
-
-	bool State::CheckFieldCell()
-	{
-		auto currentHeadPosition = player.partsPositions[0].position;
-
-		auto isXOutOfBound = currentHeadPosition.x < 0 || currentHeadPosition.x >= xCellsNum;
-		auto isYOutOfBound = currentHeadPosition.y < 0 || currentHeadPosition.y >= yCellsNum;
-
-		if (isXOutOfBound || isYOutOfBound)
-		{
-			return true;
-		}
-
-		auto fieldCell = &gameField.grid[currentHeadPosition.x][currentHeadPosition.y];
-
-		switch (fieldCell->type)
-		{
-		case ActorType::NONE:
-		{
-			for (int i = 1; i < player.partsPositions.size(); ++i) {
-				if (currentHeadPosition == player.partsPositions[i].position) {
-					return true;
-				}
-			}
-
-			break;
-		}
-		case ActorType::APPLE:
-		{
-			/*if (difficulty != Difficulty::EASY)
-				GenerateNewActorPosition(*fieldCell, currentHeadPosition.x, currentHeadPosition.y);
-			else {*/
-				fieldCell->type = ActorType::NONE;
-			//}
-
-			score = score + (player.hasBonus ? 2 : 1);
-
-			player.speed += accelerationByDifficulty[difficulty];
-
-			soundManager->Play(Sounds::ApplePickSound);
-			
-			player.AddPart();
-			break;
-		}
-		case ActorType::STONE:
-		{
-			return true;
-		}
-		case ActorType::BONUS:
-		{
-			fieldCell->type = ActorType::NONE;
-
-			player.hasBonus = true;
-			player.bonusTimeRemaining = 10.f;
-			soundManager->Play(Sounds::BonusPickSound);
-			break;
-		}
-		default:
-			return false;
-			break;
-		}
-
-		return false;
 	}
 
 	void State::UpdateActors(float timeDelta)
@@ -231,19 +139,7 @@ namespace ApplesGame
 			return;
 		}
 
-		player.Update(timeDelta);
-
-		if (player.hasBonus) {
-			player.bonusTimeRemaining -= timeDelta;
-
-			if ((int)player.bonusTimeRemaining <= 0)
-			{
-				player.hasBonus = false;
-				player.size = INITIAL_PLAYER_SIZE;
-			}
-		}
-
-		auto isGameOver = CheckFieldCell();
+		auto isGameOver = false;
 
 		if (isGameOver)
 		{
@@ -293,17 +189,14 @@ namespace ApplesGame
 
 	void State::Draw()
 	{
+		uiState.Draw();
+
 		if (gameState.top() == GameState::Game)
 		{
-			gameField.Draw();
-			player.Draw();
-
 			for (auto gameObject : gameObjects) {
 				gameObject->Draw();
 			}
 		}
-
-		uiState.Draw();
 	}
 
 	State* State::Instance()
@@ -325,22 +218,6 @@ namespace ApplesGame
 	{
 		gameState.push(GameState::MainMenu);
 
-		actorsInfo[ActorType::APPLE].num = NUM_APPLES;
-		actorsInfo[ActorType::APPLE].store.resize(NUM_APPLES);
-
-		actorsInfo[ActorType::STONE].num = NUM_STONES;
-		actorsInfo[ActorType::STONE].store.resize(NUM_STONES);
-
-		actorsInfo[ActorType::BONUS].num = NUM_BONUSES;
-		actorsInfo[ActorType::BONUS].store.resize(NUM_BONUSES);
-
-		// TODO: move resources loading into separate class
-		// Init game resources (terminate if error)
-		assert(playerTexture.loadFromFile(RESOURCES_PATH + "Snake_Body.png"));
-		assert(playerHeadTexture.loadFromFile(RESOURCES_PATH + "Snake_head.png"));
-		assert(actorsInfo[ActorType::APPLE].texture.loadFromFile(RESOURCES_PATH + "Apple.png"));
-		assert(actorsInfo[ActorType::STONE].texture.loadFromFile(RESOURCES_PATH + "Stone.png"));
-		assert(actorsInfo[ActorType::BONUS].texture.loadFromFile(RESOURCES_PATH + "xyz-logo.png"));
 		assert(font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
 
 		soundManager = new SoundManager({
@@ -354,15 +231,15 @@ namespace ApplesGame
 		xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
 		yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
 
-		platform = new Platform(playerHeadTexture);
+		platform = new Platform();
 		platform->SetSpeed(300.f);
 		platform->Move({ (SCREEN_WIDTH - 180.f) / 2.f, SCREEN_HEGHT - 50.f}); //TODO: remove magic numbers
 
 		gameObjects.push_back(platform);
 
-		ball = new Ball(actorsInfo[ActorType::APPLE].texture);
+		ball = new Ball();
 		ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
-		ball->SetSpeed(250.f);
+		ball->SetSpeed(450.f);
 		ball->SetDirection({ 0.1f, 1.f });
 
 		gameObjects.push_back(ball);

@@ -27,4 +27,5 @@ namespace ApplesGame
 	bool HasMaskFlag(int mask, int value);
 	sf::Vector2f reflectVector(sf::Vector2f circleCenter, float r, sf::Vector2f direction, sf::Vector2f point1, sf::Vector2f point2);
 	std::vector<Line>::const_iterator findIntersectionCircleRectangle(sf::Vector2f circleCenter, float r, const std::vector<Line>& lines);
+	std::vector<Line> GetRectLines(const sf::RectangleShape& rect, sf::Vector2f position);
 }

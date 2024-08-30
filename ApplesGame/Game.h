@@ -7,7 +7,6 @@
 #include "UI.h"
 #include "GameSettings.h"
 #include "Sound.h"
-#include "GameField.h"
 #include "ActorInfo.h"
 #include "DifficultyPage.h"
 
@@ -35,7 +34,6 @@ namespace ApplesGame
 		static State* _instance;
 		void GenerateRecordsList();
 		void UpdateActors(float timeDelta);
-		bool CheckFieldCell();
 
 		map<Difficulty, float> accelerationByDifficulty = {
 			{Difficulty::EASY, 0.f},
@@ -44,14 +42,8 @@ namespace ApplesGame
 		};
 
 		Difficulty difficulty;
-		Player player;
-		GameField gameField;
 		UIState uiState;
 		stack<GameState> gameState;
-		map<ActorType, ActorInfo> actorsInfo;
-
-		Texture playerTexture;
-		Texture playerHeadTexture;
 		Font font;
 
 		int score = 0;
@@ -62,9 +54,6 @@ namespace ApplesGame
 		Difficulty* getDifficulty();
 		void setDifficulty(Difficulty);
 
-		Player* getPlayer();
-
-		GameField* getGameField();
 		Font& GetFont();
 
 		stack<GameState>* getGameState();
@@ -78,7 +67,6 @@ namespace ApplesGame
 		static State* Instance();
 
 		void Init(sf::RenderWindow& window);
-
 
 		Settings setings;
 		SoundManager* soundManager;

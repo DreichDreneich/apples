@@ -31,6 +31,8 @@ namespace ApplesGame
 		Text scoreText;
 		Text inputHintText;
 
+		sf::RectangleShape border;
+
 		sf::Text bonusDuration;
 		sf::Vector2f bonusDurationPosition;
 
@@ -49,6 +51,8 @@ namespace ApplesGame
 		UIState();
 
 		void InitUI(sf::RenderWindow* window);
+		// TODO:: Move into GamePage
+		void DrawGameBorder();
 		void Update();
 		void Draw();
 	};
