@@ -13,7 +13,7 @@ namespace ApplesGame
 	{
 		GameObject::Update(timeDelta);
 
-		if (HasCollision()) {
+		if (HasCollisionWithWindow()) {
 			GameObject::UndoUpdate();
 		}
 	}
@@ -35,26 +35,26 @@ namespace ApplesGame
 
 	void Ball::Update(float timeDelta)
 	{
+		auto newDirection = direction;
+		auto radius = ((Circle*)shape)->getRadius();
+		auto hasCollision = CollisionManager::HasCollisionCircleWindow(position, radius);
 
-		sf::Vector2f newDirection = direction;
-
-		auto hasCollision = ((Circle*)shape)->HasCollision();
 		if (hasCollision) {
-			newDirection = reflectVector(position, ((Circle*)shape)->getRadius(), direction, { 0.f, 0.f }, { SCREEN_WIDTH, 0.f });
+			newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { SCREEN_WIDTH, 0.f + TOP_PADDING });
 
 			if (newDirection == direction) {
-				newDirection = reflectVector(position, ((Circle*)shape)->getRadius(), direction, { 0.f, 0.f }, { 0.f, SCREEN_HEGHT });
+				newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { 0.f, SCREEN_HEGHT });
 			}
 
 			if (newDirection == direction) {
-				newDirection = reflectVector(position, ((Circle*)shape)->getRadius(), direction, { SCREEN_WIDTH, 0.f }, { SCREEN_WIDTH, SCREEN_HEGHT });
+				newDirection = reflectVector(position, radius, direction, { SCREEN_WIDTH, 0.f + TOP_PADDING }, { SCREEN_WIDTH, SCREEN_HEGHT });
 			}
 
 			if (newDirection == direction) {
-				newDirection = reflectVector(position, ((Circle*)shape)->getRadius(), direction, { 0.f, SCREEN_HEGHT }, { SCREEN_WIDTH, SCREEN_HEGHT });
+				State::Instance()->getGameState()->push(GameState::GameOverMenu);
+				newDirection = reflectVector(position, radius, direction, { 0.f, SCREEN_HEGHT }, { SCREEN_WIDTH, SCREEN_HEGHT });
 			}
 		}
-
 
 		SetDirection(newDirection);
 

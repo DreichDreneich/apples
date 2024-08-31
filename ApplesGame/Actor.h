@@ -18,56 +18,50 @@ namespace ApplesGame
 		sf::Vector2f position = { 0.f, 0.f };
 		sf::Vector2f prevPosition = { 0.f, 0.f };
 		sf::Vector2f direction = { 0.f, 0.f};
-		float speed = 300.f;
 		sf::Shape* shape;
+		float speed = 300.f;
 
 	public: 
 		GameObject() = default;
-
-		virtual sf::Shape* GetShape() { return shape; }
-		void SetSpeed(const float&);
-		sf::Vector2f GetDirection() { return direction; }
-		virtual void Draw();
-		void SetDirection(const sf::Vector2f& direction);
-		void Move(const sf::Vector2f& position)
-		{
-			GameObject::position = position;
+		~GameObject() {
+			delete shape;
 		};
-		virtual void Update(float timeDelta);
+
+		sf::Vector2f GetDirection() { return direction; }
+		void SetSpeed(const float&);
+		void SetDirection(const sf::Vector2f& direction);
+		void Move(const sf::Vector2f& position) { GameObject::position = position; };
 		void UndoUpdate();
+		virtual sf::Shape* GetShape() { return shape; }
+		virtual void Update(float timeDelta);
+		virtual void Draw();
 	};
 
 	class ScreenCollision {
 	public:
 		// with screen border
-		virtual bool HasCollision() = 0;
+		virtual bool HasCollisionWithWindow() = 0;
 	};
 
-	class Circle : public sf::CircleShape, public ScreenCollision {
-	public:
-		bool HasCollision() {
-			auto position = getPosition();
+	//TODO: remove
+	class Circle : public sf::CircleShape {
 
-			return (position.x - getRadius() < 0) ||
-				(position.x + getRadius() > SCREEN_WIDTH) ||
-				(position.y - getRadius() < 0) ||
-				(position.y + getRadius() > SCREEN_HEGHT);
-		};
 	};
 
+	//TODO: remove
 	class Rectangle : public sf::RectangleShape, public ScreenCollision {
 	public:
-		bool HasCollision() {
+		bool HasCollisionWithWindow() {
 			return getPosition().x < 0 || getPosition().x + getSize().x > SCREEN_WIDTH || getPosition().y < 0 || getPosition().y + getSize().y > SCREEN_HEGHT;
 		};
 	};
 
 	class CollisionManager {
 	public:
-		static bool HasCollision(const sf::CircleShape& circle, const sf::RectangleShape& rect) {
+		static bool HasCollisionCircleRect(const sf::CircleShape& circle, const sf::RectangleShape& rect) {
 			float circleRadius = circle.getRadius();
-			float actorWidth = rect.getSize().x; // Ширина актера
-			float actorHeight = rect.getSize().y; // Высота актера
+			float actorWidth = rect.getSize().x; 
+			float actorHeight = rect.getSize().y; 
 			float halfWidth = actorWidth / 2.0f;
 			float halfHeight = actorHeight / 2.0f;
 
@@ -93,5 +87,12 @@ namespace ApplesGame
 			// Проверка на коллизию
 			return distSq <= std::pow(circleRadius, 2);
 		}
+
+		static bool HasCollisionCircleWindow(sf::Vector2f position, float radius) {
+			return (position.x - radius < 0) ||
+				(position.x + radius > SCREEN_WIDTH) ||
+				(position.y - radius < TOP_PADDING) ||
+				(position.y + radius > SCREEN_HEGHT);
+		};
 	};
 }

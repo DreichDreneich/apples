@@ -130,6 +130,13 @@ namespace ApplesGame
 	{
  		score = 0;
 		timeSinceGameOver = 0.f;
+
+		platform->Move({ (SCREEN_WIDTH - 180.f) / 2.f, SCREEN_HEGHT - 50.f }); //TODO: remove magic numbers
+		platform->SetSpeed(300.f);
+
+		ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
+		ball->SetSpeed(450.f);
+		ball->SetDirection({ 0.1f, 1.f });
 	}
 
 	void State::UpdateActors(float timeDelta)
@@ -228,20 +235,10 @@ namespace ApplesGame
 			{Music::Background, "Clinthammer__Background_Music.wav"},
 			});
 
-		xCellsNum = SCREEN_WIDTH / FIELD_CELL_SIZE;
-		yCellsNum = (SCREEN_HEGHT - (unsigned int)TOP_PADDING) / FIELD_CELL_SIZE;
-
 		platform = new Platform();
-		platform->SetSpeed(300.f);
-		platform->Move({ (SCREEN_WIDTH - 180.f) / 2.f, SCREEN_HEGHT - 50.f}); //TODO: remove magic numbers
+		ball = new Ball();
 
 		gameObjects.push_back(platform);
-
-		ball = new Ball();
-		ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
-		ball->SetSpeed(450.f);
-		ball->SetDirection({ 0.1f, 1.f });
-
 		gameObjects.push_back(ball);
 	}
 

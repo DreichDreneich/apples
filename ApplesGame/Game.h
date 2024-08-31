@@ -47,9 +47,6 @@ namespace ApplesGame
 		Font font;
 
 		int score = 0;
-		int xCellsNum;
-		int yCellsNum;
-
 	public:
 		Difficulty* getDifficulty();
 		void setDifficulty(Difficulty);

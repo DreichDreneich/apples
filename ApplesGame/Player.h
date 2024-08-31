@@ -10,9 +10,9 @@ using namespace sf;
 
 namespace ApplesGame
 {
-	class Platform : public GameObject, public ScreenCollision
+	class Platform : public GameObject
 	{
-		virtual bool HasCollision() override { return ((Rectangle*)shape)->HasCollision(); }
+		bool HasCollisionWithWindow() { return ((Rectangle*)shape)->HasCollisionWithWindow(); }
 	public:
 		Platform() {
 			auto sh = new Rectangle();
@@ -32,15 +32,8 @@ namespace ApplesGame
 		virtual Rectangle* GetShape() override { return (Rectangle*)shape; };
 	};
 
-	class Ball : public GameObject, public ScreenCollision
+	class Ball : public GameObject
 	{
-		virtual bool HasCollision() override {
-			auto hasCollision = ((Circle*)shape)->HasCollision();
-
-			 
-			return hasCollision;
-		}
-
 	public:
 		Ball(){
 			auto sh = new Circle();
