@@ -24,4 +24,6 @@ namespace ApplesGame {
 	std::vector<Line>::const_iterator findIntersectionCircleRectangle(sf::Vector2f circleCenter, float r, const std::vector<Line>& lines);
 
 	std::vector<Line> GetRectLines(const sf::RectangleShape& rect, sf::Vector2f position);
+
+	std::string generate_uuid();
 }

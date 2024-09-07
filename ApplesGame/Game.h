@@ -79,7 +79,7 @@ namespace ApplesGame
 			{"Olga", 0},
 		};
 
-		vector<GameObject*> gameObjects;
+		unordered_map<string, GameObject*> gameObjects;
 		Platform* platform;
 		Ball* ball;
 

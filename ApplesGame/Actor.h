@@ -1,6 +1,7 @@
 #pragma once
 #include "Math.h"
 #include "GameSettings.h"
+#include "Utils.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
@@ -15,7 +16,7 @@ namespace ApplesGame
 	class GameObject
 	{
 	private:
-		bool isDeleted = false;
+		std::string id;
 
 	protected:
 		sf::Vector2f position = { 0.f, 0.f };
@@ -25,13 +26,14 @@ namespace ApplesGame
 		float speed = 300.f;
 
 	public: 
-		GameObject() = default;
+		GameObject() {
+			id = generate_uuid();
+		}
 		~GameObject() {
 			delete shape;
 		};
 
-		bool& GetIsDeteled() { return isDeleted; }
-		void SetIsDeteled(bool val) { isDeleted = val; }
+		std::string GetId() { return id; }
 		sf::Vector2f& GetDirection() { return direction; }
 		sf::Vector2f& GetPosition() { return position; }
 		void SetSpeed(const float&);

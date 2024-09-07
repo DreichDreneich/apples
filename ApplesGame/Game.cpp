@@ -187,10 +187,19 @@ namespace ApplesGame
 				ball->SetDirection(nextDirection);
 			}
 			
+
+			bool hasDeleted = false;
+			pair<int, int> deletedIdx;
+
 			auto grid = blocksGrid->GetGrid();
 			for (int i = 0; i < grid.size(); ++i) {
 				for (int j = 0; j < grid[i].size(); ++j) {
 					auto block = grid[i][j];
+
+					if (block == nullptr) {
+						continue;
+					}
+
 					auto blockLines = GetRectLines(*block->GetShape(), block->GetPosition());
 					auto line = findIntersectionCircleRectangle(ball->GetPosition(), ballShape->getRadius(), blockLines);
 
@@ -198,16 +207,21 @@ namespace ApplesGame
 						auto nextDirection = reflectVector(ball->GetPosition(), ballShape->getRadius(), ball->GetDirection(), line->p1, line->p2);
 						ball->SetDirection(nextDirection);
 
-						grid[i][j]->SetIsDeteled(true);
+						hasDeleted = true;
+						deletedIdx = { i, j };
 						break;
 					}
 				}
 			}
 
-			for (auto gameObject : gameObjects) {
-				if (gameObject != nullptr) {
-					gameObject->Update(timeDelta);
-				}
+			if (hasDeleted) {
+				auto el = grid[deletedIdx.first][deletedIdx.second];
+				gameObjects.erase(el->GetId());
+				blocksGrid->RemoveEl(deletedIdx.first, deletedIdx.second);
+			}
+
+			for (auto& gameObject : gameObjects) {
+				gameObject.second->Update(timeDelta);
 			}
 		}
 
@@ -220,8 +234,8 @@ namespace ApplesGame
 
 		if (gameState.top() == GameState::Game)
 		{
-			for (auto gameObject : gameObjects) {
-				gameObject->Draw();
+			for (auto& gameObject : gameObjects) {
+				gameObject.second->Draw();
 			}
 		}
 	}
@@ -259,18 +273,15 @@ namespace ApplesGame
 
 		platform = new Platform();
 		ball = new Ball();
-		const auto& block = new Block();
-		block->Move({ 300.f, 150.f });
 
 		for (auto& blocksColumn : blocksGrid->GetGrid()) {
 			for (auto& block : blocksColumn) {
-				gameObjects.push_back(block);
+				gameObjects[block->GetId()] = block;
 			}
 		}
 
-		gameObjects.push_back(platform);
-		gameObjects.push_back(ball);
-		gameObjects.push_back(block);
+		gameObjects[platform->GetId()] = platform;
+		gameObjects[ball->GetId()] = ball;
 	}
 
 	void State::Init(sf::RenderWindow& window)

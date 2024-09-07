@@ -32,6 +32,13 @@ namespace ApplesGame {
 			return grid;	
 		}
 
+		void RemoveEl(int i, int j) {
+			auto& column = grid[i];
+			auto& el = column[j];
+			delete el;
+			column.erase(column.begin() + j);
+		}
+
 		void Fill() {
 			blockWidth = (SCREEN_WIDTH - ((float)(Numx + 1) * blocksMargin)) / (float)Numx;
 

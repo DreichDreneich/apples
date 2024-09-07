@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "Utils.h"
 #include "GameSettings.h"
+#include <random>
 
 namespace ApplesGame {
 	bool CollisionManager::HasCollisionCircleRect(const sf::CircleShape& circle, const sf::RectangleShape& rect) {
@@ -187,5 +188,25 @@ namespace ApplesGame {
 			{ position, { position.x, position.y + size.y } },
 			{ { position.x + size.x, position.y }, { position.x + size.x, position.y + size.y } }
 		};
+	}
+
+	short BASE_LENGTH = 36;
+
+	std::string generate_uuid() {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dis(0, 15);
+
+		const int nibbles[] = { 10, 11, 12, 13, 14, 15 };
+
+		std::string result(BASE_LENGTH, '0');
+		for (size_t i = 0; i < BASE_LENGTH / 2; ++i) {
+			if (dis(gen) % 8 == 0 && i != 6) {
+				result[i * 2] = '-';
+				continue;
+			}
+			result[i * 2 + 1] += static_cast<char>(nibbles[dis(gen)]);
+		}
+		return result;
 	}
 }
