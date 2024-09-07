@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Player.h"
 #include <assert.h>
+#include "Player.h"
 #include "GameSettings.h"
 #include "Game.h"
 #include "Actor.h"
 #include "Application.h"
+#include "Utils.h"
 
 namespace ApplesGame
 {

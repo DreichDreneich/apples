@@ -49,6 +49,12 @@
     <ClCompile Include="SettingsPage.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
+    <ClCompile Include="BlocksGrid.cpp">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -97,6 +103,12 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="SettingsPage.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="BlocksGrid.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

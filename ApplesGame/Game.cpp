@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Audio.hpp>
 #include "Game.h"
+#include "Utils.h"
 #include <assert.h>
 #include <string>
 #include <iostream>
@@ -177,17 +178,36 @@ namespace ApplesGame
 		if (gameState.top() == GameState::Game)
 		{
 			auto ballShape = ball->GetShape();
-			auto platformLines = platform->GetLines();
 
-			auto line = findIntersectionCircleRectangle(ballShape->getPosition(), ballShape->getRadius(), platformLines);
+			auto platformLines = platform->GetLines();
+			auto line = findIntersectionCircleRectangle(ball->GetPosition(), ballShape->getRadius(), platformLines);
 
 			if (line != platformLines.end()) {
-				auto nextDirection = reflectVector(ballShape->getPosition(), ballShape->getRadius(), ball->GetDirection(), line->p1, line->p2);
+				auto nextDirection = reflectVector(ball->GetPosition(), ballShape->getRadius(), ball->GetDirection(), line->p1, line->p2);
 				ball->SetDirection(nextDirection);
+			}
+			
+			auto grid = blocksGrid->GetGrid();
+			for (int i = 0; i < grid.size(); ++i) {
+				for (int j = 0; j < grid[i].size(); ++j) {
+					auto block = grid[i][j];
+					auto blockLines = GetRectLines(*block->GetShape(), block->GetPosition());
+					auto line = findIntersectionCircleRectangle(ball->GetPosition(), ballShape->getRadius(), blockLines);
+
+					if (line != blockLines.end()) {
+						auto nextDirection = reflectVector(ball->GetPosition(), ballShape->getRadius(), ball->GetDirection(), line->p1, line->p2);
+						ball->SetDirection(nextDirection);
+
+						grid[i][j]->SetIsDeteled(true);
+						break;
+					}
+				}
 			}
 
 			for (auto gameObject : gameObjects) {
-				gameObject->Update(timeDelta);
+				if (gameObject != nullptr) {
+					gameObject->Update(timeDelta);
+				}
 			}
 		}
 
@@ -235,11 +255,22 @@ namespace ApplesGame
 			{Music::Background, "Clinthammer__Background_Music.wav"},
 			});
 
+		blocksGrid = new BlocksGrid();
+
 		platform = new Platform();
 		ball = new Ball();
+		const auto& block = new Block();
+		block->Move({ 300.f, 150.f });
+
+		for (auto& blocksColumn : blocksGrid->GetGrid()) {
+			for (auto& block : blocksColumn) {
+				gameObjects.push_back(block);
+			}
+		}
 
 		gameObjects.push_back(platform);
 		gameObjects.push_back(ball);
+		gameObjects.push_back(block);
 	}
 
 	void State::Init(sf::RenderWindow& window)

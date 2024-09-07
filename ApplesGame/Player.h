@@ -4,6 +4,7 @@
 #include "GameSettings.h"
 #include "Actor.h"
 #include "Application.h"
+#include "Utils.h"
 
 using namespace std;
 using namespace sf;
@@ -48,5 +49,31 @@ namespace ApplesGame
 
 		void Update(float timeDelta) override;
 		virtual Circle* GetShape() override { return (Circle*)shape; };
+	};
+
+	class Block : public GameObject
+	{
+	public:
+		Block() {
+			auto sh = new Rectangle();
+
+			sh->setFillColor(sf::Color::Green);
+
+			shape = sh;
+		}
+
+		std::vector<Line> GetLines() {
+			return GetRectLines(*((Rectangle*)shape), position);
+		}
+
+		void Draw() {
+			GameObject::Draw();
+		}
+
+		void Move(sf::Vector2f position) {
+			GameObject::Move({ position.x, position.y + TOP_PADDING });
+		}
+		void HandleInput() = delete;
+		virtual Rectangle* GetShape() override { return (Rectangle*)shape; };
 	};
 }

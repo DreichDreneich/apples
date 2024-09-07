@@ -9,6 +9,7 @@
 #include "Sound.h"
 #include "ActorInfo.h"
 #include "DifficultyPage.h"
+#include "BlocksGrid.h"
 
 using namespace std;
 
@@ -67,6 +68,7 @@ namespace ApplesGame
 
 		Settings setings;
 		SoundManager* soundManager;
+		BlocksGrid* blocksGrid;
 
 		float timeSinceGameOver = 0.f;
 
