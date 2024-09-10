@@ -140,14 +140,14 @@ namespace ApplesGame
 		CreateNewBlockGrid();
 
 		platform->Move({ (SCREEN_WIDTH - 180.f) / 2.f, SCREEN_HEGHT - 50.f }); //TODO: remove magic numbers
-		platform->SetSpeed(300.f);
+		platform->SetSpeed(350.f);
 
 		ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
 		ball->SetSpeed(450.f);
 
 		std::random_device rd; // Случайный генератор
 		std::mt19937 gen(rd()); // Генератор псевдослучайных чисел Mersenne Twister
-		std::uniform_real_distribution<float> dist(-0.7f, 0.7f);
+		std::uniform_real_distribution<float> dist(-0.9f, 0.9f);
 
 		ball->SetDirection({ dist(gen), -1.f});
 	}

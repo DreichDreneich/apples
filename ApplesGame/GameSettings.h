@@ -14,7 +14,7 @@ namespace ApplesGame
 	const float BONUS_DURATION = 10.f;
 	const float ACCELERATION = 1.f; // For each eaten apple player speed will be increased by this value
 	const int NUM_X = 8;
-	const int NUM_Y = 3;
+	const int NUM_Y = 6;
 	const unsigned int SCREEN_WIDTH = 800;
 	const unsigned int SCREEN_HEGHT = 600;
 	const std::string PLAYER_NAME = "Player";

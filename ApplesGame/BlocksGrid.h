@@ -15,7 +15,7 @@ namespace ApplesGame {
 		float blocksMargin = 10.f;
 
 		float blockWidth = 0.f;
-		float blockHeight = 50.f;
+		float blockHeight = NUM_Y <= 4 ? 50.f : 200 / NUM_Y;
 
 		BlocksGrid() {
 			grid.resize(NUM_X);
