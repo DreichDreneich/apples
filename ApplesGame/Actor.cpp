@@ -17,14 +17,12 @@ namespace ApplesGame
 		position.x += speed * timeDelta * direction.x;
 		position.y += speed * timeDelta * direction.y;
 		shape->setPosition(position);
-		//shape->setOrigin(GetOrigin(*shape, { ORIGIN_MULTIPLIER, ORIGIN_MULTIPLIER }));
 	}
 
 	void GameObject::UndoUpdate()
 	{
 		position = prevPosition;
 		shape->setPosition(position);
-		//shape->setOrigin(GetOrigin(*shape, { ORIGIN_MULTIPLIER, ORIGIN_MULTIPLIER }));
 	}
 
 	void GameObject::SetSpeed(const float& speed)

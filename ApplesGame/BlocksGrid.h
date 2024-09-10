@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Player.h"
+#include "GameSettings.h"
 
 using namespace std;
 
@@ -11,21 +12,30 @@ namespace ApplesGame {
 
 	public:
 		// TODO: move to settings
-		int Numx = 8;
-		int Numy = 3;
 		float blocksMargin = 10.f;
 
 		float blockWidth = 0.f;
 		float blockHeight = 50.f;
 
 		BlocksGrid() {
-			grid.resize(Numx);
+			grid.resize(NUM_X);
 
 			for (auto& blocksColumn : grid) {
-				blocksColumn.resize(Numy);
+				blocksColumn.resize(NUM_Y);
 			}
 
 			Fill();
+		}
+
+		~BlocksGrid() {
+			for (auto blocksColumn : grid) {
+				for (auto block : blocksColumn) {
+					delete block;
+				}
+				blocksColumn.clear();
+			}
+
+			grid.clear();
 		}
 
 		vector<vector<Block*>>& GetGrid() {
@@ -40,7 +50,7 @@ namespace ApplesGame {
 		}
 
 		void Fill() {
-			blockWidth = (SCREEN_WIDTH - ((float)(Numx + 1) * blocksMargin)) / (float)Numx;
+			blockWidth = (SCREEN_WIDTH - ((float)(NUM_X + 1) * blocksMargin)) / (float)NUM_X;
 
 			for (int i = 0; i < grid.size(); ++i) {
 				for (int j = 0; j < grid[i].size(); ++j) {

@@ -16,7 +16,7 @@ using namespace std;
 namespace ApplesGame
 {
 	enum class GameState : short {
-		Game, MainMenu, PauseMenu, GameOverMenu, Records, DifficultyPage, SettingsPage
+		Game, MainMenu, PauseMenu, GameOverMenu, Records, DifficultyPage, SettingsPage, WinPage
 	};
 
 	class Settings {
@@ -35,6 +35,7 @@ namespace ApplesGame
 		static State* _instance;
 		void GenerateRecordsList();
 		void UpdateActors(float timeDelta);
+		void CreateNewBlockGrid();
 
 		map<Difficulty, float> accelerationByDifficulty = {
 			{Difficulty::EASY, 0.f},
@@ -55,6 +56,7 @@ namespace ApplesGame
 		Font& GetFont();
 
 		stack<GameState>* getGameState();
+		void setGameOverState();
 		void clearGameState();
 
 		State(State& other) = delete;

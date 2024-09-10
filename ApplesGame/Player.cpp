@@ -52,7 +52,7 @@ namespace ApplesGame
 			}
 
 			if (newDirection == direction) {
-				State::Instance()->getGameState()->push(GameState::GameOverMenu);
+				State::Instance()->setGameOverState();
 				newDirection = reflectVector(position, radius, direction, { 0.f, SCREEN_HEGHT }, { SCREEN_WIDTH, SCREEN_HEGHT });
 			}
 		}

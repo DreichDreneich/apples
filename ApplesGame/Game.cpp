@@ -1,10 +1,12 @@
 #pragma once
 #include <SFML/Audio.hpp>
 #include "Game.h"
+#include "GameSettings.h"
 #include "Utils.h"
 #include <assert.h>
 #include <string>
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -47,6 +49,9 @@ namespace ApplesGame
 			break;
 		case GameState::SettingsPage:
 			uiState.settingsPage->HandleKeyboardEvent(evt);
+			break;
+		case GameState::WinPage:
+			uiState.winPage->HandleKeyboardEvent(evt);
 			break;
 		default:
 			break;
@@ -132,36 +137,33 @@ namespace ApplesGame
  		score = 0;
 		timeSinceGameOver = 0.f;
 
+		CreateNewBlockGrid();
+
 		platform->Move({ (SCREEN_WIDTH - 180.f) / 2.f, SCREEN_HEGHT - 50.f }); //TODO: remove magic numbers
 		platform->SetSpeed(300.f);
 
 		ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
 		ball->SetSpeed(450.f);
-		ball->SetDirection({ 0.1f, 1.f });
+
+		std::random_device rd; // Случайный генератор
+		std::mt19937 gen(rd()); // Генератор псевдослучайных чисел Mersenne Twister
+		std::uniform_real_distribution<float> dist(-0.7f, 0.7f);
+
+		ball->SetDirection({ dist(gen), -1.f});
 	}
 
-	void State::UpdateActors(float timeDelta)
+	void State::setGameOverState()
 	{
-		if (gameState.top() == GameState::GameOverMenu) {
-			timeSinceGameOver += timeDelta;
-			return;
-		}
+		gameState.push(GameState::GameOverMenu);
+		timeSinceGameOver = 0.f;
 
-		auto isGameOver = false;
-
-		if (isGameOver)
+		auto prevRecord = recordsList.find(PLAYER_NAME);
+		if (prevRecord->second < score)
 		{
-			gameState.push(GameState::GameOverMenu);
-			timeSinceGameOver = 0.f;
-
-			auto prevRecord = recordsList.find(PLAYER_NAME);
-			if (prevRecord->second < score)
-			{
-				prevRecord->second = score;
-			}
-
-			soundManager->Play(Sounds::DeathSound);
+			prevRecord->second = score;
 		}
+
+		soundManager->Play(Sounds::DeathSound);
 	}
 
 	Font& State::GetFont() {
@@ -187,7 +189,6 @@ namespace ApplesGame
 				ball->SetDirection(nextDirection);
 			}
 			
-
 			bool hasDeleted = false;
 			pair<int, int> deletedIdx;
 
@@ -218,6 +219,16 @@ namespace ApplesGame
 				auto el = grid[deletedIdx.first][deletedIdx.second];
 				gameObjects.erase(el->GetId());
 				blocksGrid->RemoveEl(deletedIdx.first, deletedIdx.second);
+
+				++score;
+			}
+
+			if (score == NUM_X * NUM_Y) {
+				soundManager->Play(Sounds::BonusPickSound);
+				gameState.push(GameState::WinPage);
+			}
+			else if (hasDeleted) {
+				soundManager->Play(Sounds::ApplePickSound);
 			}
 
 			for (auto& gameObject : gameObjects) {
@@ -236,6 +247,27 @@ namespace ApplesGame
 		{
 			for (auto& gameObject : gameObjects) {
 				gameObject.second->Draw();
+			}
+		}
+	}
+
+	void State::CreateNewBlockGrid() 
+	{
+		if (blocksGrid != nullptr) {
+			for (auto& blocksColumn : blocksGrid->GetGrid()) {
+				for (auto& block : blocksColumn) {
+					gameObjects.erase(block->GetId());
+				}
+			}
+		}
+
+		delete blocksGrid;
+
+		blocksGrid = new BlocksGrid();
+
+		for (auto& blocksColumn : blocksGrid->GetGrid()) {
+			for (auto& block : blocksColumn) {
+				gameObjects[block->GetId()] = block;
 			}
 		}
 	}
@@ -269,16 +301,8 @@ namespace ApplesGame
 			{Music::Background, "Clinthammer__Background_Music.wav"},
 			});
 
-		blocksGrid = new BlocksGrid();
-
 		platform = new Platform();
 		ball = new Ball();
-
-		for (auto& blocksColumn : blocksGrid->GetGrid()) {
-			for (auto& block : blocksColumn) {
-				gameObjects[block->GetId()] = block;
-			}
-		}
 
 		gameObjects[platform->GetId()] = platform;
 		gameObjects[ball->GetId()] = ball;

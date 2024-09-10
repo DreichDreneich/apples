@@ -92,9 +92,9 @@ namespace ApplesGame {
 			}
 		}
 	}
+
+	WinPage::WinPage() : GameOverPage() {
+		delete recordsListHeader;
+		recordsListHeader = new PageHeader("ВЫ ВЫИГРАЛИ!!!");
+	}
 }
-
-
-
-
-

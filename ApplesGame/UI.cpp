@@ -117,6 +117,7 @@ namespace ApplesGame
 		gameOverPage = make_unique<GameOverPage>();
 		recordsList = make_unique<RecordsList>();
 		settingsPage = make_unique<SettingsPage>();
+		winPage = make_unique<WinPage>();
 
 		InitPauseGame(pauseGameMenu);
 	}
@@ -145,6 +146,11 @@ namespace ApplesGame
 		case GameState::DifficultyPage:
 		{
 			difficultyPage->Draw();
+			break;
+		}
+		case GameState::WinPage:
+		{
+			winPage->Draw();
 			break;
 		}
 		case GameState::GameOverMenu:

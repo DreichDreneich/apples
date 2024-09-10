@@ -43,6 +43,7 @@ namespace ApplesGame
 		unique_ptr<SettingsPage> settingsPage;
 		unique_ptr<RecordsList> recordsList;
 		unique_ptr<GameOverPage> gameOverPage;
+		unique_ptr<WinPage> winPage;
 
 		unique_ptr<Page> currentPage;
 

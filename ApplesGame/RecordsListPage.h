@@ -35,13 +35,13 @@ namespace ApplesGame
 
 	class GameOverPage : public RecordsList
 	{
-		PageHeader* gameOverText;
-
 	public:
 		GameOverPage();
-		~GameOverPage() {
-			delete gameOverText;
-		};
 		void HandleKeyboardEvent(const sf::Event& event) override;
+	};
+
+	class WinPage : public GameOverPage {
+	public:
+		WinPage();
 	};
 }
