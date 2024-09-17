@@ -73,7 +73,7 @@ namespace ApplesGame
 		short& GetHealth() { return health; }
 		void ApplyDamage(short value) { health -= value; }
 
-		std::vector<Line> GetLines() {
+		const std::vector<Line>& GetLines() {
 			return GetRectLines(*((Rectangle*)shape), position);
 		}
 

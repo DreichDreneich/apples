@@ -34,8 +34,8 @@ namespace ApplesGame
 		};
 
 		std::string GetId() { return id; }
-		sf::Vector2f& GetDirection() { return direction; }
-		sf::Vector2f& GetPosition() { return position; }
+		const sf::Vector2f& GetDirection() { return direction; }
+		const sf::Vector2f& GetPosition() { return position; }
 		void SetSpeed(const float&);
 		void SetDirection(const sf::Vector2f& direction);
 		void Move(const sf::Vector2f& position) { GameObject::position = { position.x, position.y }; };
