@@ -179,7 +179,7 @@ namespace ApplesGame {
 		return lineIt;
 	}
 
-	std::vector<Line> GetRectLines(const sf::RectangleShape& rect, sf::Vector2f position) {
+	const std::vector<Line> GetRectLines(const sf::RectangleShape& rect, sf::Vector2f position) {
 		auto size = rect.getSize();
 
 		return {

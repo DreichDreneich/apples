@@ -24,10 +24,6 @@ namespace ApplesGame
 			shape = sh;
 		}
 
-		std::vector<Line> GetLines() {
-			return GetRectLines(*((Rectangle*)shape), position);
-		}
-
 		void Update(float timeDelta) override;
 		void HandleInput();
 		virtual Rectangle* GetShape() override { return (Rectangle*)shape; };
@@ -72,10 +68,6 @@ namespace ApplesGame
 
 		short& GetHealth() { return health; }
 		void ApplyDamage(short value) { health -= value; }
-
-		const std::vector<Line>& GetLines() {
-			return GetRectLines(*((Rectangle*)shape), position);
-		}
 
 		void Draw() {
 			GameObject::Draw();

@@ -122,7 +122,7 @@ namespace ApplesGame
 
 	void State::Restart()
 	{
- 		score = 0;
+		score = 0;
 		timeSinceGameOver = 0.f;
 
 		CreateNewBlockGrid();
@@ -137,7 +137,7 @@ namespace ApplesGame
 		std::mt19937 gen(rd()); // Генератор псевдослучайных чисел Mersenne Twister
 		std::uniform_real_distribution<float> dist(-0.9f, 0.9f);
 
-		ball->SetDirection({ dist(gen), -1.f});
+		ball->SetDirection({ dist(gen), -1.f });
 	}
 
 	void State::setGameOverState()
@@ -164,14 +164,14 @@ namespace ApplesGame
 		{
 			auto ballShape = ball->GetShape();
 
-			auto platformLines = platform->GetLines();
+			auto platformLines = GetRectLines(*platform->GetShape(), platform->GetPosition());
 			auto line = findIntersectionCircleRectangle(ball->GetPosition(), ballShape->getRadius(), platformLines);
 
 			if (line != platformLines.end()) {
 				auto nextDirection = reflectVector(ball->GetPosition(), ballShape->getRadius(), ball->GetDirection(), line->p1, line->p2);
 				ball->SetDirection(nextDirection);
 			}
-			
+
 			bool hasDeleted = false;
 			pair<int, int> deletedIdx;
 
@@ -238,7 +238,7 @@ namespace ApplesGame
 		}
 	}
 
-	void State::CreateNewBlockGrid() 
+	void State::CreateNewBlockGrid()
 	{
 		if (blocksGrid != nullptr) {
 			for (auto& blocksColumn : blocksGrid->GetGrid()) {
@@ -290,7 +290,7 @@ namespace ApplesGame
 			{Sounds::DeathSound, "Death.wav"},
 			{Sounds::ApplePickSound, "AppleEat.wav"},
 			{Sounds::BonusPickSound, "ding.flac"},
-			},{
+			}, {
 			{Music::Background, "Clinthammer__Background_Music.wav"},
 			});
 
