@@ -14,25 +14,13 @@ namespace ApplesGame
 {
 	State* State::_instance;
 
-	Difficulty* State::getDifficulty()
-	{
-		return &difficulty;
-	}
+	Difficulty* State::getDifficulty() { return &difficulty; }
 
-	void State::setDifficulty(Difficulty value)
-	{
-		difficulty = value;
-	}
+	void State::setDifficulty(Difficulty value) { difficulty = value; }
 
-	stack<GameState>* State::getGameState()
-	{
-		return &gameState;
-	}
+	stack<GameState>* State::getGameState() { return &gameState; }
 
-	void State::clearGameState()
-	{
-		gameState = {};
-	}
+	void State::clearGameState() { gameState = {}; }
 
 	void State::HandleKeyboardEvent(const sf::Event& evt)
 	{
@@ -166,14 +154,9 @@ namespace ApplesGame
 		soundManager->Play(Sounds::DeathSound);
 	}
 
-	Font& State::GetFont() {
-		return font;
-	}
+	Font& State::GetFont() { return font; }
 
-	int State::GetScore()
-	{
-		return score;
-	}
+	int State::GetScore() { return score; }
 
 	void State::Update(float timeDelta)
 	{
@@ -208,8 +191,12 @@ namespace ApplesGame
 						auto nextDirection = reflectVector(ball->GetPosition(), ballShape->getRadius(), ball->GetDirection(), line->p1, line->p2);
 						ball->SetDirection(nextDirection);
 
-						hasDeleted = true;
-						deletedIdx = { i, j };
+						block->ApplyDamage((short)1);
+						if (block->GetHealth() == 0) {
+							hasDeleted = true;
+							deletedIdx = { i, j };
+						}
+
 						break;
 					}
 				}
@@ -263,7 +250,7 @@ namespace ApplesGame
 
 		delete blocksGrid;
 
-		blocksGrid = new BlocksGrid();
+		blocksGrid = new BlocksGrid(blockTexture);
 
 		for (auto& blocksColumn : blocksGrid->GetGrid()) {
 			for (auto& block : blocksColumn) {
@@ -292,6 +279,12 @@ namespace ApplesGame
 		gameState.push(GameState::MainMenu);
 
 		assert(font.loadFromFile(RESOURCES_PATH + "Fonts/Roboto-Regular.ttf"));
+
+		sf::Image image;
+		assert(image.loadFromFile(RESOURCES_PATH + "Cracks.png"));
+		image.createMaskFromColor(sf::Color::White);
+		assert(blockTexture.loadFromImage(image));
+		blockTexture.setSmooth(true);
 
 		soundManager = new SoundManager({
 			{Sounds::DeathSound, "Death.wav"},

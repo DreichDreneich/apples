@@ -53,14 +53,25 @@ namespace ApplesGame
 
 	class Block : public GameObject
 	{
+	protected:
+		Sprite sprite;
+		short initHealth = 4;
+		short health = 4;
 	public:
-		Block() {
-			auto sh = new Rectangle();
+		Block() : GameObject() {}
 
+		Block(const Texture& texture) {
+			sprite.setTexture(texture);
+			
+
+			auto sh = new Rectangle();
 			sh->setFillColor(sf::Color::Green);
 
 			shape = sh;
 		}
+
+		short& GetHealth() { return health; }
+		void ApplyDamage(short value) { health -= value; }
 
 		std::vector<Line> GetLines() {
 			return GetRectLines(*((Rectangle*)shape), position);
@@ -68,6 +79,17 @@ namespace ApplesGame
 
 		void Draw() {
 			GameObject::Draw();
+			sprite.setPosition(position);
+			auto rectSize = ((Rectangle*)shape)->getSize();
+			sprite.setScale(GetSpriteScale(sprite, { rectSize.x, rectSize.y }));
+
+			sf::Color color = sprite.getColor();
+			auto a = ((float)initHealth - (float)health) / (float)initHealth;
+
+			color.a = (sf::Uint8)(a * (float)255);
+			sprite.setColor(color);
+
+			Application::Instance()->GetWindow().draw(sprite);
 		}
 
 		void Move(sf::Vector2f position) {

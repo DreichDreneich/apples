@@ -43,6 +43,8 @@ namespace ApplesGame
 			{Difficulty::HARD, 1.f},
 		};
 
+		Texture blockTexture;
+
 		Difficulty difficulty;
 		UIState uiState;
 		stack<GameState> gameState;
@@ -50,6 +52,7 @@ namespace ApplesGame
 
 		int score = 0;
 	public:
+
 		Difficulty* getDifficulty();
 		void setDifficulty(Difficulty);
 
