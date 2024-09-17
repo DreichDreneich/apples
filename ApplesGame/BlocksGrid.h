@@ -8,7 +8,7 @@ using namespace std;
 namespace ApplesGame {
 	class BlocksGrid {
 	private:
-		vector<vector<Block*>> grid;
+		vector<vector<shared_ptr<Block>>> grid;
 
 	public:
 		// TODO: move to settings
@@ -32,7 +32,7 @@ namespace ApplesGame {
 		~BlocksGrid() {
 			for (auto blocksColumn : grid) {
 				for (auto block : blocksColumn) {
-					delete block;
+					block.reset();
 				}
 				blocksColumn.clear();
 			}
@@ -40,14 +40,14 @@ namespace ApplesGame {
 			grid.clear();
 		}
 
-		vector<vector<Block*>>& GetGrid() {
+		vector<vector<shared_ptr<Block>>>& GetGrid() {
 			return grid;	
 		}
 
 		void RemoveEl(int i, int j) {
 			auto& column = grid[i];
 			auto& el = column[j];
-			delete el;
+			el.reset();
 			column.erase(column.begin() + j);
 		}
 
@@ -56,7 +56,7 @@ namespace ApplesGame {
 
 			for (int i = 0; i < grid.size(); ++i) {
 				for (int j = 0; j < grid[i].size(); ++j) {
-					grid[i][j] = new Block(texture);
+					grid[i][j] = make_shared<Block>(Block(texture));
 					grid[i][j]->GetShape()->setSize({ blockWidth, blockHeight });
 					grid[i][j]->Move({ blocksMargin + i * blocksMargin + i * blockWidth, blocksMargin + j * blocksMargin + j * blockHeight });
 				}

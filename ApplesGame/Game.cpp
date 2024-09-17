@@ -254,7 +254,7 @@ namespace ApplesGame
 
 		for (auto& blocksColumn : blocksGrid->GetGrid()) {
 			for (auto& block : blocksColumn) {
-				gameObjects[block->GetId()] = block;
+				gameObjects[block->GetId()] = block.get();
 			}
 		}
 	}
