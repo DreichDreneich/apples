@@ -50,44 +50,61 @@ namespace ApplesGame
 	class Block : public GameObject
 	{
 	protected:
-		Sprite sprite;
-		short initHealth = 4;
-		short health = 4;
-	public:
-		Block() : GameObject() {}
+		short totalHealth = 1;
+		short health = 1;
 
-		Block(const Texture& texture) {
-			sprite.setTexture(texture);
-			
+	public:
+		Block() : GameObject() {
+			Block::totalHealth = health;
+			Block::health = health;
 
 			auto sh = new Rectangle();
+
 			sh->setFillColor(sf::Color::Green);
 
 			shape = sh;
 		}
 
 		short& GetHealth() { return health; }
+
 		void ApplyDamage(short value) { health -= value; }
 
-		void Draw() {
-			GameObject::Draw();
+		void Move(sf::Vector2f position) {
+			GameObject::Move({ position.x, position.y + TOP_PADDING });
+		}
+
+		void HandleInput() = delete;
+
+		virtual Rectangle* GetShape() override { return (Rectangle*)shape; };
+	};
+
+	class StrongBlock : public Block {
+	protected:
+		Sprite sprite;
+
+	public:
+		StrongBlock(const Texture& texture) : Block(){
+			Block::totalHealth = 3;
+			Block::health = 3;
+			sprite.setTexture(texture);
+
+			shape->setFillColor(sf::Color(210, 210, 210));
+		}
+
+		void Draw() override {
+			Block::Draw();
+
 			sprite.setPosition(position);
 			auto rectSize = ((Rectangle*)shape)->getSize();
 			sprite.setScale(GetSpriteScale(sprite, { rectSize.x, rectSize.y }));
 
 			sf::Color color = sprite.getColor();
-			auto a = ((float)initHealth - (float)health) / (float)initHealth;
+			auto a = ((float)totalHealth - (float)health) / (float)totalHealth;
 
 			color.a = (sf::Uint8)(a * (float)255);
 			sprite.setColor(color);
 
 			Application::Instance()->GetWindow().draw(sprite);
 		}
-
-		void Move(sf::Vector2f position) {
-			GameObject::Move({ position.x, position.y + TOP_PADDING });
-		}
-		void HandleInput() = delete;
-		virtual Rectangle* GetShape() override { return (Rectangle*)shape; };
 	};
 }

@@ -128,7 +128,7 @@ namespace ApplesGame
 		CreateNewBlockGrid();
 
 		platform->Move({ (SCREEN_WIDTH - 180.f) / 2.f, SCREEN_HEGHT - 50.f }); //TODO: remove magic numbers
-		platform->SetSpeed(350.f);
+		platform->SetSpeed(450.f);
 
 		ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
 		ball->SetSpeed(450.f);
