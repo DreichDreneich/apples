@@ -58,7 +58,9 @@ namespace ApplesGame
 
 		Font& GetFont();
 
-		stack<GameState>* getGameState();
+		const stack<GameState>& getGameState();
+		void pushGameState(const GameState);
+		void popGameState();
 		void setGameOverState();
 		void clearGameState();
 

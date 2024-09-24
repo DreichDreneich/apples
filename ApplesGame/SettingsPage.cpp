@@ -48,7 +48,7 @@ namespace ApplesGame
 	{
 		if (evt.type == sf::Event::KeyReleased && evt.key.code == sf::Keyboard::Tab)
 		{
-			State::Instance()->getGameState()->pop();
+			State::Instance()->popGameState();
 		}
 
 		menu->HandleKeyboardEvent(evt);

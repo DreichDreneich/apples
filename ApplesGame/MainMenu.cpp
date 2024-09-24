@@ -30,16 +30,16 @@ namespace ApplesGame
 			case Pages::START:
 				state->Restart();
 				state->clearGameState();
-				state->getGameState()->push(GameState::Game);
+				state->pushGameState(GameState::Game);
 				break;
 			case Pages::DIFFICULTY:
-				state->getGameState()->push(GameState::DifficultyPage);
+				state->pushGameState(GameState::DifficultyPage);
 				break;
 			case Pages::RECORDS:
-				state->getGameState()->push(GameState::Records);
+				state->pushGameState(GameState::Records);
 				break;
 			case Pages::SETTINGS:
-				state->getGameState()->push(GameState::SettingsPage);
+				state->pushGameState(GameState::SettingsPage);
 				break;
 			case Pages::EXIT:
 				Application::Instance()->GetWindow().close();

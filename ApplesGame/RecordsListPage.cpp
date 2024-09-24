@@ -6,7 +6,7 @@ namespace ApplesGame {
 	{
 		if (evt.type == sf::Event::KeyReleased && evt.key.code == sf::Keyboard::Tab)
 		{
-			State::Instance()->getGameState()->pop();
+			State::Instance()->popGameState();
 		}
 	}
 
@@ -82,12 +82,12 @@ namespace ApplesGame {
 			if (evt.key.code == sf::Keyboard::Tab) 
 			{
 				State::Instance()->clearGameState();
-				State::Instance()->getGameState()->push(GameState::MainMenu);
+				State::Instance()->pushGameState(GameState::MainMenu);
 			}
 			
 			if (evt.key.code == sf::Keyboard::Space)
 			{
-				State::Instance()->getGameState()->pop();
+				State::Instance()->popGameState();
 				State::Instance()->Restart();
 			}
 		}

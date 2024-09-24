@@ -63,7 +63,7 @@ namespace ApplesGame {
 
 			for (int i = 0; i < grid.size(); ++i) {
 				for (int j = 0; j < grid[i].size(); ++j) {
-					bool isStrongBlock = dist(gen) > 8;
+					const bool isStrongBlock = dist(gen) > 8;
 					grid[i][j] = isStrongBlock ? new StrongBlock(texture) : new Block();
 					grid[i][j]->GetShape()->setSize({ blockWidth, blockHeight });
 					grid[i][j]->Move({ blocksMargin + i * blocksMargin + i * blockWidth, blocksMargin + j * blocksMargin + j * blockHeight });

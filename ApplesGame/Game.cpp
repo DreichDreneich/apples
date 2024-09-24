@@ -18,7 +18,10 @@ namespace ApplesGame
 
 	void State::setDifficulty(Difficulty value) { difficulty = value; }
 
-	stack<GameState>* State::getGameState() { return &gameState; }
+	const stack<GameState>& State::getGameState() { return gameState; }
+
+	void State::pushGameState(const GameState gs) { gameState.push(gs); }
+	void State::popGameState() { gameState.pop(); }
 
 	void State::clearGameState() { gameState = {}; }
 

@@ -132,7 +132,7 @@ namespace ApplesGame
 
 	void UIState::Draw()
 	{
-		switch (State::Instance()->getGameState()->top())
+		switch (State::Instance()->getGameState().top())
 		{
 		case GameState::MainMenu:
 		{
