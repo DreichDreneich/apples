@@ -101,12 +101,33 @@ namespace ApplesGame
 			}
 			else if (gameState.top() == GameState::GameOverMenu)
 			{
-				State::Instance()->Restart();
+				Restart();
 				gameState.pop();
 			}
 			else if (gameState.top() == GameState::Game)
 			{
 				gameState.push(GameState::PauseMenu);
+			}
+			break;
+		}
+		case sf::Keyboard::F5: 
+		{
+			if (gameState.top() == GameState::Game) {
+				auto gameSnapshot = gameStore->getGameSnapshot();
+				gameCaretaker.setMemento(*gameSnapshot);
+			}
+			break;
+		}
+		case sf::Keyboard::F6:
+		{
+			if (gameState.top() == GameState::GameOverMenu && gameCaretaker.isSaveExists())
+			{
+				timeSinceGameOver = 0.f;
+				gameObjects.clear();
+
+				auto memento = gameCaretaker.getMemento();
+				gameStore->restoreGameSnapshot(memento);
+				gameState.pop();
 			}
 			break;
 		}
@@ -125,22 +146,9 @@ namespace ApplesGame
 
 	void State::Restart()
 	{
-		score = 0;
 		timeSinceGameOver = 0.f;
 
-		CreateNewBlockGrid();
-
-		platform->Move({ (SCREEN_WIDTH - 180.f) / 2.f, SCREEN_HEGHT - 50.f }); //TODO: remove magic numbers
-		platform->SetSpeed(450.f);
-
-		ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
-		ball->SetSpeed(450.f);
-
-		std::random_device rd; // Случайный генератор
-		std::mt19937 gen(rd()); // Генератор псевдослучайных чисел Mersenne Twister
-		std::uniform_real_distribution<float> dist(-0.9f, 0.9f);
-
-		ball->SetDirection({ dist(gen), -1.f });
+		gameStore->Restart(blockTexture);
 	}
 
 	void State::setGameOverState()
@@ -149,9 +157,9 @@ namespace ApplesGame
 		timeSinceGameOver = 0.f;
 
 		auto prevRecord = recordsList.find(PLAYER_NAME);
-		if (prevRecord->second < score)
+		if (prevRecord->second < gameStore->getGameScore())
 		{
-			prevRecord->second = score;
+			prevRecord->second = gameStore->getGameScore();
 		}
 
 		soundManager->Play(Sounds::DeathSound);
@@ -159,59 +167,23 @@ namespace ApplesGame
 
 	Font& State::GetFont() { return font; }
 
-	int State::GetScore() { return score; }
+	int State::GetScore() { return gameStore->getGameScore(); }
 
 	void State::Update(float timeDelta)
 	{
 		if (gameState.top() == GameState::Game)
 		{
-			auto ballShape = ball->GetShape();
+			auto result = gameStore->Update();
 
-			auto platformLines = GetRectLines(*platform->GetShape(), platform->GetPosition());
-			auto line = findIntersectionCircleRectangle(ball->GetPosition(), ballShape->getRadius(), platformLines);
+			bool hasDeleted = get<0>(result);
+			string deletedId = get<1>(result);
 
-			if (line != platformLines.end()) {
-				auto nextDirection = reflectVector(ball->GetPosition(), ballShape->getRadius(), ball->GetDirection(), line->p1, line->p2);
-				ball->SetDirection(nextDirection);
-			}
-
-			bool hasDeleted = false;
-			pair<int, int> deletedIdx;
-
-			auto grid = blocksGrid->GetGrid();
-			for (int i = 0; i < grid.size(); ++i) {
-				for (int j = 0; j < grid[i].size(); ++j) {
-					auto block = grid[i][j];
-
-					if (block == nullptr) {
-						continue;
-					}
-
-					auto blockLines = GetRectLines(*block->GetShape(), block->GetPosition());
-					auto line = findIntersectionCircleRectangle(ball->GetPosition(), ballShape->getRadius(), blockLines);
-
-					if (line != blockLines.end()) {
-						auto nextDirection = reflectVector(ball->GetPosition(), ballShape->getRadius(), ball->GetDirection(), line->p1, line->p2);
-						ball->SetDirection(nextDirection);
-
-						block->ApplyDamage((short)1);
-						if (block->GetHealth() == 0) {
-							hasDeleted = true;
-							deletedIdx = { i, j };
-						}
-
-						break;
-					}
-				}
-			}
 
 			if (hasDeleted) {
-				auto el = grid[deletedIdx.first][deletedIdx.second];
-				gameObjects.erase(el->GetId());
-				blocksGrid->RemoveEl(deletedIdx.first, deletedIdx.second);
-
-				++score;
+				gameObjects.erase(deletedId);
 			}
+
+			auto score = gameStore->getGameScore();
 
 			if (score == NUM_X * NUM_Y) {
 				soundManager->Play(Sounds::BonusPickSound);
@@ -237,27 +209,6 @@ namespace ApplesGame
 		{
 			for (auto& gameObject : gameObjects) {
 				gameObject.second->Draw();
-			}
-		}
-	}
-
-	void State::CreateNewBlockGrid()
-	{
-		if (blocksGrid != nullptr) {
-			for (auto& blocksColumn : blocksGrid->GetGrid()) {
-				for (auto& block : blocksColumn) {
-					gameObjects.erase(block->GetId());
-				}
-			}
-		}
-
-		delete blocksGrid;
-
-		blocksGrid = new BlocksGrid(blockTexture);
-
-		for (auto& blocksColumn : blocksGrid->GetGrid()) {
-			for (auto& block : blocksColumn) {
-				gameObjects[block->GetId()] = block;
 			}
 		}
 	}
@@ -297,11 +248,7 @@ namespace ApplesGame
 			{Music::Background, "Clinthammer__Background_Music.wav"},
 			});
 
-		platform = new Platform();
-		ball = new Ball();
-
-		gameObjects[platform->GetId()] = platform;
-		gameObjects[ball->GetId()] = ball;
+		gameStore = make_shared<GameStore>(gameObjects);
 	}
 
 	void State::Init(sf::RenderWindow& window)

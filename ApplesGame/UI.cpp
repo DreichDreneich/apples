@@ -103,7 +103,7 @@ namespace ApplesGame
 		inputHintText.setFont(State::Instance()->GetFont());
 		inputHintText.setCharacterSize(24);
 		inputHintText.setFillColor(sf::Color::Black);
-		string hintStr = "Используйте стрелки что бы двигаться,\nSpace для паузы, ESC для выхода";
+		string hintStr = "Используйте стрелки что бы двигаться,\nSpace для паузы, ESC для выхода, <F5> для сохранения";
 		inputHintText.setString(String::fromUtf8(hintStr.begin(), hintStr.end()));
 		inputHintText.setOrigin(GetTextOrigin(inputHintText, { 1.f, 0.f }));
 

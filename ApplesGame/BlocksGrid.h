@@ -10,14 +10,15 @@ using namespace std;
 namespace ApplesGame {
 	class BlocksGrid {
 	private:
-		vector<vector<Block*>> grid;
+		vector<vector<shared_ptr<Block>>> grid;
 
-	public:
-		// TODO: move to settings
 		float blocksMargin = 10.f;
 
 		float blockWidth = 0.f;
 		float blockHeight = NUM_Y <= 4 ? 50.f : 200 / NUM_Y;
+	public:
+		// TODO: move to settings
+
 
 		BlocksGrid() = default;
 
@@ -31,25 +32,56 @@ namespace ApplesGame {
 			Fill(texture);
 		}
 
+		BlocksGrid(BlocksGrid& g) {
+			grid.resize(g.grid.size());
+
+			for (int i = 0; i < g.grid.size(); ++i) {
+				for (int j = 0; j < g.grid[i].size(); ++j) {
+					if (j == 0) {
+						grid[i].resize(g.grid[i].size());
+					}
+					if (g.grid[i][j] != nullptr) {
+						// grid[i][j] = make_shared<Block>(*g.grid[i][j].get()); // Does not work
+						grid[i][j] = g.grid[i][j]->clone();
+						grid[i][j]->GetShape()->setSize(g.grid[i][j]->GetShape()->getSize());
+					}
+				}
+			}
+		}
+
+		BlocksGrid& operator=(const BlocksGrid& g) {
+			grid.resize(g.grid.size());
+
+			for (int i = 0; i < g.grid.size(); ++i) {
+				for (int j = 0; j < g.grid[i].size(); ++j) {
+					if (j == 0) {
+						grid[i].resize(g.grid[i].size());
+					}
+					if (g.grid[i][j] != nullptr) {
+						// grid[i][j] = make_shared<Block>(*g.grid[i][j].get()); // Does not work
+						grid[i][j] = g.grid[i][j]->clone();
+						grid[i][j]->GetShape()->setSize(g.grid[i][j]->GetShape()->getSize());
+					}
+				}
+			}
+
+			return *this;
+		}
+
 		~BlocksGrid() {
 			for (auto blocksColumn : grid) {
-				for (auto block : blocksColumn) {
-					delete block;
-				}
 				blocksColumn.clear();
 			}
 
 			grid.clear();
 		}
 
-		vector<vector<Block*>>& GetGrid() {
+		vector<vector<shared_ptr<Block>>>& GetGrid() {
 			return grid;	
 		}
 
 		void RemoveEl(int i, int j) {
 			auto& column = grid[i];
-			auto& el = column[j];
-			delete el;
 			column.erase(column.begin() + j);
 		}
 
@@ -63,18 +95,11 @@ namespace ApplesGame {
 
 			for (int i = 0; i < grid.size(); ++i) {
 				for (int j = 0; j < grid[i].size(); ++j) {
+					//const bool isStrongBlock = dist(gen) > 0;
 					const bool isStrongBlock = dist(gen) > 8;
-					grid[i][j] = isStrongBlock ? new StrongBlock(texture) : new Block();
+					grid[i][j] = isStrongBlock ? make_shared<StrongBlock>(texture) : make_shared<Block>();
 					grid[i][j]->GetShape()->setSize({ blockWidth, blockHeight });
 					grid[i][j]->Move({ blocksMargin + i * blocksMargin + i * blockWidth, blocksMargin + j * blocksMargin + j * blockHeight });
-				}
-			}
-		}
-
-		void Draw() {
-			for (auto& blocksColumn : grid) {
-				for (auto block : blocksColumn) {
-					block->Draw();
 				}
 			}
 		}

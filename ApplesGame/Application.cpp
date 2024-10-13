@@ -71,7 +71,7 @@ namespace ApplesGame {
 			float timeDelta = currentTime.asSeconds() - lastTime.asSeconds();
 			lastTime = currentTime;
 			State::Instance()->Update(timeDelta);
-			State::Instance()->platform->HandleInput();
+			State::Instance()->getGameStore()->getPlatform()->HandleInput();
 
 			// Draw everything here
 			// Clear the window first

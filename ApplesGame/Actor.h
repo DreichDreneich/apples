@@ -38,6 +38,7 @@ namespace ApplesGame
 		const sf::Vector2f& GetPosition() { return position; }
 		void SetSpeed(const float&);
 		void SetDirection(const sf::Vector2f& direction);
+		void SetPosition(const sf::Vector2f& position) { GameObject::position = position; };
 		void Move(const sf::Vector2f& position) { GameObject::position = { position.x, position.y }; };
 		void UndoUpdate();
 		virtual sf::Shape* GetShape() { return shape; }

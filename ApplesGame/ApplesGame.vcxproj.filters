@@ -108,5 +108,8 @@
     <ClInclude Include="BlocksGrid.h">
       <Filter>Sources</Filter>
     </ClInclude>
+    <ClInclude Include="GameStore.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

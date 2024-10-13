@@ -72,7 +72,7 @@ namespace ApplesGame {
 		delete recordsListHeader;
 
 		recordsListHeader = new PageHeader("КОНЕЦ ИГРЫ");
-		backText = new CommonText("Нажмите <Space> что бы начать игру заново\n	 и <TAB> что бы выйти в главное меню", { 0.5f, 0.f });
+		backText = new CommonText("Нажмите <Space> что бы начать игру заново\n	 <TAB> что бы выйти в главное меню\n<F6> что бы загрузить последнее сохранение", { 0.5f, 0.f });
 	}
 
 	void GameOverPage::HandleKeyboardEvent(const sf::Event& evt)

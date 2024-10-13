@@ -10,6 +10,7 @@
 #include "ActorInfo.h"
 #include "DifficultyPage.h"
 #include "BlocksGrid.h"
+#include "GameStore.h"
 
 using namespace std;
 
@@ -35,7 +36,6 @@ namespace ApplesGame
 		static State* _instance;
 		void GenerateRecordsList();
 		void UpdateActors(float timeDelta);
-		void CreateNewBlockGrid();
 
 		map<Difficulty, float> accelerationByDifficulty = {
 			{Difficulty::EASY, 0.f},
@@ -50,19 +50,24 @@ namespace ApplesGame
 		stack<GameState> gameState;
 		Font font;
 
-		int score = 0;
-	public:
+		GameCaretaker gameCaretaker;
 
+		shared_ptr<GameStore> gameStore;
+
+		//int score = 0;
+	public:
 		Difficulty* getDifficulty();
 		void setDifficulty(Difficulty);
 
 		Font& GetFont();
+		shared_ptr<GameStore> getGameStore() { return gameStore; };
 
 		const stack<GameState>& getGameState();
 		void pushGameState(const GameState);
 		void popGameState();
 		void setGameOverState();
 		void clearGameState();
+
 
 		State(State& other) = delete;
 		State operator=(const State&) = delete;
@@ -75,7 +80,6 @@ namespace ApplesGame
 
 		Settings setings;
 		SoundManager* soundManager;
-		BlocksGrid* blocksGrid;
 
 		float timeSinceGameOver = 0.f;
 
@@ -86,9 +90,9 @@ namespace ApplesGame
 			{"Olga", 0},
 		};
 
-		unordered_map<string, GameObject*> gameObjects;
-		Platform* platform;
-		Ball* ball;
+		unordered_map<string, shared_ptr<GameObject>> gameObjects;
+		//Platform* platform;
+		//Ball* ball;
 
 		int GetScore();
 		void HandleKeyReleasedEvent(sf::Event event);

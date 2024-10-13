@@ -10,6 +10,7 @@ namespace ApplesGame {
 
 		Application();
 		static Application* _instance;
+		//GameCaretaker gameCaretaker;
 	public:
 
 		Application(Application& other) = delete;

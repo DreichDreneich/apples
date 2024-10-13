@@ -181,6 +181,7 @@
     <ClInclude Include="DifficultyPage.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameSettings.h" />
+    <ClInclude Include="GameStore.h" />
     <ClInclude Include="MainMenu.h" />
     <ClInclude Include="Math.h" />
     <ClInclude Include="Menu.h" />
