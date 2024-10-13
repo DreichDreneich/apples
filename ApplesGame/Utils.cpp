@@ -43,6 +43,15 @@ namespace ApplesGame {
 			(position.y + radius > SCREEN_HEGHT);
 	};
 
+	std::tuple<bool, bool, bool, bool> CollisionManager::HasCollisionCircleWindow2(sf::Vector2f position, float radius) {
+		return {
+			(position.y - radius < TOP_PADDING),
+			(position.x + radius > SCREEN_WIDTH),
+			(position.y + radius > SCREEN_HEGHT),
+			(position.x - radius < 0),
+		};
+	};
+
 	std::vector<sf::Vector2f> findIntersectionCircleLine(sf::Vector2f circleCenter, float r, sf::Vector2f point1, sf::Vector2f point2) {
 		std::vector<sf::Vector2f> intersections;
 

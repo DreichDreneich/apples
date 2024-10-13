@@ -17,6 +17,7 @@ namespace ApplesGame {
 		static bool HasCollisionCircleRect(const sf::CircleShape& circle, const sf::RectangleShape& rect);
 
 		static bool HasCollisionCircleWindow(sf::Vector2f position, float radius);
+		static std::tuple<bool, bool, bool, bool> HasCollisionCircleWindow2(sf::Vector2f position, float radius);
 	};
 
 	sf::Vector2f reflectVector(sf::Vector2f circleCenter, float r, sf::Vector2f direction, sf::Vector2f point1, sf::Vector2f point2);

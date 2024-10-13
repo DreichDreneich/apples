@@ -29,6 +29,7 @@ namespace ApplesGame {
 		shared_ptr<Platform> _platform;
 		shared_ptr<Ball> _ball;
 		shared_ptr<BlocksGrid> _blocksGrid;
+		unordered_map<string, shared_ptr<Bonus>> bonuses = {};
 
 		unordered_map<string, shared_ptr<GameObject>>& gameObjects;
 	public:
@@ -78,6 +79,31 @@ namespace ApplesGame {
 				_ball->SetDirection(nextDirection);
 			}
 
+			string deletedId;
+
+			for (auto bonus : bonuses) {
+				auto bonusPosition = bonus.second->GetPosition();
+				auto bonusRadius = bonus.second->GetShape()->getRadius();
+				auto lineIntersection = findIntersectionCircleRectangle(bonusPosition, bonusRadius, platformLines);
+	
+				if (lineIntersection != platformLines.end()) {
+					deletedId = bonus.first;
+					break;
+				}
+
+				auto collisionBonus = CollisionManager::HasCollisionCircleWindow2(bonusPosition, bonusRadius);
+
+				if (get<2>(collisionBonus)) {
+					deletedId = bonus.first;
+					break;
+				}
+			}
+
+			if (deletedId != "") {
+				gameObjects.erase(deletedId);
+				bonuses.erase(deletedId);
+			}
+
 			auto grid = _blocksGrid->GetGrid();
 
 			for (int i = 0; i < grid.size(); ++i) {
@@ -99,6 +125,17 @@ namespace ApplesGame {
 						if (block->GetHealth() == 0) {
 							_blocksGrid->RemoveEl(i, j);
 							++score;
+
+							gameObjects.erase(block->GetId());
+
+							auto bonus = make_shared<Bonus>();
+							auto blockSize = block->GetShape()->getSize();
+							auto blockPosition = block->GetPosition();
+
+							bonus->Move({ blockPosition.x + (blockSize.x / 2), blockPosition.y + (blockSize.y / 2) });
+
+							gameObjects.insert({ bonus->GetId(), bonus });
+							bonuses.insert({ bonus->GetId(), bonus });
 
 							return { true, block->GetId() };
 						}

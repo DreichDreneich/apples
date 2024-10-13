@@ -178,11 +178,6 @@ namespace ApplesGame
 			bool hasDeleted = get<0>(result);
 			string deletedId = get<1>(result);
 
-
-			if (hasDeleted) {
-				gameObjects.erase(deletedId);
-			}
-
 			auto score = gameStore->getGameScore();
 
 			if (score == NUM_X * NUM_Y) {

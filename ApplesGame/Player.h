@@ -87,6 +87,29 @@ namespace ApplesGame
 		virtual Circle* GetShape() override { return (Circle*)shape; };
 	};
 
+	class Bonus : public Ball {
+	public:
+		Bonus() {
+			direction = { 0.f, 1.f };
+			speed = 100.f;
+		}
+
+		Bonus(Bonus& b) : Ball(b) {
+		}
+
+		Bonus& operator=(const Bonus& b) {
+			Bonus::operator=(b);
+
+			return *this;
+		}
+
+		void SetDirection(const sf::Vector2f& direction) = delete;
+
+		void Update(float timeDelta) {
+			GameObject::Update(timeDelta);
+		}
+	};
+
 	enum class BlockTypes {
 		BLOCK, STRONG_BLOCK,
 	};
@@ -175,19 +198,7 @@ namespace ApplesGame
 			shape->setFillColor(sf::Color(210, 210, 210));
 		}
 
-		StrongBlock(StrongBlock& b) {
-			auto newShape = new RectangleShape();
-			newShape->setSize(b.GetShape()->getSize());
-			newShape->setFillColor(b.GetShape()->getFillColor());
-			newShape->setTexture(b.GetShape()->getTexture());
-			shape = newShape;
-
-			totalHealth = b.totalHealth;
-			health = b.health;
-			position = b.position;
-			speed = b.speed;
-			type = b.type;
-
+		StrongBlock(StrongBlock& b): Block (b) {
 			sprite.setTexture(*b.sprite.getTexture());
 		}
 

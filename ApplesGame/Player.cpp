@@ -38,24 +38,38 @@ namespace ApplesGame
 	{
 		auto newDirection = direction;
 		auto radius = ((Circle*)shape)->getRadius();
-		auto hasCollision = CollisionManager::HasCollisionCircleWindow(position, radius);
+		auto collision = CollisionManager::HasCollisionCircleWindow2(position, radius);
 
-		if (hasCollision) {
+		if (get<0>(collision)) {
 			newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { SCREEN_WIDTH, 0.f + TOP_PADDING });
-
-			if (newDirection == direction) {
-				newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { 0.f, SCREEN_HEGHT });
-			}
-
-			if (newDirection == direction) {
-				newDirection = reflectVector(position, radius, direction, { SCREEN_WIDTH, 0.f + TOP_PADDING }, { SCREEN_WIDTH, SCREEN_HEGHT });
-			}
-
-			if (newDirection == direction) {
-				State::Instance()->setGameOverState();
-				newDirection = reflectVector(position, radius, direction, { 0.f, SCREEN_HEGHT }, { SCREEN_WIDTH, SCREEN_HEGHT });
-			}
 		}
+		else if (get<1>(collision)) {
+			newDirection = reflectVector(position, radius, direction, { SCREEN_WIDTH, 0.f + TOP_PADDING }, { SCREEN_WIDTH, SCREEN_HEGHT });
+		} 
+		else if (get<2>(collision)) {
+			State::Instance()->setGameOverState();
+			newDirection = reflectVector(position, radius, direction, { 0.f, SCREEN_HEGHT }, { SCREEN_WIDTH, SCREEN_HEGHT });
+		}
+		else if (get<3>(collision)) {
+			newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { 0.f, SCREEN_HEGHT });
+		}
+
+		//if (hasCollision) {
+		//	newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { SCREEN_WIDTH, 0.f + TOP_PADDING });
+
+		//	if (newDirection == direction) {
+		//		newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { 0.f, SCREEN_HEGHT });
+		//	}
+
+		//	if (newDirection == direction) {
+		//		newDirection = reflectVector(position, radius, direction, { SCREEN_WIDTH, 0.f + TOP_PADDING }, { SCREEN_WIDTH, SCREEN_HEGHT });
+		//	}
+
+		//	if (newDirection == direction) {
+		//		State::Instance()->setGameOverState();
+		//		newDirection = reflectVector(position, radius, direction, { 0.f, SCREEN_HEGHT }, { SCREEN_WIDTH, SCREEN_HEGHT });
+		//	}
+		//}
 
 		SetDirection(newDirection);
 
