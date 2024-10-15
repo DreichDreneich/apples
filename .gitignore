@@ -1,3 +1,6 @@
 
 .vs
 ApplesGame/x64/
+*.log
+*.tlog
+/SFMLTemplate/x64/Debug

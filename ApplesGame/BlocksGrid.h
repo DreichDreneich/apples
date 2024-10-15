@@ -95,8 +95,9 @@ namespace ApplesGame {
 
 			for (int i = 0; i < grid.size(); ++i) {
 				for (int j = 0; j < grid[i].size(); ++j) {
-					//const bool isStrongBlock = dist(gen) > 0;
-					const bool isStrongBlock = dist(gen) > 8;
+					auto distGen = dist(gen);
+					const bool isStrongBlock = distGen > 5;
+					//const bool isStrongBlock = dist(gen) > 2;
 					grid[i][j] = isStrongBlock ? make_shared<StrongBlock>(texture) : make_shared<Block>();
 					grid[i][j]->GetShape()->setSize({ blockWidth, blockHeight });
 					grid[i][j]->Move({ blocksMargin + i * blocksMargin + i * blockWidth, blocksMargin + j * blocksMargin + j * blockHeight });

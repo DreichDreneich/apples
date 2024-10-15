@@ -10,8 +10,8 @@ namespace ApplesGame {
 	public:
 		BonusType GetBonusType() { return type; }
 
-		float duration = 10.f;
-		float durationRemained = 10.f;
+		float duration = 5.f;
+		float durationRemained = 5.f;
 
 		virtual void ApplyBonus(BlocksGrid& grid) {
 			for (auto& col : grid.GetGrid()) {
@@ -27,6 +27,8 @@ namespace ApplesGame {
 					item->SetPrevState();
 				}
 			}
+
+			_RPTF2(_CRT_WARN, "Bonus removed x= %f\n", 0.f);
 		}
 	};
 
