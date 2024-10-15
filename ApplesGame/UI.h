@@ -1,9 +1,11 @@
 #pragma once
+#include <unordered_map>
 #include "SFML/Graphics.hpp"
 #include "MainMenu.h"
 #include "RecordsListPage.h"
 #include "DifficultyPage.h"
 #include "SettingsPage.h"
+#include "Enums.h"
 
 using namespace std;
 using namespace sf;
@@ -32,6 +34,8 @@ namespace ApplesGame
 		Text inputHintText;
 
 		sf::RectangleShape border;
+
+		unordered_map<BonusType, shared_ptr<SmallText>> bonusesTexts;
 
 		sf::Text bonusDuration;
 		sf::Vector2f bonusDurationPosition;

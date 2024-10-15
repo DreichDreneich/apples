@@ -160,6 +160,7 @@
   <ItemGroup>
     <ClCompile Include="Application.cpp" />
     <ClCompile Include="DifficultyPage.cpp" />
+    <ClCompile Include="Enums.h" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameMain.cpp" />
     <ClCompile Include="MainMenu.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="ActorInfo.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="BlocksGrid.h" />
+    <ClInclude Include="Bonus.h" />
     <ClInclude Include="DifficultyPage.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameSettings.h" />

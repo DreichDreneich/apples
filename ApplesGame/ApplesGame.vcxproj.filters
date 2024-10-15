@@ -52,6 +52,9 @@
     <ClCompile Include="Utils.cpp">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="Enums.h">
+      <Filter>Sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -109,6 +112,9 @@
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="GameStore.h">
+      <Filter>Sources</Filter>
+    </ClInclude>
+    <ClInclude Include="Bonus.h">
       <Filter>Sources</Filter>
     </ClInclude>
   </ItemGroup>

@@ -27,4 +27,13 @@ namespace ApplesGame
 		CommonText(const string& str, Vector2D origin = { 1.f, 0.f });
 		void setString(const string& str);
 	};
+
+	class SmallText : public CommonText
+	{
+	public:
+		SmallText() = default;
+		SmallText(string str, int size = 10) : CommonText(str) {
+			textObj.setCharacterSize(size);
+		};
+	};
 }

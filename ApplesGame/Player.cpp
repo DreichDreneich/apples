@@ -54,23 +54,6 @@ namespace ApplesGame
 			newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { 0.f, SCREEN_HEGHT });
 		}
 
-		//if (hasCollision) {
-		//	newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { SCREEN_WIDTH, 0.f + TOP_PADDING });
-
-		//	if (newDirection == direction) {
-		//		newDirection = reflectVector(position, radius, direction, { 0.f, 0.f + TOP_PADDING }, { 0.f, SCREEN_HEGHT });
-		//	}
-
-		//	if (newDirection == direction) {
-		//		newDirection = reflectVector(position, radius, direction, { SCREEN_WIDTH, 0.f + TOP_PADDING }, { SCREEN_WIDTH, SCREEN_HEGHT });
-		//	}
-
-		//	if (newDirection == direction) {
-		//		State::Instance()->setGameOverState();
-		//		newDirection = reflectVector(position, radius, direction, { 0.f, SCREEN_HEGHT }, { SCREEN_WIDTH, SCREEN_HEGHT });
-		//	}
-		//}
-
 		SetDirection(newDirection);
 
 		GameObject::Update(timeDelta);

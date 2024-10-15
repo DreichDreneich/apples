@@ -1,6 +1,7 @@
 #pragma once
 #include "Player.h"
 #include "BlocksGrid.h"
+#include "Bonus.h"
 #include <unordered_map>
 
 namespace ApplesGame {
@@ -30,19 +31,23 @@ namespace ApplesGame {
 		shared_ptr<Ball> _ball;
 		shared_ptr<BlocksGrid> _blocksGrid;
 		unordered_map<string, shared_ptr<Bonus>> bonuses = {};
+		unordered_map<BonusType, BonusState> appliedBonuses = {};
 
 		unordered_map<string, shared_ptr<GameObject>>& gameObjects;
+		TexturesManager* texturesManager;
 	public:
 		void setGameScore(int sc) { score = sc; }
 		int getGameScore() { return score; }
 
+		unordered_map<BonusType, BonusState>& GetAppliedBonuses() { return appliedBonuses; }
 		shared_ptr<Platform> getPlatform() { return _platform; }
 		Ball& getBall() { return *_ball; }
 		BlocksGrid& getBlocksGrid() { return *_blocksGrid; }
 
 		GameStore() = default;
 
-		GameStore(unordered_map<string, shared_ptr<GameObject>>& _gameObjects) : gameObjects(_gameObjects) {
+		GameStore(unordered_map<string, shared_ptr<GameObject>>& _gameObjects, TexturesManager* _texturesManager)
+			: gameObjects(_gameObjects), texturesManager(_texturesManager) {
 			_platform = make_shared<Platform>();
 			_ball = make_shared<Ball>();
 
@@ -59,7 +64,8 @@ namespace ApplesGame {
 			_platform->SetSpeed(450.f);
 
 			_ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
-			_ball->SetSpeed(150.f);
+			_ball->SetSpeed(250.f);
+			_ball->SetTexture(*texturesManager->list[TextureType::FIREBALL]);
 
 			std::random_device rd; // Случайный генератор
 			std::mt19937 gen(rd()); // Генератор псевдослучайных чисел Mersenne Twister
@@ -68,7 +74,29 @@ namespace ApplesGame {
 			_ball->SetDirection({ dist(gen), -1.f });
 		}
 
-		tuple<bool, string> Update() {
+		void UpdateBonuses(float timeDelta) {
+			BonusType removedBonusType;
+			bool hasRemoved = false;
+
+			for (auto& appliedBonus : appliedBonuses) {
+				appliedBonus.second.durationRemained -= timeDelta;
+
+				if ((int)appliedBonus.second.durationRemained <= 0) {
+					hasRemoved = true;
+					removedBonusType = appliedBonus.first;
+					appliedBonus.second.RemoveBonus(*_blocksGrid);
+					break;
+				}
+			}
+
+			if (hasRemoved) {
+				appliedBonuses.erase(removedBonusType);
+			}
+		}
+
+		tuple<bool, string> Update(float timeDelta) {
+			UpdateBonuses(timeDelta);
+
 			auto ballShape = _ball->GetShape();
 
 			auto platformLines = GetRectLines(*_platform->GetShape(), _platform->GetPosition());
@@ -88,6 +116,8 @@ namespace ApplesGame {
 	
 				if (lineIntersection != platformLines.end()) {
 					deletedId = bonus.first;
+					auto bonusInfo = bonus.second->ApplyBonus(*_blocksGrid);
+					appliedBonuses.insert({ bonusInfo->GetBonusType(), *bonusInfo });
 					break;
 				}
 

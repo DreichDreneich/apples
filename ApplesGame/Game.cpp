@@ -173,7 +173,7 @@ namespace ApplesGame
 	{
 		if (gameState.top() == GameState::Game)
 		{
-			auto result = gameStore->Update();
+			auto result = gameStore->Update(timeDelta);
 
 			bool hasDeleted = get<0>(result);
 			string deletedId = get<1>(result);
@@ -235,6 +235,8 @@ namespace ApplesGame
 		assert(blockTexture.loadFromImage(image));
 		blockTexture.setSmooth(true);
 
+		assert(fireballTexture.loadFromFile(RESOURCES_PATH + "bonus1.png"));
+
 		soundManager = new SoundManager({
 			{Sounds::DeathSound, "Death.wav"},
 			{Sounds::ApplePickSound, "AppleEat.wav"},
@@ -243,7 +245,12 @@ namespace ApplesGame
 			{Music::Background, "Clinthammer__Background_Music.wav"},
 			});
 
-		gameStore = make_shared<GameStore>(gameObjects);
+		texturesManager = new TexturesManager({
+			{TextureType::BLOCK, "Cracks.png"},
+			{TextureType::FIREBALL, "bonus1.png"},
+			});
+
+		gameStore = make_shared<GameStore>(gameObjects, texturesManager);
 	}
 
 	void State::Init(sf::RenderWindow& window)

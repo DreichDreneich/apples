@@ -128,6 +128,37 @@ namespace ApplesGame
 		scoreText.setString(String::fromUtf8(scoreStr.begin(), scoreStr.end()) + std::to_string(State::Instance()->GetScore()));
 
 		sf::Color gameOverTextColor = (int)State::Instance()->timeSinceGameOver % 2 ? sf::Color::Red : sf::Color::Yellow;
+
+		auto appliedBonuses = State::Instance()->getGameStore()->GetAppliedBonuses();
+
+		BonusType removedBonusType;
+		for (auto& textInfo : bonusesTexts) {
+			if (appliedBonuses.find(textInfo.first) == appliedBonuses.end()) {
+				removedBonusType = textInfo.first;
+				break;
+			}
+		}
+
+		bonusesTexts.erase(removedBonusType);
+
+		for (auto& bonus : appliedBonuses) {
+			string title;
+
+			if (bonus.first == BonusType::GLASS_BLOCKS) {
+				title = "Glass blocks: ";
+			}
+			else {
+				title = "Fireball: ";
+			}
+
+			if (bonusesTexts.find(bonus.first) == bonusesTexts.end()) {
+				auto text = make_shared<SmallText>(title + std::to_string((int)bonus.second.durationRemained));
+				bonusesTexts.insert({ bonus.first, text });
+			}
+			else {
+				bonusesTexts[bonus.first]->setString(title + std::to_string((int)bonus.second.durationRemained));
+			}
+		}
 	}
 
 	void UIState::Draw()
@@ -175,6 +206,12 @@ namespace ApplesGame
 
 			scoreText.setPosition(10.f, 10.f);
 			window->draw(scoreText);
+
+			int count = 0;
+			for (auto& bonus : bonusesTexts) {
+				bonus.second->Draw({ 50.f, SCREEN_HEGHT - 100.f - (count * 30.f) });
+				++count;
+			}
 
 			inputHintText.setPosition(window->getSize().x - 10.f, 3.f);
 			window->draw(inputHintText);

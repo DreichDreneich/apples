@@ -18,14 +18,26 @@ namespace ApplesGame
 
 	sf::Vector2f GetSpriteScale(const sf::Sprite& sprite, const Vector2D& desiredSize)
 	{
-		const sf::Vector2u textureSize = sprite.getTexture()->getSize();
+		const auto texture = sprite.getTexture();
+
+		if (texture == nullptr) {
+			return { 0.f, 0.f };
+		}
+
+		const auto textureSize = texture->getSize();
 		const sf::Vector2f spriteScale = { desiredSize.x / textureSize.x, desiredSize.y / textureSize.y };
 		return spriteScale;
 	}
 
 	sf::Vector2f GetSpriteOrigin(const sf::Sprite& sprite, const Vector2D& relativePosition)
 	{
-		const sf::Vector2u textureSize = sprite.getTexture()->getSize();
+		const auto texture = sprite.getTexture();
+
+		if (texture == nullptr) {
+			return { 0.f, 0.f };
+		}
+
+		const auto textureSize = texture->getSize();
 		return { relativePosition.x * textureSize.x, relativePosition.y * textureSize.y };
 	}
 

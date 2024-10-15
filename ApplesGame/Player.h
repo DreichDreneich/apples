@@ -51,8 +51,10 @@ namespace ApplesGame
 
 	class Ball : public GameObject
 	{
-	public:
+	protected:
+		Sprite sprite;
 
+	public:
 		Ball(Ball& b) {
 			shape = new sf::CircleShape();
 			*shape = *b.shape;
@@ -60,6 +62,7 @@ namespace ApplesGame
 			prevPosition = b.prevPosition;
 			direction = b.direction;
 			speed = b.speed;
+			sprite.setTexture(*b.sprite.getTexture());
 		}
 
 		Ball& operator=(const Ball& b) {
@@ -68,46 +71,60 @@ namespace ApplesGame
 			prevPosition = b.prevPosition;
 			direction = b.direction;
 			speed = b.speed;
+			sprite.setTexture(*b.sprite.getTexture());
 
 			return *this;
 		}
 
 		Ball(){
 			auto sh = new sf::CircleShape();
-
+			 
 			auto radius = 10.f;
 
 			sh->setRadius(radius);
-			sh->setFillColor(sf::Color::White);
+			//sh->setFillColor(sf::Color::White);
 			sh->setOrigin({ position.x + radius, position.y + radius });
 			shape = sh;
+		}
+
+		void SetTexture(const Texture& texture) {
+			sprite.setTexture(texture);
+		}
+
+		void Draw() override {
+			GameObject::Draw();
+			auto radius = GetShape()->getRadius();
+
+			sprite.setOrigin(GetSpriteOrigin(sprite, { 0.5f, 0.5f }));
+			sprite.setScale(GetSpriteScale(sprite, { radius * 2.f + 4.f, radius * 2.f + 4.f }));
+			sprite.setPosition(position);
+			Application::Instance()->GetWindow().draw(sprite);
 		}
 
 		void Update(float timeDelta) override;
 		virtual Circle* GetShape() override { return (Circle*)shape; };
 	};
 
-	class Bonus : public Ball {
+	class BlockStateBase {
+	protected:
+		short health = 1;
 	public:
-		Bonus() {
-			direction = { 0.f, 1.f };
-			speed = 100.f;
-		}
+		BlockStateBase() = default;
+		BlockStateBase(short value) { health = value; }
+		virtual void SetHealth(short value) { health = value; };
+		virtual short GetHealth() { return health; };
+		virtual void ApplyDamage(short value) {
+			health -= value;
+		};
+	};
 
-		Bonus(Bonus& b) : Ball(b) {
-		}
-
-		Bonus& operator=(const Bonus& b) {
-			Bonus::operator=(b);
-
-			return *this;
-		}
-
-		void SetDirection(const sf::Vector2f& direction) = delete;
-
-		void Update(float timeDelta) {
-			GameObject::Update(timeDelta);
-		}
+	class GlassBlockState : public BlockStateBase {
+	public:
+		GlassBlockState() : BlockStateBase() {};
+		GlassBlockState(short value) : BlockStateBase(value) {};
+		void ApplyDamage(short value) override {
+			health = 0;
+		};
 	};
 
 	enum class BlockTypes {
@@ -118,9 +135,12 @@ namespace ApplesGame
 	{
 	protected:
 		short totalHealth = 1;
-		short health = 1;
+		//short health = 1;
 		BlockTypes type = BlockTypes::BLOCK;
 
+		BlockStateBase* state = new BlockStateBase();
+
+		BlockStateBase* prevState = nullptr;
 	public:
 		virtual BlockTypes GetType() { return type; }
 
@@ -132,7 +152,7 @@ namespace ApplesGame
 			shape = newShape;
 
 			totalHealth = b.totalHealth;
-			health = b.health;
+			*state = *b.state;
 			position = b.position;
 			speed = b.speed;
 			type = b.type;
@@ -141,7 +161,7 @@ namespace ApplesGame
 		Block& operator=(const Block& b) {
 			*shape = *b.shape;
 			totalHealth = b.totalHealth;
-			health = b.health;
+			state = b.state;
 			position = b.position;
 			speed = b.speed;
 			type = b.type;
@@ -150,8 +170,8 @@ namespace ApplesGame
 		}
 
 		Block() : GameObject() {
-			Block::totalHealth = health;
-			Block::health = health;
+			Block::totalHealth = 1;
+			state->SetHealth(1);
 
 			auto sh = new Rectangle();
 
@@ -161,14 +181,26 @@ namespace ApplesGame
 		}
 
 		virtual shared_ptr<Block> clone() {
-			//return std::make_shared<Block>(*this);
-			_RPTF2(_CRT_WARN, "Block x= %f\n", 0.f);
+			//_RPTF2(_CRT_WARN, "Block x= %f\n", 0.f);
 			return std::make_shared<Block>(*this);
 		}
 
-		short& GetHealth() { return health; }
+		void SetState(BlockStateBase* nextState) {
+			nextState->SetHealth(state->GetHealth());
+			prevState = state;
+			state = nextState;
+		}
 
-		void ApplyDamage(short value) { health -= value; }
+		void SetPrevState() {
+			delete state;
+			state = prevState;
+		}
+
+		short GetHealth() { return state->GetHealth(); }
+
+		void ApplyDamage(short value) {
+			state->ApplyDamage(value);
+		}
 
 		void Move(sf::Vector2f position) {
 			GameObject::Move({ position.x, position.y + TOP_PADDING });
@@ -191,7 +223,7 @@ namespace ApplesGame
 
 		StrongBlock(const Texture& texture) : Block() {
 			Block::totalHealth = 3;
-			Block::health = 3;
+			state->SetHealth(3);
 			Block::type = BlockTypes::STRONG_BLOCK;
 			sprite.setTexture(texture);
 
@@ -222,7 +254,7 @@ namespace ApplesGame
 			sprite.setScale(GetSpriteScale(sprite, { rectSize.x, rectSize.y }));
 
 			sf::Color color = sprite.getColor();
-			auto a = ((float)totalHealth - (float)health) / (float)totalHealth;
+			auto a = ((float)totalHealth - (float)state->GetHealth()) / (float)totalHealth;
 
 			color.a = (sf::Uint8)(a * (float)255);
 			sprite.setColor(color);

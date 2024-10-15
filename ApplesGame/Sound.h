@@ -1,6 +1,9 @@
 #pragma once
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
+#include <cassert>
 #include "map"
+#include "GameSettings.h"
 
 using namespace std;
 using namespace sf;
@@ -40,5 +43,21 @@ namespace ApplesGame
 		void SetLoop(Music musicType, bool isLoop);
 		void SetBackgroundMusicVolume(float);
 		void SetSoundsVolume(float);
+	};
+
+	enum class TextureType {
+		BLOCK, FIREBALL
+	};
+
+	class TexturesManager {
+	public:
+		TexturesManager(map<TextureType, string> textures) {
+			for (auto& textureInfo : textures) {
+				Texture texture;
+				assert(texture.loadFromFile(RESOURCES_PATH + textureInfo.second));
+				list.insert({ textureInfo.first, make_unique<Texture>(texture) });
+			}
+		}
+		map<TextureType, unique_ptr<sf::Texture>> list;
 	};
 }

@@ -44,6 +44,10 @@ namespace ApplesGame
 		};
 
 		Texture blockTexture;
+		Texture bonus1Texture;
+		Texture bonus2Texture;
+		Texture bonus3Texture;
+		Texture fireballTexture;
 
 		Difficulty difficulty;
 		UIState uiState;
@@ -80,6 +84,7 @@ namespace ApplesGame
 
 		Settings setings;
 		SoundManager* soundManager;
+		TexturesManager* texturesManager;
 
 		float timeSinceGameOver = 0.f;
 
@@ -91,8 +96,6 @@ namespace ApplesGame
 		};
 
 		unordered_map<string, shared_ptr<GameObject>> gameObjects;
-		//Platform* platform;
-		//Ball* ball;
 
 		int GetScore();
 		void HandleKeyReleasedEvent(sf::Event event);
