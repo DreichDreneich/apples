@@ -5,6 +5,7 @@
 #include "Actor.h"
 #include "Application.h"
 #include "Utils.h"
+#include "Sound.h"
 
 using namespace std;
 using namespace sf;
@@ -49,13 +50,42 @@ namespace ApplesGame
 		virtual Rectangle* GetShape() override { return (Rectangle*)shape; };
 	};
 
+	class BallStateBase {
+	protected:
+		short speed = 300;
+		Texture texture;
+
+	public:
+		BallStateBase() = default;
+		BallStateBase(shared_ptr<TexturesManager> manager) {
+
+		}
+
+		/*BallStateBase(short _speed, Sprite _sprite) { 
+			speed = _speed;
+			sprite = _sprite;
+		}*/
+		//virtual void SetHealth(short value) { health = value; };
+		//virtual short GetHealth() { return health; };
+		//virtual void ApplyDamage(short value) {
+		//	health -= value;
+		//};
+	};
+
+	class FireballBallState : public BallStateBase {
+	public:
+		FireballBallState() : BallStateBase() {
+			
+		};
+	};
+
 	class Ball : public GameObject
 	{
 	protected:
 		Sprite sprite;
 
 	public:
-		Ball(Ball& b) {
+		Ball(const Ball& b) {
 			shape = new sf::CircleShape();
 			*shape = *b.shape;
 			position = b.position;

@@ -31,7 +31,7 @@ namespace ApplesGame {
 		shared_ptr<Ball> _ball;
 		shared_ptr<BlocksGrid> _blocksGrid;
 		unordered_map<string, shared_ptr<Bonus>> bonuses = {};
-		unordered_map<BonusType, BonusState> appliedBonuses = {};
+		unordered_map<BonusType, BonusStateBase> appliedBonuses = {};
 
 		unordered_map<string, shared_ptr<GameObject>>& gameObjects;
 		TexturesManager* texturesManager;
@@ -39,7 +39,7 @@ namespace ApplesGame {
 		void setGameScore(int sc) { score = sc; }
 		int getGameScore() { return score; }
 
-		unordered_map<BonusType, BonusState>& GetAppliedBonuses() { return appliedBonuses; }
+		unordered_map<BonusType, BonusStateBase>& GetAppliedBonuses() { return appliedBonuses; }
 		shared_ptr<Platform> getPlatform() { return _platform; }
 		Ball& getBall() { return *_ball; }
 		BlocksGrid& getBlocksGrid() { return *_blocksGrid; }
@@ -84,7 +84,7 @@ namespace ApplesGame {
 				if ((int)appliedBonus.second.durationRemained <= 0) {
 					hasRemoved = true;
 					removedBonusType = appliedBonus.first;
-					appliedBonus.second.RemoveBonus(*_blocksGrid);
+					appliedBonus.second.RemoveBonus(_blocksGrid, _ball, _platform);
 					break;
 				}
 			}
@@ -116,7 +116,7 @@ namespace ApplesGame {
 	
 				if (lineIntersection != platformLines.end()) {
 					deletedId = bonus.first;
-					auto bonusInfo = bonus.second->ApplyBonus(*_blocksGrid);
+					auto bonusInfo = bonus.second->ApplyBonus(_blocksGrid, _ball, _platform);
 					appliedBonuses.insert({ bonusInfo->GetBonusType(), *bonusInfo });
 					break;
 				}
@@ -158,7 +158,8 @@ namespace ApplesGame {
 
 							gameObjects.erase(block->GetId());
 
-							auto bonus = make_shared<Bonus>();
+							FireballBonusState state{};
+							auto bonus = make_shared<Bonus>(state);
 							auto blockSize = block->GetShape()->getSize();
 							auto blockPosition = block->GetPosition();
 
