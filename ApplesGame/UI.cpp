@@ -147,16 +147,22 @@ namespace ApplesGame
 			if (bonus.first == BonusType::GLASS_BLOCKS) {
 				title = "Glass blocks: ";
 			}
-			else {
+			else if (bonus.first == BonusType::FIREBALL) {
 				title = "Fireball: ";
+			}
+			else if (bonus.first == BonusType::FAST_PLATFORM) {
+				title = "Fast platform: ";
+			}
+			else {
+				title = "Bonus: ";
 			}
 
 			if (bonusesTexts.find(bonus.first) == bonusesTexts.end()) {
-				auto text = make_shared<SmallText>(title + std::to_string((int)bonus.second.durationRemained));
+				auto text = make_shared<SmallText>(title + std::to_string((int)bonus.second->durationRemained));
 				bonusesTexts.insert({ bonus.first, text });
 			}
 			else {
-				bonusesTexts[bonus.first]->setString(title + std::to_string((int)bonus.second.durationRemained));
+				bonusesTexts[bonus.first]->setString(title + std::to_string((int)bonus.second->durationRemained));
 			}
 		}
 	}

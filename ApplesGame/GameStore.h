@@ -31,7 +31,7 @@ namespace ApplesGame {
 		shared_ptr<Ball> _ball;
 		shared_ptr<BlocksGrid> _blocksGrid;
 		unordered_map<string, shared_ptr<Bonus>> bonuses = {};
-		unordered_map<BonusType, BonusStateBase> appliedBonuses = {};
+		unordered_map<BonusType, BonusStateBase*> appliedBonuses = {};
 
 		unordered_map<string, shared_ptr<GameObject>>& gameObjects;
 		TexturesManager* texturesManager;
@@ -39,7 +39,7 @@ namespace ApplesGame {
 		void setGameScore(int sc) { score = sc; }
 		int getGameScore() { return score; }
 
-		unordered_map<BonusType, BonusStateBase>& GetAppliedBonuses() { return appliedBonuses; }
+		unordered_map<BonusType, BonusStateBase*>& GetAppliedBonuses() { return appliedBonuses; }
 		shared_ptr<Platform> getPlatform() { return _platform; }
 		Ball& getBall() { return *_ball; }
 		BlocksGrid& getBlocksGrid() { return *_blocksGrid; }
@@ -50,9 +50,6 @@ namespace ApplesGame {
 			: gameObjects(_gameObjects), texturesManager(_texturesManager) {
 			_platform = make_shared<Platform>();
 			_ball = make_shared<Ball>();
-
-			gameObjects["platform"] = _platform;
-			gameObjects["ball"] = _ball;
 		}
 
 		void Restart(const Texture& texture) {
@@ -60,12 +57,29 @@ namespace ApplesGame {
 
 			createNewBlockGrid(texture);
 
+			_platform = make_shared<Platform>();
+			_ball = make_shared<Ball>();
+
+			gameObjects["platform"] = _platform;
+			gameObjects["ball"] = _ball;
+
 			_platform->Move({ (SCREEN_WIDTH - 180.f) / 2.f, SCREEN_HEGHT - 50.f }); //TODO: remove magic numbers
 			_platform->SetSpeed(450.f);
 
 			_ball->Move({ (SCREEN_WIDTH - 10.f) / 2.f, SCREEN_HEGHT - 150.f }); //TODO: remove magic numbers
 			_ball->SetSpeed(250.f);
-			_ball->SetTexture(*texturesManager->list[TextureType::FIREBALL]);
+
+			for (auto& bonusObj : bonuses) {
+				gameObjects.erase(bonusObj.first);
+			}
+
+			bonuses = {};
+
+			for (auto bonus : appliedBonuses) {
+				delete bonus.second;
+			}
+
+			appliedBonuses = {};
 
 			std::random_device rd; // Случайный генератор
 			std::mt19937 gen(rd()); // Генератор псевдослучайных чисел Mersenne Twister
@@ -79,17 +93,19 @@ namespace ApplesGame {
 			bool hasRemoved = false;
 
 			for (auto& appliedBonus : appliedBonuses) {
-				appliedBonus.second.durationRemained -= timeDelta;
+				appliedBonus.second->durationRemained -= timeDelta;
 
-				if ((int)appliedBonus.second.durationRemained <= 0) {
+				if ((int)appliedBonus.second->durationRemained <= 0) {
 					hasRemoved = true;
 					removedBonusType = appliedBonus.first;
-					appliedBonus.second.RemoveBonus(_blocksGrid, _ball, _platform);
+					appliedBonus.second->RemoveBonus(_blocksGrid, _ball, _platform);
 					break;
 				}
 			}
 
 			if (hasRemoved) {
+				auto data = appliedBonuses[removedBonusType];
+				delete data;
 				appliedBonuses.erase(removedBonusType);
 			}
 		}
@@ -117,13 +133,13 @@ namespace ApplesGame {
 				if (lineIntersection != platformLines.end()) {
 					deletedId = bonus.first;
 					auto bonusInfo = bonus.second->ApplyBonus(_blocksGrid, _ball, _platform);
-					appliedBonuses.insert({ bonusInfo->GetBonusType(), *bonusInfo });
+					appliedBonuses.insert({ bonusInfo->GetBonusType(), bonusInfo });
 					break;
 				}
 
-				auto collisionBonus = CollisionManager::HasCollisionCircleWindow2(bonusPosition, bonusRadius);
+				auto bonusCollision = CollisionManager::HasCollisionCircleWindow2(bonusPosition, bonusRadius);
 
-				if (get<2>(collisionBonus)) {
+				if (get<2>(bonusCollision)) {
 					deletedId = bonus.first;
 					break;
 				}
@@ -158,8 +174,24 @@ namespace ApplesGame {
 
 							gameObjects.erase(block->GetId());
 
-							FireballBonusState state{};
-							auto bonus = make_shared<Bonus>(state);
+							BonusStateBase* bonusState;
+
+							std::random_device rd; // Случайный генератор
+							std::mt19937 gen(rd()); // Генератор псевдослучайных чисел Mersenne Twister
+							std::uniform_int_distribution<short> dist(1, 10);
+							auto randomShort = dist(gen);
+
+							if (randomShort <= 3) {
+								bonusState = new FireballBonusState(texturesManager);
+							}
+							else if (randomShort <= 7) {
+								bonusState = new FastPlatformBonusState();
+							}
+							else {
+								bonusState = new GlassBlocksBonusState();
+							}
+
+							const auto bonus = make_shared<Bonus>(bonusState);
 							auto blockSize = block->GetShape()->getSize();
 							auto blockPosition = block->GetPosition();
 

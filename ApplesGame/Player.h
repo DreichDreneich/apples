@@ -51,38 +51,39 @@ namespace ApplesGame
 	};
 
 	class BallStateBase {
-	protected:
-		short speed = 300;
-		Texture texture;
-
 	public:
-		BallStateBase() = default;
-		BallStateBase(shared_ptr<TexturesManager> manager) {
+		short speed = 300;
+		Sprite sprite;
 
+		BallStateBase() = default;
+
+		BallStateBase(const BallStateBase& b) {
+			speed = b.speed;
+			sprite = b.sprite;
 		}
 
-		/*BallStateBase(short _speed, Sprite _sprite) { 
-			speed = _speed;
-			sprite = _sprite;
-		}*/
-		//virtual void SetHealth(short value) { health = value; };
-		//virtual short GetHealth() { return health; };
-		//virtual void ApplyDamage(short value) {
-		//	health -= value;
-		//};
+		BallStateBase& operator=(const BallStateBase& b) {
+			speed = b.speed;
+			sprite = b.sprite;
+		}
 	};
 
 	class FireballBallState : public BallStateBase {
 	public:
 		FireballBallState() : BallStateBase() {
-			
+			speed = 450;
+		};
+		
+		FireballBallState(TexturesManager* manager) : FireballBallState() {
+			sprite.setTexture(*manager->list[TextureType::FIREBALL]);
 		};
 	};
 
 	class Ball : public GameObject
 	{
 	protected:
-		Sprite sprite;
+		shared_ptr<BallStateBase> state = make_shared<BallStateBase>();
+		shared_ptr<BallStateBase> prevState = nullptr;
 
 	public:
 		Ball(const Ball& b) {
@@ -92,7 +93,8 @@ namespace ApplesGame
 			prevPosition = b.prevPosition;
 			direction = b.direction;
 			speed = b.speed;
-			sprite.setTexture(*b.sprite.getTexture());
+			state = make_shared<BallStateBase>(*b.state);
+			//sprite.setTexture(*b.sprite.getTexture());
 		}
 
 		Ball& operator=(const Ball& b) {
@@ -101,7 +103,8 @@ namespace ApplesGame
 			prevPosition = b.prevPosition;
 			direction = b.direction;
 			speed = b.speed;
-			sprite.setTexture(*b.sprite.getTexture());
+			//sprite.setTexture(*b.sprite.getTexture());
+			state = make_shared<BallStateBase>(*b.state);
 
 			return *this;
 		}
@@ -118,17 +121,29 @@ namespace ApplesGame
 		}
 
 		void SetTexture(const Texture& texture) {
-			sprite.setTexture(texture);
+			state->sprite.setTexture(texture);
+		}
+
+		void SetState(BallStateBase& _state) {
+			prevState = make_shared<BallStateBase>(*state);
+			state = make_shared<BallStateBase>(_state);
+			speed = state->speed;
+		}
+
+		void SetPrevState() {
+			state = make_shared<BallStateBase>(*prevState);
+			speed = state->speed;
+			prevState.reset();
 		}
 
 		void Draw() override {
 			GameObject::Draw();
 			auto radius = GetShape()->getRadius();
 
-			sprite.setOrigin(GetSpriteOrigin(sprite, { 0.5f, 0.5f }));
-			sprite.setScale(GetSpriteScale(sprite, { radius * 2.f + 4.f, radius * 2.f + 4.f }));
-			sprite.setPosition(position);
-			Application::Instance()->GetWindow().draw(sprite);
+			state->sprite.setOrigin(GetSpriteOrigin(state->sprite, { 0.5f, 0.5f }));
+			state->sprite.setScale(GetSpriteScale(state->sprite, { radius * 2.f + 4.f, radius * 2.f + 4.f }));
+			state->sprite.setPosition(position);
+			Application::Instance()->GetWindow().draw(state->sprite);
 		}
 
 		void Update(float timeDelta) override;

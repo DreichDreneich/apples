@@ -2,6 +2,6 @@
 
 namespace ApplesGame {
 	enum class BonusType {
-		GLASS_BLOCKS, FIREBALL
+		GLASS_BLOCKS, FIREBALL, FAST_PLATFORM
 	};
 }

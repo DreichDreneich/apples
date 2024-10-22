@@ -9,57 +9,89 @@ namespace ApplesGame {
 	protected:
 		BonusType type = BonusType::GLASS_BLOCKS;
 	public:
+		BonusStateBase() = default;
+
 		BonusType GetBonusType() { return type; }
 
-		float duration = 5.f;
-		float durationRemained = 5.f;
+		float duration = 10.f;
+		float durationRemained = 10.f;
 
 		virtual void ApplyBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball>, shared_ptr<Platform>) {
+		}
+
+		virtual void RemoveBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball>, shared_ptr<Platform>) {
+		}
+	};
+
+	class GlassBlocksBonusState : public BonusStateBase {
+		virtual void ApplyBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball>, shared_ptr<Platform>) override {
 			for (auto& col : grid->GetGrid()) {
 				for (auto& item : col) {
 					item->SetState(new GlassBlockState());
 				}
 			}
+
+			_RPTF2(_CRT_WARN, "Bonus GlassBlocks applied x= %f\n", 0.f);
 		}
 
-		virtual void RemoveBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball>, shared_ptr<Platform>) {
+		virtual void RemoveBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball>, shared_ptr<Platform>) override {
 			for (auto& col : grid->GetGrid()) {
 				for (auto& item : col) {
 					item->SetPrevState();
 				}
 			}
 
-			_RPTF2(_CRT_WARN, "Bonus removed x= %f\n", 0.f);
+			_RPTF2(_CRT_WARN, "Bonus GlassBlocks removed x= %f\n", 0.f);
 		}
-	};
-
-	class GlassBlocksBonusState {
-
 	};
 
 	class FireballBonusState : public BonusStateBase {
+		TexturesManager* texturesManager;
 	public:
-		FireballBonusState() : BonusStateBase() {
+		FireballBonusState(TexturesManager* tm) : BonusStateBase() {
 			type = BonusType::FIREBALL;
+			texturesManager = tm;
 		}
 
 		virtual void ApplyBonus(shared_ptr<BlocksGrid>, shared_ptr<Ball> ball, shared_ptr<Platform>) override {
-			//ball->SetSpeed(400);
-			//ball->SetTexture();
+			auto state = FireballBallState(texturesManager);
+			ball->SetState(state);
 
 			_RPTF2(_CRT_WARN, "Bonus Fireball applied x= %f\n", 0.f);
 		}
 
 		virtual void RemoveBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball> ball, shared_ptr<Platform>) override {
-			ball->SetSpeed(300);
+			ball->SetPrevState();
 
 			_RPTF2(_CRT_WARN, "Bonus Fireball removed x= %f\n", 0.f);
 		}
 	};
 
+	class FastPlatformBonusState : public BonusStateBase {
+	public:
+		FastPlatformBonusState() : BonusStateBase() {
+			type = BonusType::FAST_PLATFORM;
+		}
+
+		virtual void ApplyBonus(shared_ptr<BlocksGrid>, shared_ptr<Ball>, shared_ptr<Platform> platform) override {
+			platform->SetSpeed(600.f);
+			platform->GetShape()->setFillColor(Color::Red);
+
+			_RPTF2(_CRT_WARN, "Bonus FastPlatform applied x= %f\n", 0.f);
+		}
+
+		virtual void RemoveBonus(shared_ptr<BlocksGrid>, shared_ptr<Ball>, shared_ptr<Platform> platform) override {
+			platform->SetSpeed(450.f);
+			platform->GetShape()->setFillColor(Color::Green);
+
+
+			_RPTF2(_CRT_WARN, "Bonus FastPlatform removed x= %f\n", 0.f);
+		}
+	};
+
 	class Bonus : public Ball {
 	protected:
-		shared_ptr<BonusStateBase> state = make_shared<BonusStateBase>();
+		BonusStateBase* state;
 		
 	public:
 		Bonus() {
@@ -67,8 +99,8 @@ namespace ApplesGame {
 			speed = 100.f;
 		}
 
-		Bonus(BonusStateBase& st) : Bonus() {
-			state = make_shared<BonusStateBase>(st);
+		Bonus(BonusStateBase* st) : Bonus() {
+			state = st;
 		}
 
 		Bonus(const Bonus& b) : Ball(b) {}
@@ -85,7 +117,7 @@ namespace ApplesGame {
 			GameObject::Update(timeDelta);
 		}
 
-		virtual shared_ptr<BonusStateBase> ApplyBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball> ball, shared_ptr<Platform> platform) {
+		virtual BonusStateBase* ApplyBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball> ball, shared_ptr<Platform> platform) {
 			state->ApplyBonus(grid, ball, platform);
 			return state;
 		}
