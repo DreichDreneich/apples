@@ -248,6 +248,8 @@ namespace ApplesGame
 		texturesManager = new TexturesManager({
 			{TextureType::BLOCK, "Cracks.png"},
 			{TextureType::FIREBALL, "bonus1.png"},
+			{TextureType::GLASS_BONUS, "glass_bonus.png"},
+			{TextureType::FAST_PLATFORM, "Apple.png"},
 			});
 
 		gameStore = make_shared<GameStore>(gameObjects, texturesManager);

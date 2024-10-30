@@ -8,8 +8,11 @@ namespace ApplesGame {
 	class BonusStateBase {
 	protected:
 		BonusType type = BonusType::GLASS_BLOCKS;
+		BallStateBase* ballState;
+
 	public:
 		BonusStateBase() = default;
+		BallStateBase* GetBallState() { return ballState; }
 
 		BonusType GetBonusType() { return type; }
 
@@ -24,6 +27,12 @@ namespace ApplesGame {
 	};
 
 	class GlassBlocksBonusState : public BonusStateBase {
+	public:
+		GlassBlocksBonusState(TexturesManager* tm) : BonusStateBase() {
+			type = BonusType::GLASS_BLOCKS;
+			ballState = new GlassBlocksBonusBallState(tm);
+		};
+
 		virtual void ApplyBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball>, shared_ptr<Platform>) override {
 			for (auto& col : grid->GetGrid()) {
 				for (auto& item : col) {
@@ -50,6 +59,7 @@ namespace ApplesGame {
 	public:
 		FireballBonusState(TexturesManager* tm) : BonusStateBase() {
 			type = BonusType::FIREBALL;
+			ballState = new FireballBonusBallState(tm);
 			texturesManager = tm;
 		}
 
@@ -69,9 +79,10 @@ namespace ApplesGame {
 
 	class FastPlatformBonusState : public BonusStateBase {
 	public:
-		FastPlatformBonusState() : BonusStateBase() {
+		FastPlatformBonusState(TexturesManager* tm) : BonusStateBase() {
 			type = BonusType::FAST_PLATFORM;
-		}
+			ballState = new FastPlatformBonusBallState(tm);
+		};
 
 		virtual void ApplyBonus(shared_ptr<BlocksGrid>, shared_ptr<Ball>, shared_ptr<Platform> platform) override {
 			platform->SetSpeed(600.f);
@@ -91,7 +102,7 @@ namespace ApplesGame {
 
 	class Bonus : public Ball {
 	protected:
-		BonusStateBase* state;
+		BonusStateBase* bonusState;
 		
 	public:
 		Bonus() {
@@ -100,7 +111,9 @@ namespace ApplesGame {
 		}
 
 		Bonus(BonusStateBase* st) : Bonus() {
-			state = st;
+			bonusState = st;
+			auto ballState = st->GetBallState();
+			SetState(*ballState);
 		}
 
 		Bonus(const Bonus& b) : Ball(b) {}
@@ -118,8 +131,8 @@ namespace ApplesGame {
 		}
 
 		virtual BonusStateBase* ApplyBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball> ball, shared_ptr<Platform> platform) {
-			state->ApplyBonus(grid, ball, platform);
-			return state;
+			bonusState->ApplyBonus(grid, ball, platform);
+			return bonusState;
 		}
 	};
 }

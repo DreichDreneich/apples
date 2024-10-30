@@ -46,7 +46,7 @@ namespace ApplesGame
 	};
 
 	enum class TextureType {
-		BLOCK, FIREBALL
+		BLOCK, FIREBALL, GLASS_BONUS, FAST_PLATFORM
 	};
 
 	class TexturesManager {

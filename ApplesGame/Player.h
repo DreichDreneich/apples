@@ -79,6 +79,39 @@ namespace ApplesGame
 		};
 	};
 
+	class GlassBlocksBonusBallState : public BallStateBase {
+	public:
+		GlassBlocksBonusBallState() : BallStateBase() {
+			speed = 200;
+		};
+
+		GlassBlocksBonusBallState(TexturesManager* manager) : GlassBlocksBonusBallState() {
+			sprite.setTexture(*manager->list[TextureType::GLASS_BONUS]);
+		};
+	};
+
+	class FireballBonusBallState : public BallStateBase {
+	public:
+		FireballBonusBallState() : BallStateBase() {
+			speed = 200;
+		};
+
+		FireballBonusBallState(TexturesManager* manager) : FireballBonusBallState() {
+			sprite.setTexture(*manager->list[TextureType::FIREBALL]);
+		};
+	};
+
+	class FastPlatformBonusBallState : public BallStateBase {
+	public:
+		FastPlatformBonusBallState() : BallStateBase() {
+			speed = 200;
+		};
+
+		FastPlatformBonusBallState(TexturesManager* manager) : FastPlatformBonusBallState() {
+			sprite.setTexture(*manager->list[TextureType::FAST_PLATFORM]);
+		};
+	};
+
 	class Ball : public GameObject
 	{
 	protected:
@@ -94,7 +127,6 @@ namespace ApplesGame
 			direction = b.direction;
 			speed = b.speed;
 			state = make_shared<BallStateBase>(*b.state);
-			//sprite.setTexture(*b.sprite.getTexture());
 		}
 
 		Ball& operator=(const Ball& b) {
@@ -103,7 +135,6 @@ namespace ApplesGame
 			prevPosition = b.prevPosition;
 			direction = b.direction;
 			speed = b.speed;
-			//sprite.setTexture(*b.sprite.getTexture());
 			state = make_shared<BallStateBase>(*b.state);
 
 			return *this;
@@ -115,7 +146,6 @@ namespace ApplesGame
 			auto radius = 10.f;
 
 			sh->setRadius(radius);
-			//sh->setFillColor(sf::Color::White);
 			sh->setOrigin({ position.x + radius, position.y + radius });
 			shape = sh;
 		}
@@ -140,6 +170,7 @@ namespace ApplesGame
 			GameObject::Draw();
 			auto radius = GetShape()->getRadius();
 
+			state->sprite.setColor(Color::Yellow);
 			state->sprite.setOrigin(GetSpriteOrigin(state->sprite, { 0.5f, 0.5f }));
 			state->sprite.setScale(GetSpriteScale(state->sprite, { radius * 2.f + 4.f, radius * 2.f + 4.f }));
 			state->sprite.setPosition(position);

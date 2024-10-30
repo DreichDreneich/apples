@@ -185,10 +185,10 @@ namespace ApplesGame {
 								bonusState = new FireballBonusState(texturesManager);
 							}
 							else if (randomShort <= 7) {
-								bonusState = new FastPlatformBonusState();
+								bonusState = new FastPlatformBonusState(texturesManager);
 							}
 							else {
-								bonusState = new GlassBlocksBonusState();
+								bonusState = new GlassBlocksBonusState(texturesManager);
 							}
 
 							const auto bonus = make_shared<Bonus>(bonusState);
