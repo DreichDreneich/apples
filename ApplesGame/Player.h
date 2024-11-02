@@ -60,11 +60,19 @@ namespace ApplesGame
 		BallStateBase(const BallStateBase& b) {
 			speed = b.speed;
 			sprite = b.sprite;
+			if (b.sprite.getTexture() != nullptr) {
+				sprite.setTexture(*b.sprite.getTexture());
+			}
 		}
 
 		BallStateBase& operator=(const BallStateBase& b) {
 			speed = b.speed;
 			sprite = b.sprite;
+			if (b.sprite.getTexture() != nullptr) {
+				sprite.setTexture(*b.sprite.getTexture());
+			}
+
+			return *this;
 		}
 	};
 
@@ -116,7 +124,7 @@ namespace ApplesGame
 	{
 	protected:
 		shared_ptr<BallStateBase> state = make_shared<BallStateBase>();
-		shared_ptr<BallStateBase> prevState = nullptr;
+		shared_ptr<BallStateBase> prevState = make_shared<BallStateBase>();
 
 	public:
 		Ball(const Ball& b) {
@@ -127,6 +135,7 @@ namespace ApplesGame
 			direction = b.direction;
 			speed = b.speed;
 			state = make_shared<BallStateBase>(*b.state);
+			prevState = make_shared<BallStateBase>(*b.prevState);
 		}
 
 		Ball& operator=(const Ball& b) {
@@ -136,6 +145,7 @@ namespace ApplesGame
 			direction = b.direction;
 			speed = b.speed;
 			state = make_shared<BallStateBase>(*b.state);
+			prevState = make_shared<BallStateBase>(*b.prevState);
 
 			return *this;
 		}
@@ -152,6 +162,10 @@ namespace ApplesGame
 
 		void SetTexture(const Texture& texture) {
 			state->sprite.setTexture(texture);
+		}
+
+		const Texture* GetTexture() {
+			return state->sprite.getTexture();
 		}
 
 		void SetState(BallStateBase& _state) {
@@ -216,7 +230,7 @@ namespace ApplesGame
 
 		BlockStateBase* state = new BlockStateBase();
 
-		BlockStateBase* prevState = nullptr;
+		BlockStateBase* prevState = new BlockStateBase();
 	public:
 		virtual BlockTypes GetType() { return type; }
 
@@ -232,15 +246,17 @@ namespace ApplesGame
 			position = b.position;
 			speed = b.speed;
 			type = b.type;
+			*prevState = *b.prevState;
 		}
 
 		Block& operator=(const Block& b) {
 			*shape = *b.shape;
 			totalHealth = b.totalHealth;
-			state = b.state;
+			*state = *b.state;
 			position = b.position;
 			speed = b.speed;
 			type = b.type;
+			*prevState = *b.prevState;
 
 			return *this;
 		}

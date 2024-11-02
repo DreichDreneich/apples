@@ -8,10 +8,22 @@ namespace ApplesGame {
 	class BonusStateBase {
 	protected:
 		BonusType type = BonusType::GLASS_BLOCKS;
-		BallStateBase* ballState;
+		BallStateBase* ballState = new BallStateBase();
 
 	public:
 		BonusStateBase() = default;
+
+		BonusStateBase& operator=(const BonusStateBase& b) {
+			*ballState = *b.ballState;
+			type = b.type;
+			duration = b.duration;
+			durationRemained = b.durationRemained;
+
+			return *this;
+		}
+
+		virtual BonusStateBase* clone() { return new BonusStateBase(*this); };
+
 		BallStateBase* GetBallState() { return ballState; }
 
 		BonusType GetBonusType() { return type; }
@@ -32,6 +44,8 @@ namespace ApplesGame {
 			type = BonusType::GLASS_BLOCKS;
 			ballState = new GlassBlocksBonusBallState(tm);
 		};
+
+		virtual GlassBlocksBonusState* clone() override { return new GlassBlocksBonusState(*this); };
 
 		virtual void ApplyBonus(shared_ptr<BlocksGrid> grid, shared_ptr<Ball>, shared_ptr<Platform>) override {
 			for (auto& col : grid->GetGrid()) {
@@ -63,6 +77,15 @@ namespace ApplesGame {
 			texturesManager = tm;
 		}
 
+		virtual FireballBonusState* clone() override { return new FireballBonusState(*this); };
+
+		FireballBonusState& operator=(const FireballBonusState& b) {
+			FireballBonusState::operator=(b);
+			texturesManager = b.texturesManager;
+
+			return *this;
+		}
+
 		virtual void ApplyBonus(shared_ptr<BlocksGrid>, shared_ptr<Ball> ball, shared_ptr<Platform>) override {
 			auto state = FireballBallState(texturesManager);
 			ball->SetState(state);
@@ -84,6 +107,8 @@ namespace ApplesGame {
 			ballState = new FastPlatformBonusBallState(tm);
 		};
 
+		virtual FastPlatformBonusState* clone() override { return new FastPlatformBonusState(*this); };
+
 		virtual void ApplyBonus(shared_ptr<BlocksGrid>, shared_ptr<Ball>, shared_ptr<Platform> platform) override {
 			platform->SetSpeed(600.f);
 			platform->GetShape()->setFillColor(Color::Red);
@@ -102,7 +127,7 @@ namespace ApplesGame {
 
 	class Bonus : public Ball {
 	protected:
-		BonusStateBase* bonusState;
+		BonusStateBase* bonusState = new BonusStateBase();
 		
 	public:
 		Bonus() {
@@ -116,10 +141,45 @@ namespace ApplesGame {
 			SetState(*ballState);
 		}
 
-		Bonus(const Bonus& b) : Ball(b) {}
+		Bonus(const Bonus& b) : Ball(b) {
+			position = b.position;
+			prevPosition = b.prevPosition;
+
+			auto oldShape = (CircleShape*)b.shape;
+			auto nextShape = new sf::CircleShape();
+			nextShape->setRadius(oldShape->getRadius());
+			nextShape->setOrigin(oldShape->getOrigin());
+			shape = nextShape;
+			
+			direction = b.direction;
+			speed = b.speed;
+			bonusState = b.bonusState->clone();
+			state = make_shared<BallStateBase>(*b.bonusState->GetBallState());
+			state->sprite.setTexture(*b.state->sprite.getTexture());
+			if (b.prevState) {
+				prevState = make_shared<BallStateBase>(*b.prevState);
+			}
+		}
 
 		Bonus& operator=(const Bonus& b) {
-			Bonus::operator=(b);
+			position = b.position;
+			prevPosition = b.prevPosition;
+
+			auto oldShape = (CircleShape*)b.shape;
+			auto nextShape = new sf::CircleShape();
+			nextShape->setRadius(oldShape->getRadius());
+			nextShape->setOrigin(oldShape->getOrigin());
+			shape = nextShape;
+
+			direction = b.direction;
+			speed = b.speed;
+			bonusState = b.bonusState->clone();
+			state = make_shared<BallStateBase>(*b.bonusState->GetBallState());
+			state->sprite.setTexture(*b.state->sprite.getTexture());
+
+			if (b.prevState) {
+				prevState = make_shared<BallStateBase>(*b.prevState);
+			}
 
 			return *this;
 		}

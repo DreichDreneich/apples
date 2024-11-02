@@ -11,12 +11,27 @@ namespace ApplesGame {
 		Platform _platform;
 		Ball _ball;
 		BlocksGrid _blocksGrid;
+		unordered_map<string, shared_ptr<Bonus>> _bonuses = {};
+		unordered_map<BonusType, BonusStateBase*> _appliedBonuses = {};
 	public:
-		GameStoreMemento(tuple<shared_ptr<Ball>, shared_ptr<Platform>, shared_ptr<BlocksGrid>, int> data) {
+		GameStoreMemento(
+			tuple<shared_ptr<Ball>, shared_ptr<Platform>, shared_ptr<BlocksGrid>, int> data,
+			unordered_map<string, shared_ptr<Bonus>> bonuses,
+			unordered_map<BonusType, BonusStateBase*> appliedBonuses
+		) {
 			_ball = *(get<0>(data).get());
 			_platform = *(get<1>(data).get());
 			_blocksGrid = *(get<2>(data).get());
 			score = get<3>(data);
+
+			for (auto& bonusObj : bonuses) {
+				_bonuses.insert({ bonusObj.first, make_shared<Bonus>(*bonusObj.second.get())});
+			}
+
+			for (auto bonus : appliedBonuses) {
+				BonusStateBase* base = new BonusStateBase(*bonus.second);
+				_appliedBonuses.insert({ bonus.first, base });
+			}
 
 			_RPTF2(_CRT_WARN, "ball position x= %f, y= %f\n", _ball.GetPosition().x, _ball.GetPosition().y);
 		}
@@ -174,31 +189,33 @@ namespace ApplesGame {
 
 							gameObjects.erase(block->GetId());
 
-							BonusStateBase* bonusState;
-
 							std::random_device rd; // Случайный генератор
 							std::mt19937 gen(rd()); // Генератор псевдослучайных чисел Mersenne Twister
 							std::uniform_int_distribution<short> dist(1, 10);
 							auto randomShort = dist(gen);
 
-							if (randomShort <= 3) {
-								bonusState = new FireballBonusState(texturesManager);
-							}
-							else if (randomShort <= 7) {
-								bonusState = new FastPlatformBonusState(texturesManager);
-							}
-							else {
-								bonusState = new GlassBlocksBonusState(texturesManager);
-							}
+							if (randomShort >= 5) {
+								BonusStateBase* bonusState;
 
-							const auto bonus = make_shared<Bonus>(bonusState);
-							auto blockSize = block->GetShape()->getSize();
-							auto blockPosition = block->GetPosition();
+								if (randomShort <= 7) {
+									bonusState = new FireballBonusState(texturesManager);
+								}
+								else if (randomShort <= 9) {
+									bonusState = new FastPlatformBonusState(texturesManager);
+								}
+								else {
+									bonusState = new GlassBlocksBonusState(texturesManager);
+								}
 
-							bonus->Move({ blockPosition.x + (blockSize.x / 2), blockPosition.y + (blockSize.y / 2) });
+								const auto bonus = make_shared<Bonus>(bonusState);
+								auto blockSize = block->GetShape()->getSize();
+								auto blockPosition = block->GetPosition();
 
-							gameObjects.insert({ bonus->GetId(), bonus });
-							bonuses.insert({ bonus->GetId(), bonus });
+								bonus->Move({ blockPosition.x + (blockSize.x / 2), blockPosition.y + (blockSize.y / 2) });
+
+								gameObjects.insert({ bonus->GetId(), bonus });
+								bonuses.insert({ bonus->GetId(), bonus });
+							}
 
 							return { true, block->GetId() };
 						}
@@ -212,12 +229,16 @@ namespace ApplesGame {
 		};
 
 		GameStoreMemento* getGameSnapshot() {
-			auto a = new GameStoreMemento({ _ball, _platform, _blocksGrid, score });
+			auto a = new GameStoreMemento({ _ball, _platform, _blocksGrid, score }, bonuses, appliedBonuses);
 			return a;
 		}
 
 		void restoreGameSnapshot(GameStoreMemento* memento) {
 			_RPTF2(_CRT_WARN, "ball position x= %f, y= %f\n", memento->_ball.GetPosition().x, memento->_ball.GetPosition().y);
+
+			gameObjects = {};
+			bonuses = {};
+			appliedBonuses = {};
 
 			_ball = make_shared<Ball>(memento->_ball);
 			auto oldBall = _ball->GetPosition();
@@ -234,6 +255,16 @@ namespace ApplesGame {
 			score = memento->score;
 
 			gameObjects["platform"] = _platform;
+
+			for (auto& bonusObj : memento->_bonuses) {
+				bonuses.insert({ bonusObj.first, make_shared<Bonus>(*bonusObj.second.get())});
+				gameObjects.insert({ bonusObj.first, bonuses[bonusObj.first]});
+			}
+
+			for (auto bonus : memento->_appliedBonuses) {
+				BonusStateBase* base = new BonusStateBase(*bonus.second);
+				appliedBonuses.insert({ bonus.first, base });
+			}
 		}
 
 		void addGridToGameObjects() {
