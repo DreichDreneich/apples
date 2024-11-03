@@ -44,10 +44,6 @@ namespace ApplesGame
 		};
 
 		Texture blockTexture;
-		Texture bonus1Texture;
-		Texture bonus2Texture;
-		Texture bonus3Texture;
-		Texture fireballTexture;
 
 		Difficulty difficulty;
 		UIState uiState;
@@ -57,8 +53,6 @@ namespace ApplesGame
 		GameCaretaker gameCaretaker;
 
 		shared_ptr<GameStore> gameStore;
-
-		//int score = 0;
 	public:
 		Difficulty* getDifficulty();
 		void setDifficulty(Difficulty);

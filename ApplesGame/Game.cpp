@@ -235,8 +235,6 @@ namespace ApplesGame
 		assert(blockTexture.loadFromImage(image));
 		blockTexture.setSmooth(true);
 
-		assert(fireballTexture.loadFromFile(RESOURCES_PATH + "bonus1.png"));
-
 		soundManager = new SoundManager({
 			{Sounds::DeathSound, "Death.wav"},
 			{Sounds::ApplePickSound, "AppleEat.wav"},
