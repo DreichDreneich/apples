@@ -225,7 +225,6 @@ namespace ApplesGame
 	{
 	protected:
 		short totalHealth = 1;
-		//short health = 1;
 		BlockTypes type = BlockTypes::BLOCK;
 
 		BlockStateBase* state = new BlockStateBase();
@@ -273,8 +272,11 @@ namespace ApplesGame
 		}
 
 		virtual shared_ptr<Block> clone() {
-			//_RPTF2(_CRT_WARN, "Block x= %f\n", 0.f);
 			return std::make_shared<Block>(*this);
+		}
+
+		virtual short GetScoreOnDeath() {
+			return 1;
 		}
 
 		void SetState(BlockStateBase* nextState) {
@@ -336,6 +338,10 @@ namespace ApplesGame
 		shared_ptr<Block> clone() override {
 			_RPTF2(_CRT_WARN, "Strong Block x= %f\n", 0.f);
 			return std::make_shared<StrongBlock>(*this);
+		}
+
+		short GetScoreOnDeath() override {
+			return 5;
 		}
 
 		void Draw() override {

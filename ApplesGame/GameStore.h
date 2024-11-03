@@ -185,7 +185,7 @@ namespace ApplesGame {
 						block->ApplyDamage((short)1);
 						if (block->GetHealth() == 0) {
 							_blocksGrid->RemoveEl(i, j);
-							++score;
+							score = score + block->GetScoreOnDeath();
 
 							gameObjects.erase(block->GetId());
 
